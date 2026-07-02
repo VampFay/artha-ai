@@ -1,0 +1,1454 @@
+     1→================================================================================
+     2→DOCUMENT TEXT CONTENT
+     3→================================================================================
+     4→[Heading 1] FinSight AI — Detailed Implementation Plan
+     5→[Heading 2] Project Title
+     6→[First Paragraph] FinSight AI: AI-Powered Tax Readiness and Financial Health Assistant
+     7→[Heading 2] Core Idea
+     8→[First Paragraph] FinSight AI is a privacy-first web application that helps users organize financial documents, estimate tax readiness, analyze spending behavior, understand financial health, and generate CA-ready summary reports.
+     9→[Body Text] The project does not aim to replace a Chartered Accountant or investment adviser. Instead, it acts as a smart assistant that makes financial data easier to understand, verify, and prepare.
+    10→[Body Text] A major focus of this project is UI/UX quality. Since finance and tax data can feel confusing, the interface must be simple, clean, trustworthy, and easy to use. The system should not only work correctly, but also feel professional and comfortable for real users.
+    11→[Heading 1] 1. Project Priorities
+    12→[First Paragraph] The project will be built around five major priorities:
+    13→[Heading 2] 1. Functional correctness
+    14→[First Paragraph] The system should correctly extract, organize, calculate, and display financial information.
+    15→[Heading 2] 2. UI/UX quality
+    16→[First Paragraph] The application should be easy to navigate, visually clean, and understandable even for users with low financial knowledge.
+    17→[Heading 2] 3. Privacy and trust
+    18→[First Paragraph] The system should clearly show consent, data usage, masking of sensitive information, and deletion controls.
+    19→[Heading 2] 4. Performance and optimization
+    20→[First Paragraph] Every module must be efficient. No unnecessary database queries, no repeated calculations, no oversized components, and no wasteful processing.
+    21→[Heading 2] 5. Clean code discipline
+    22→[First Paragraph] There must be no dead code, unused functions, unused imports, redundant logic, unnecessary files, duplicate components, or inefficient algorithms.
+    23→[Body Text] Every line of code should have a purpose.
+    24→[Heading 1] 2. Final Scope
+    25→[Heading 2] The system will include
+    26→[Compact] User registration and login.
+    27→[Compact] Consent-based document upload.
+    28→[Compact] Financial document processing.
+    29→[Compact] OCR and PDF text extraction.
+    30→[Compact] AI-based field extraction.
+    31→[Compact] User verification of extracted data.
+    32→[Compact] Tax readiness estimation.
+    33→[Compact] Old vs new tax regime comparison.
+    34→[Compact] Missing document detection.
+    35→[Compact] Financial health score.
+    36→[Compact] Expense analysis.
+    37→[Compact] Goal-based financial simulation.
+    38→[Compact] AI explanation assistant.
+    39→[Compact] CA-ready PDF report generation.
+    40→[Compact] Clean dashboard with strong UI/UX.
+    41→[Compact] Privacy controls and data deletion.
+    42→[Heading 2] The system will not include
+    43→[Compact] Official income tax return filing.
+    44→[Compact] Direct integration with the government income tax portal.
+    45→[Compact] Legal tax advice.
+    46→[Compact] Direct investment recommendations.
+    47→[Compact] Stock or mutual fund buy/sell advice.
+    48→[Compact] Guaranteed tax savings.
+    49→[Compact] Guaranteed financial returns.
+    50→[Heading 1] 3. High-Level Architecture
+    51→[Source Code] User
+    52→ ↓
+    53→Frontend Web Application
+    54→ ↓
+    55→Authentication + Consent Layer
+    56→ ↓
+    57→Document Upload Interface
+    58→ ↓
+    59→Backend API
+    60→ ↓
+    61→Document Processing Engine
+    62→ ↓
+    63→OCR / PDF Parser
+    64→ ↓
+    65→AI Extraction Engine
+    66→ ↓
+    67→User Verification Layer
+    68→ ↓
+    69→Structured Financial Database
+    70→ ↓
+    71→Tax Readiness Engine
+    72→ ↓
+    73→Financial Health Engine
+    74→ ↓
+    75→Goal Simulation Engine
+    76→ ↓
+    77→AI Explanation Assistant
+    78→ ↓
+    79→Dashboard + Reports
+    80→[Heading 1] 4. Recommended Tech Stack
+    81→[Heading 2] Frontend
+    82→[First Paragraph] Use:
+    83→[Compact] React.js or Next.js.
+    84→[Compact] TypeScript.
+    85→[Compact] Tailwind CSS.
+    86→[Compact] ShadCN UI or Material UI.
+    87→[Compact] Recharts or Chart.js.
+    88→[Compact] React Hook Form.
+    89→[Compact] Zod for validation.
+    90→[Heading 2] Backend
+    91→[First Paragraph] Use:
+    92→[Compact] FastAPI with Python.
+    93→[First Paragraph] FastAPI is recommended because the project needs document parsing, OCR, AI extraction, and financial calculations, which are easier to build in Python.
+    94→[Heading 2] Database
+    95→[First Paragraph] Use:
+    96→[Compact] PostgreSQL.
+    97→[Heading 2] AI and document processing
+    98→[First Paragraph] Use:
+    99→[Compact] pdfplumber for PDF extraction.
+   100→[Compact] PyMuPDF for PDF reading.
+   101→[Compact] Tesseract or PaddleOCR for OCR.
+   102→[Compact] Regex and rule-based extraction for predictable fields.
+   103→[Compact] Optional LLM-based extraction for messy documents.
+   104→[Heading 2] Reports
+   105→[First Paragraph] Use:
+   106→[Compact] ReportLab or WeasyPrint for PDF generation.
+   107→[Heading 2] Deployment
+   108→[First Paragraph] Use:
+   109→[Compact] Docker.
+   110→[Compact] Render / Railway / Vercel / Supabase if cloud deployment is needed.
+   111→[Heading 1] 5. UI/UX Design Philosophy
+   112→[First Paragraph] UI/UX is a core part of this project.
+   113→[Body Text] The user should never feel lost. Every screen must clearly answer:
+   114→[Source Code] Where am I?
+   115→What do I need to do?
+   116→What has the system understood?
+   117→What is missing?
+   118→What should I verify?
+   119→What can I download?
+   120→[Heading 2] Design principles
+   121→[Heading 3] 5.1 Simplicity
+   122→[First Paragraph] Finance and tax are already complicated. The UI must reduce complexity, not add to it.
+   123→[Body Text] Use:
+   124→[Compact] Simple language.
+   125→[Compact] Short labels.
+   126→[Compact] Clear explanations.
+   127→[Compact] Visual indicators.
+   128→[Compact] Step-by-step flows.
+   129→[First Paragraph] Avoid:
+   130→[Compact] Too many buttons.
+   131→[Compact] Dense tables without summaries.
+   132→[Compact] Unexplained financial terms.
+   133→[Compact] Overloaded dashboards.
+   134→[Compact] Long forms without grouping.
+   135→[Heading 3] 5.2 Trust
+   136→[First Paragraph] Since users are uploading financial documents, the UI must feel secure.
+   137→[Body Text] Add:
+   138→[Compact] Consent screen.
+   139→[Compact] Data masking.
+   140→[Compact] “Delete document” option.
+   141→[Compact] “Why we need this” tooltips.
+   142→[Compact] Processing status.
+   143→[Compact] Confidence scores.
+   144→[Compact] Clear disclaimers.
+   145→[Heading 3] 5.3 Explainability
+   146→[First Paragraph] Do not just show numbers. Explain them.
+   147→[Body Text] Example:
+   148→[Body Text] Instead of only showing:
+   149→[Source Code] Tax Readiness Score: 68
+   150→[First Paragraph] Show:
+   151→[Source Code] Tax Readiness Score: 68/100
+   152→
+   153→Your score is reduced because rent receipts and insurance proof are missing.
+   154→[Heading 3] 5.4 Progressive disclosure
+   155→[First Paragraph] Do not show everything at once.
+   156→[Body Text] Show summary first, details later.
+   157→[Body Text] Example:
+   158→[Source Code] Financial Health Score: 74/100
+   159→Main issue: Emergency fund is low.
+   160→View Details
+   161→[Heading 3] 5.5 Mobile-friendly design
+   162→[First Paragraph] The app should work on laptops and mobile screens.
+   163→[Body Text] Important pages must be responsive:
+   164→[Compact] Login.
+   165→[Compact] Dashboard.
+   166→[Compact] Document upload.
+   167→[Compact] Tax summary.
+   168→[Compact] Financial health page.
+   169→[Compact] Report download page.
+   170→[Heading 1] 6. UI/UX Phase Plan
+   171→[Heading 2] Phase UI-1: User Research and Flow Mapping
+   172→[Heading 3] Goal
+   173→[First Paragraph] Understand the user journey before building screens.
+   174→[Heading 3] Tasks
+   175→[First Paragraph] Create user personas:
+   176→[Source Code] Persona 1: First-time taxpayer
+   177→Persona 2: Salaried employee
+   178→Persona 3: Student with internship income
+   179→Persona 4: Freelancer with basic income
+   180→[First Paragraph] Map the user journey:
+   181→[Source Code] Login
+   182→ → Consent
+   183→ → Upload documents
+   184→ → Processing
+   185→ → Verify extracted data
+   186→ → View tax readiness
+   187→ → View financial health
+   188→ → Ask assistant
+   189→ → Download report
+   190→[First Paragraph] Identify pain points:
+   191→[Source Code] User does not know which documents are needed.
+   192→User does not understand tax regime difference.
+   193→User does not know whether extracted values are correct.
+   194→User does not understand why financial health score is low.
+   195→[Heading 3] Deliverables
+   196→[Compact] User personas.
+   197→[Compact] User journey map.
+   198→[Compact] Feature priority list.
+   199→[Compact] UI flow diagram.
+   200→[Heading 2] Phase UI-2: Wireframing
+   201→[Heading 3] Goal
+   202→[First Paragraph] Create low-fidelity screen layouts before coding.
+   203→[Heading 3] Required wireframes
+   204→[Compact] Landing page.
+   205→[Compact] Login/register page.
+   206→[Compact] Consent page.
+   207→[Compact] Main dashboard.
+   208→[Compact] Document upload page.
+   209→[Compact] Processing status page.
+   210→[Compact] Extracted data verification page.
+   211→[Compact] Tax readiness page.
+   212→[Compact] Financial health page.
+   213→[Compact] Goal simulator page.
+   214→[Compact] AI assistant page.
+   215→[Compact] Report download page.
+   216→[Compact] Settings and data deletion page.
+   217→[Heading 3] Wireframe rules
+   218→[First Paragraph] Every page must have:
+   219→[Source Code] Clear title
+   220→One main action
+   221→Readable layout
+   222→Minimal clutter
+   223→Obvious navigation
+   224→[Heading 3] Deliverables
+   225→[Compact] Figma wireframes or hand-drawn wireframes.
+   226→[Compact] Screen flow diagram.
+   227→[Compact] Navigation structure.
+   228→[Heading 2] Phase UI-3: Visual Design System
+   229→[Heading 3] Goal
+   230→[First Paragraph] Create consistent design before full development.
+   231→[Heading 3] Design system components
+   232→[First Paragraph] Define:
+   233→[Source Code] Color palette
+   234→Typography
+   235→Spacing scale
+   236→Button styles
+   237→Card styles
+   238→Form input styles
+   239→Alert styles
+   240→Table styles
+   241→Chart styles
+   242→Icon style
+   243→Loading states
+   244→Empty states
+   245→Error states
+   246→[Heading 3] Suggested visual tone
+   247→[First Paragraph] The app should feel:
+   248→[Source Code] Clean
+   249→Professional
+   250→Calm
+   251→Trustworthy
+   252→Modern
+   253→Financially serious
+   254→[Heading 3] Avoid
+   255→[Source Code] Neon-heavy design
+   256→Overly playful finance UI
+   257→Too many colors
+   258→Tiny fonts
+   259→Dense unstructured tables
+   260→[Heading 3] Core UI components
+   261→[First Paragraph] Build reusable components:
+   262→[Source Code] Button
+   263→Input
+   264→Select
+   265→FileUploader
+   266→DashboardCard
+   267→ScoreCard
+   268→ProgressBar
+   269→AlertBox
+   270→DataTable
+   271→VerificationField
+   272→ChartCard
+   273→DocumentStatusBadge
+   274→ReportDownloadCard
+   275→AssistantMessage
+   276→ConsentCard
+   277→[First Paragraph] Each component should be reused. Do not duplicate similar UI code.
+   278→[Heading 3] Deliverables
+   279→[Compact] Design system file.
+   280→[Compact] Reusable component list.
+   281→[Compact] UI style guide.
+   282→[Heading 1] 7. Development Phases
+   283→[Heading 1] Phase 0: Scope Lock and Project Setup
+   284→[Heading 2] Goal
+   285→[First Paragraph] Prepare the project foundation.
+   286→[Heading 2] Tasks
+   287→[Compact] Finalize title.
+   288→[Compact] Finalize problem statement.
+   289→[Compact] Define modules.
+   290→[Compact] Define limitations.
+   291→[Compact] Create GitHub repository.
+   292→[Compact] Set up frontend folder.
+   293→[Compact] Set up backend folder.
+   294→[Compact] Set up database.
+   295→[Compact] Add README.
+   296→[Compact] Add .env.example.
+   297→[Compact] Add code formatter.
+   298→[Compact] Add linter.
+   299→[Compact] Add pre-commit checks.
+   300→[Heading 2] Folder structure
+   301→[Source Code] finsight-ai/
+   302→ ├── frontend/
+   303→ ├── backend/
+   304→ ├── docs/
+   305→ ├── sample-data/
+   306→ ├── reports/
+   307→ ├── docker-compose.yml
+   308→ ├── README.md
+   309→ └── .gitignore
+   310→[Heading 2] Clean-code rules from day one
+   311→[Compact] No unused imports.
+   312→[Compact] No unused variables.
+   313→[Compact] No commented-out code.
+   314→[Compact] No duplicate functions.
+   315→[Compact] No large files without reason.
+   316→[Compact] No hardcoded secrets.
+   317→[Compact] No temporary debug logs in final code.
+   318→[Compact] No meaningless variable names.
+   319→[Compact] No unnecessary dependencies.
+   320→[Heading 2] Deliverables
+   321→[Compact] Repository initialized.
+   322→[Compact] Project structure ready.
+   323→[Compact] Development rules documented.
+   324→[Compact] Basic frontend and backend running.
+   325→[Heading 1] Phase 1: Database Design
+   326→[Heading 2] Goal
+   327→[First Paragraph] Create a clean database schema.
+   328→[Heading 2] Main tables
+   329→[Heading 3] users
+   330→[Source Code] id
+   331→name
+   332→email
+   333→password_hash
+   334→created_at
+   335→updated_at
+   336→[Heading 3] user_consents
+   337→[Source Code] id
+   338→user_id
+   339→consent_type
+   340→consent_text
+   341→accepted_at
+   342→revoked_at
+   343→[Heading 3] documents
+   344→[Source Code] id
+   345→user_id
+   346→document_type
+   347→file_name
+   348→file_path
+   349→file_hash
+   350→processing_status
+   351→confidence_score
+   352→created_at
+   353→[Heading 3] extracted_fields
+   354→[Source Code] id
+   355→document_id
+   356→field_name
+   357→field_value
+   358→confidence_score
+   359→verified_by_user
+   360→created_at
+   361→[Heading 3] incomes
+   362→[Source Code] id
+   363→user_id
+   364→income_type
+   365→source
+   366→amount
+   367→month
+   368→financial_year
+   369→document_id
+   370→[Heading 3] expenses
+   371→[Source Code] id
+   372→user_id
+   373→transaction_date
+   374→description
+   375→category
+   376→amount
+   377→document_id
+   378→[Heading 3] deductions
+   379→[Source Code] id
+   380→user_id
+   381→deduction_type
+   382→amount
+   383→financial_year
+   384→document_id
+   385→verified
+   386→[Heading 3] tax_estimations
+   387→[Source Code] id
+   388→user_id
+   389→financial_year
+   390→gross_income
+   391→total_deductions
+   392→taxable_income_old_regime
+   393→taxable_income_new_regime
+   394→estimated_tax_old_regime
+   395→estimated_tax_new_regime
+   396→recommended_regime
+   397→created_at
+   398→[Heading 3] financial_health_scores
+   399→[Source Code] id
+   400→user_id
+   401→month
+   402→savings_rate
+   403→debt_to_income_ratio
+   404→emergency_fund_months
+   405→subscription_total
+   406→score
+   407→created_at
+   408→[Heading 3] goals
+   409→[Source Code] id
+   410→user_id
+   411→goal_name
+   412→target_amount
+   413→current_amount
+   414→monthly_contribution
+   415→target_date
+   416→created_at
+   417→[Heading 3] audit_logs
+   418→[Source Code] id
+   419→user_id
+   420→action
+   421→details
+   422→timestamp
+   423→[Heading 2] Optimization rules
+   424→[Compact] Add indexes on frequently queried columns.
+   425→[Compact] Avoid storing duplicate calculated data unless needed.
+   426→[Compact] Avoid repeated joins where cached summaries make sense.
+   427→[Compact] Keep document metadata separate from extracted financial data.
+   428→[Compact] Use foreign keys properly.
+   429→[Heading 2] Deliverables
+   430→[Compact] ER diagram.
+   431→[Compact] SQL schema.
+   432→[Compact] Database migration files.
+   433→[Compact] Seed data.
+   434→[Heading 1] Phase 2: Authentication and Consent System
+   435→[Heading 2] Goal
+   436→[First Paragraph] Build secure access and privacy foundation.
+   437→[Heading 2] Features
+   438→[Compact] Register.
+   439→[Compact] Login.
+   440→[Compact] Logout.
+   441→[Compact] JWT authentication.
+   442→[Compact] Password hashing.
+   443→[Compact] Consent acceptance.
+   444→[Compact] Consent revocation.
+   445→[Compact] User data deletion.
+   446→[Heading 2] UX requirements
+   447→[First Paragraph] The consent screen should be simple.
+   448→[Body Text] Example text:
+   449→[Source Code] FinSight AI needs your permission to process uploaded financial documents for tax-readiness and financial-health analysis. You can delete your documents at any time.
+   450→[First Paragraph] Buttons:
+   451→[Source Code] Accept and Continue
+   452→Cancel
+   453→[Heading 2] Backend APIs
+   454→[Source Code] POST /auth/register
+   455→POST /auth/login
+   456→POST /auth/logout
+   457→GET /users/me
+   458→DELETE /users/me
+   459→POST /consent/accept
+   460→POST /consent/revoke
+   461→GET /consent/history
+   462→[Heading 2] Clean-code rules
+   463→[Compact] Keep auth logic separate from business logic.
+   464→[Compact] Do not repeat JWT validation code in every route.
+   465→[Compact] Use middleware/dependencies.
+   466→[Compact] Do not store plain passwords.
+   467→[Compact] Do not expose internal error traces to frontend.
+   468→[Heading 2] Deliverables
+   469→[Compact] Auth backend.
+   470→[Compact] Consent backend.
+   471→[Compact] Login UI.
+   472→[Compact] Consent UI.
+   473→[Compact] Protected routes.
+   474→[Heading 1] Phase 3: Document Upload Module
+   475→[Heading 2] Goal
+   476→[First Paragraph] Allow users to upload financial documents safely and clearly.
+   477→[Heading 2] Supported files
+   478→[Source Code] PDF
+   479→JPG
+   480→PNG
+   481→CSV
+   482→XLSX
+   483→[Heading 2] Upload flow
+   484→[Source Code] Select document type
+   485→ ↓
+   486→Upload file
+   487→ ↓
+   488→Validate file
+   489→ ↓
+   490→Store file
+   491→ ↓
+   492→Generate hash
+   493→ ↓
+   494→Create document record
+   495→ ↓
+   496→Show processing status
+   497→[Heading 2] UI/UX requirements
+   498→[First Paragraph] The upload page must show:
+   499→[Source Code] Supported file types
+   500→Maximum file size
+   501→Document type selector
+   502→Upload progress
+   503→Processing status
+   504→Error messages
+   505→Delete option
+   506→[First Paragraph] Use clear document categories:
+   507→[Source Code] Salary Slip
+   508→Form 16
+   509→Bank Statement
+   510→Rent Receipt
+   511→Insurance Receipt
+   512→Loan Certificate
+   513→Investment Statement
+   514→Other
+   515→[Heading 2] Backend validation
+   516→[First Paragraph] Check:
+   517→[Source Code] File type
+   518→File size
+   519→Duplicate file
+   520→Empty file
+   521→Corrupted file
+   522→Unsupported extension
+   523→[Heading 2] Optimization rules
+   524→[Compact] Do not process the same uploaded file twice.
+   525→[Compact] Use file hash to detect duplicates.
+   526→[Compact] Keep upload handling separate from document processing.
+   527→[Compact] Avoid loading large files fully into memory when not needed.
+   528→[Heading 2] Deliverables
+   529→[Compact] Upload UI.
+   530→[Compact] Upload API.
+   531→[Compact] File validation.
+   532→[Compact] Document metadata storage.
+   533→[Compact] Processing status badge.
+   534→[Heading 1] Phase 4: OCR and Document Processing
+   535→[Heading 2] Goal
+   536→[First Paragraph] Convert uploaded documents into text and structured content.
+   537→[Heading 2] Processing pipeline
+   538→[Source Code] Document uploaded
+   539→ ↓
+   540→Detect file type
+   541→ ↓
+   542→Extract text if PDF has selectable text
+   543→ ↓
+   544→Use OCR only if text extraction fails
+   545→ ↓
+   546→Clean extracted text
+   547→ ↓
+   548→Extract tables if available
+   549→ ↓
+   550→Detect document type
+   551→ ↓
+   552→Send to field extraction module
+   553→[Heading 2] Important optimization decision
+   554→[First Paragraph] OCR is expensive. Do not run OCR on every PDF.
+   555→[Body Text] Use this logic:
+   556→[Source Code] Try direct PDF text extraction first.
+   557→If extracted text is too short or empty, then use OCR.
+   558→[Heading 2] Document type detection
+   559→[First Paragraph] Rule-based detection first:
+   560→[Source Code] Contains "Form 16" → Form 16
+   561→Contains "Net Salary" → Salary Slip
+   562→Contains "Statement of Account" → Bank Statement
+   563→Contains "Premium Receipt" → Insurance Receipt
+   564→Contains "Interest Certificate" → Loan Certificate
+   565→[First Paragraph] Use AI classification only when rules are uncertain.
+   566→[Heading 2] Clean-code rules
+   567→[Compact] Keep OCR code in one module.
+   568→[Compact] Keep PDF parsing in one module.
+   569→[Compact] Keep text cleanup in one module.
+   570→[Compact] Do not mix extraction logic with API route code.
+   571→[Compact] Delete temporary OCR images after processing.
+   572→[Compact] Do not keep unused intermediate files.
+   573→[Heading 2] Deliverables
+   574→[Compact] PDF parser.
+   575→[Compact] OCR fallback.
+   576→[Compact] Table extraction.
+   577→[Compact] Document type detector.
+   578→[Compact] Processing status update.
+   579→[Heading 1] Phase 5: AI Field Extraction Engine
+   580→[Heading 2] Goal
+   581→[First Paragraph] Extract useful financial fields from document text.
+   582→[Heading 2] Extraction strategy
+   583→[First Paragraph] Use three layers:
+   584→[Source Code] Layer 1: Regex/rule-based extraction
+   585→Layer 2: Table-based extraction
+   586→Layer 3: AI extraction for messy cases
+   587→[First Paragraph] This avoids unnecessary AI calls and improves efficiency.
+   588→[Heading 2] Example fields
+   589→[Heading 3] Salary slip
+   590→[Source Code] Employee name
+   591→Employer name
+   592→Month
+   593→Basic salary
+   594→HRA
+   595→Gross salary
+   596→PF deduction
+   597→Professional tax
+   598→Net salary
+   599→[Heading 3] Form 16
+   600→[Source Code] Employee PAN
+   601→Employer TAN
+   602→Gross salary
+   603→Deductions
+   604→Taxable income
+   605→TDS deducted
+   606→Financial year
+   607→[Heading 3] Bank statement
+   608→[Source Code] Date
+   609→Description
+   610→Debit
+   611→Credit
+   612→Balance
+   613→Transaction category
+   614→[Heading 3] Insurance receipt
+   615→[Source Code] Policyholder name
+   616→Premium amount
+   617→Policy type
+   618→Payment date
+   619→Insurer name
+   620→[Heading 2] Extraction output format
+   621→[Source Code] {
+   622→  "document_type": "salary_slip",
+   623→  "fields": {
+   624→    "gross_salary": {
+   625→      "value": 65000,
+   626→      "confidence": 0.94
+   627→    },
+   628→    "net_salary": {
+   629→      "value": 58200,
+   630→      "confidence": 0.91
+   631→    }
+   632→  }
+   633→}
+   634→[Heading 2] Confidence handling
+   635→[Source Code] 90–100% → Auto-accept but allow edit
+   636→70–89% → Ask user to verify
+   637→Below 70% → Mark as uncertain
+   638→[Heading 2] UI/UX requirement
+   639→[First Paragraph] The extracted data verification page must be extremely clear.
+   640→[Body Text] Show:
+   641→[Source Code] Field name
+   642→Extracted value
+   643→Confidence score
+   644→Original source preview
+   645→Edit button
+   646→Verify button
+   647→[Heading 2] Optimization rules
+   648→[Compact] Do not call AI for fields already extracted confidently.
+   649→[Compact] Cache extraction results.
+   650→[Compact] Avoid repeated parsing of the same document.
+   651→[Compact] Validate extracted numbers before saving.
+   652→[Compact] Store confidence score with every extracted field.
+   653→[Compact] Do not save meaningless empty fields.
+   654→[Heading 2] Deliverables
+   655→[Compact] Field extraction engine.
+   656→[Compact] Confidence scoring.
+   657→[Compact] User verification UI.
+   658→[Compact] Extracted field storage.
+   659→[Compact] Validation logic.
+   660→[Heading 1] Phase 6: Tax Readiness Engine
+   661→[Heading 2] Goal
+   662→[First Paragraph] Estimate whether the user is ready for tax filing and generate useful summaries.
+   663→[Heading 2] Inputs
+   664→[Source Code] Salary data
+   665→Form 16 data
+   666→Bank interest
+   667→Deductions
+   668→Rent data
+   669→Insurance data
+   670→Loan certificate data
+   671→User-entered values
+   672→[Heading 2] Core functions
+   673→[Heading 3] Income aggregation
+   674→[Source Code] Salary income
+   675→+ Interest income
+   676→+ Other income
+   677→= Gross income
+   678→[Heading 3] Deduction aggregation
+   679→[Source Code] Insurance deduction
+   680→Rent-related data
+   681→Loan interest
+   682→Investment proofs
+   683→Other deductions
+   684→[Heading 3] Old vs new regime comparison
+   685→[First Paragraph] Show:
+   686→[Source Code] Estimated old regime tax
+   687→Estimated new regime tax
+   688→Difference
+   689→Regime that appears better based on uploaded data
+   690→[Heading 3] Missing document detection
+   691→[First Paragraph] Examples:
+   692→[Source Code] Salary detected but Form 16 missing.
+   693→Rent claimed but rent receipt missing.
+   694→Insurance deduction found but receipt missing.
+   695→Loan interest entered but certificate missing.
+   696→[Heading 3] Mismatch detection
+   697→[First Paragraph] Examples:
+   698→[Source Code] Salary slip total does not match Form 16.
+   699→Bank salary credits do not match declared salary.
+   700→TDS value missing.
+   701→Deduction amount has no supporting proof.
+   702→[Heading 2] Tax readiness score
+   703→[First Paragraph] Suggested formula:
+   704→[Source Code] Tax Readiness Score =
+   705→Document Completeness Score
+   706→+ Data Verification Score
+   707→+ Income Consistency Score
+   708→+ Deduction Proof Score
+   709→+ Mismatch Penalty Adjustment
+   710→[Heading 2] UI/UX requirements
+   711→[First Paragraph] The tax page should show:
+   712→[Source Code] Tax Readiness Score
+   713→Old vs New Regime Comparison
+   714→Missing Documents
+   715→Mismatch Alerts
+   716→Verified Income Summary
+   717→Download Report Button
+   718→[First Paragraph] Avoid overwhelming users with too many tables at once.
+   719→[Body Text] Use cards:
+   720→[Source Code] Income Summary Card
+   721→Deduction Summary Card
+   722→Regime Comparison Card
+   723→Missing Documents Card
+   724→Warnings Card
+   725→[Heading 2] Optimization rules
+   726→[Compact] Keep tax formulas in a separate service.
+   727→[Compact] Do not hardcode values across multiple files.
+   728→[Compact] Store tax parameters in a config file.
+   729→[Compact] Avoid recalculating tax on every page refresh if data has not changed.
+   730→[Compact] Recalculate only when relevant inputs change.
+   731→[Heading 2] Deliverables
+   732→[Compact] Tax calculation service.
+   733→[Compact] Missing document detector.
+   734→[Compact] Mismatch detector.
+   735→[Compact] Tax readiness score.
+   736→[Compact] Tax summary UI.
+   737→[Heading 1] Phase 7: Financial Health Engine
+   738→[Heading 2] Goal
+   739→[First Paragraph] Analyze the user’s income, spending, savings, debt, and emergency fund.
+   740→[Heading 2] Inputs
+   741→[Source Code] Bank transactions
+   742→Salary credits
+   743→Expense data
+   744→EMI data
+   745→Subscription data
+   746→User-entered savings
+   747→User-entered emergency fund
+   748→[Heading 2] Expense categories
+   749→[Source Code] Food
+   750→Rent
+   751→Travel
+   752→Shopping
+   753→Education
+   754→Medical
+   755→Entertainment
+   756→Subscriptions
+   757→EMI / Loan
+   758→Investment
+   759→Transfer
+   760→Cash Withdrawal
+   761→Other
+   762→[Heading 2] Classification method
+   763→[First Paragraph] Start with optimized keyword classification.
+   764→[Body Text] Example:
+   765→[Source Code] SWIGGY/ZOMATO → Food
+   766→UBER/OLA → Travel
+   767→NETFLIX/PRIME → Subscription
+   768→EMI/LOAN → Debt
+   769→SIP/MUTUAL FUND → Investment
+   770→[First Paragraph] Later, add ML classification if time allows.
+   771→[Heading 2] Financial metrics
+   772→[Heading 3] Savings rate
+   773→[Source Code] Savings Rate = Monthly Savings / Monthly Income × 100
+   774→[Heading 3] Expense ratio
+   775→[Source Code] Expense Ratio = Monthly Expenses / Monthly Income × 100
+   776→[Heading 3] Debt-to-income ratio
+   777→[Source Code] Debt-to-Income = Monthly EMI / Monthly Income × 100
+   778→[Heading 3] Emergency fund months
+   779→[Source Code] Emergency Fund Months = Emergency Fund / Monthly Essential Expenses
+   780→[Heading 3] Subscription leakage
+   781→[Source Code] Monthly Subscription Total = Sum of recurring subscription transactions
+   782→[Heading 2] Financial health score
+   783→[First Paragraph] Suggested factors:
+   784→[Source Code] Savings rate
+   785→Debt-to-income ratio
+   786→Emergency fund
+   787→Expense stability
+   788→Subscription control
+   789→Investment consistency
+   790→[Heading 2] UI/UX requirements
+   791→[First Paragraph] The financial health page must be visual.
+   792→[Body Text] Show:
+   793→[Source Code] Financial Health Score
+   794→Monthly Income vs Expense Chart
+   795→Category-wise Spending Chart
+   796→Savings Rate
+   797→Emergency Fund Status
+   798→Subscription Leakage
+   799→Top 3 Improvement Suggestions
+   800→[First Paragraph] The page should not feel like an accounting table. It should feel like a smart dashboard.
+   801→[Heading 2] Optimization rules
+   802→[Compact] Categorize each transaction once and store the category.
+   803→[Compact] Avoid reprocessing the full bank statement every time.
+   804→[Compact] Use monthly summaries for dashboard charts.
+   805→[Compact] Use efficient grouping queries.
+   806→[Compact] Avoid sending large raw transaction lists to frontend unless needed.
+   807→[Compact] Paginate transaction tables.
+   808→[Heading 2] Deliverables
+   809→[Compact] Expense classifier.
+   810→[Compact] Financial metrics engine.
+   811→[Compact] Financial health score.
+   812→[Compact] Dashboard charts.
+   813→[Compact] Spending insights.
+   814→[Heading 1] Phase 8: Goal-Based Financial Simulator
+   815→[Heading 2] Goal
+   816→[First Paragraph] Help users plan financial goals safely without giving investment advice.
+   817→[Heading 2] Supported goals
+   818→[Source Code] Emergency fund
+   819→Laptop purchase
+   820→Bike/car down payment
+   821→Education fund
+   822→Vacation
+   823→Loan repayment
+   824→General savings
+   825→[Heading 2] User inputs
+   826→[Source Code] Goal name
+   827→Target amount
+   828→Current amount
+   829→Monthly contribution
+   830→Target date
+   831→Expected return assumption
+   832→[Heading 2] Simulation outputs
+   833→[Source Code] Required monthly saving
+   834→Expected completion date
+   835→Shortfall amount
+   836→Alternative saving scenarios
+   837→[Heading 2] Example output
+   838→[Source Code] To reach ₹1,00,000 in 12 months, you need to save around ₹8,334 per month.
+   839→
+   840→At your current saving rate of ₹5,000 per month, you may reach this goal in about 20 months.
+   841→[Heading 2] UI/UX requirements
+   842→[First Paragraph] Use:
+   843→[Source Code] Goal progress bar
+   844→Monthly contribution slider
+   845→Scenario cards
+   846→Timeline chart
+   847→Simple explanation
+   848→[Heading 2] Optimization rules
+   849→[Compact] Keep formulas simple and transparent.
+   850→[Compact] Avoid overcomplicated financial modeling.
+   851→[Compact] Do not calculate unnecessary scenarios.
+   852→[Compact] Do not use AI for simple math.
+   853→[Compact] Keep simulation deterministic and explainable.
+   854→[Heading 2] Deliverables
+   855→[Compact] Goal creation page.
+   856→[Compact] Goal simulation engine.
+   857→[Compact] Scenario comparison UI.
+   858→[Compact] Goal progress tracker.
+   859→[Heading 1] Phase 9: AI Explanation Assistant
+   860→[Heading 2] Goal
+   861→[First Paragraph] Allow users to ask questions about their own uploaded financial data.
+   862→[Heading 2] Example questions
+   863→[Source Code] Why is my tax readiness score low?
+   864→Which documents are missing?
+   865→Why is my financial health score low?
+   866→Where am I spending the most?
+   867→Which tax regime appears better?
+   868→How much should I save monthly for my goal?
+   869→[Heading 2] Assistant architecture
+   870→[Source Code] User question
+   871→ ↓
+   872→Fetch verified user data
+   873→ ↓
+   874→Fetch relevant calculated summaries
+   875→ ↓
+   876→Generate grounded answer
+   877→ ↓
+   878→Return explanation with numbers
+   879→[Heading 2] Important rule
+   880→[First Paragraph] The assistant must answer only from available user data.
+   881→[Body Text] It should not invent values.
+   882→[Heading 2] Safe response behavior
+   883→[First Paragraph] The assistant can say:
+   884→[Source Code] Based on your uploaded data, the new regime appears better by ₹8,200.
+   885→[First Paragraph] It should not say:
+   886→[Source Code] You must choose the new regime.
+   887→[First Paragraph] The assistant can say:
+   888→[Source Code] Your food delivery spending increased this month.
+   889→[First Paragraph] It should not say:
+   890→[Source Code] Invest in this specific stock to improve your finances.
+   891→[Heading 2] UI/UX requirements
+   892→[First Paragraph] The assistant page should show suggested questions.
+   893→[Body Text] Example:
+   894→[Source Code] Why is my tax readiness score low?
+   895→What documents are missing?
+   896→How can I improve my savings rate?
+   897→Explain my spending pattern.
+   898→[Heading 2] Optimization rules
+   899→[Compact] Do not send full raw documents to the AI assistant.
+   900→[Compact] Send only summarized, relevant data.
+   901→[Compact] Use structured prompts.
+   902→[Compact] Cache repeated common answers.
+   903→[Compact] Keep assistant responses short and explainable.
+   904→[Compact] Avoid unnecessary AI calls for simple deterministic answers.
+   905→[Heading 2] Deliverables
+   906→[Compact] Assistant chat UI.
+   907→[Compact] Assistant backend endpoint.
+   908→[Compact] Data-grounded answer system.
+   909→[Compact] Suggested questions.
+   910→[Heading 1] Phase 10: Report Generation
+   911→[Heading 2] Goal
+   912→[First Paragraph] Generate professional downloadable reports.
+   913→[Heading 2] Report 1: CA-Ready Tax Summary
+   914→[First Paragraph] Sections:
+   915→[Source Code] User details
+   916→Uploaded documents
+   917→Income summary
+   918→Deduction summary
+   919→TDS summary
+   920→Old vs new regime comparison
+   921→Missing documents
+   922→Mismatch warnings
+   923→Verified extracted fields
+   924→Disclaimer
+   925→[Heading 2] Report 2: Financial Health Report
+   926→[First Paragraph] Sections:
+   927→[Source Code] Monthly income
+   928→Monthly expenses
+   929→Savings rate
+   930→Debt-to-income ratio
+   931→Emergency fund status
+   932→Top spending categories
+   933→Subscription leakage
+   934→Financial health score
+   935→Improvement suggestions
+   936→[Heading 2] Report 3: Goal Simulation Report
+   937→[First Paragraph] Sections:
+   938→[Source Code] Goal name
+   939→Target amount
+   940→Current savings
+   941→Monthly contribution
+   942→Expected completion date
+   943→Scenario comparison
+   944→[Heading 2] UI/UX requirements
+   945→[First Paragraph] The report download page should show:
+   946→[Source Code] Report name
+   947→Short description
+   948→Last generated date
+   949→Download button
+   950→Regenerate button
+   951→[Heading 2] Optimization rules
+   952→[Compact] Generate reports only when requested.
+   953→[Compact] Cache recently generated reports if data has not changed.
+   954→[Compact] Do not regenerate PDF on every page load.
+   955→[Compact] Use reusable report templates.
+   956→[Compact] Avoid duplicate report-building logic.
+   957→[Heading 2] Deliverables
+   958→[Compact] PDF report generator.
+   959→[Compact] Report templates.
+   960→[Compact] Download page.
+   961→[Compact] Sample demo reports.
+   962→[Heading 1] Phase 11: Privacy and Security Layer
+   963→[Heading 2] Goal
+   964→[First Paragraph] Make the system trustworthy and safe for financial data.
+   965→[Heading 2] Features
+   966→[Source Code] Password hashing
+   967→JWT authentication
+   968→Consent tracking
+   969→Sensitive data masking
+   970→Document deletion
+   971→Account deletion
+   972→Audit logs
+   973→File hash validation
+   974→Role-based access
+   975→[Heading 2] Sensitive data masking
+   976→[First Paragraph] Examples:
+   977→[Source Code] PAN: ABCDE****F
+   978→Account Number: XXXX1234
+   979→Email: f***@gmail.com
+   980→[Heading 2] Audit logs
+   981→[First Paragraph] Track:
+   982→[Source Code] Login
+   983→Document upload
+   984→Document processing
+   985→Data verification
+   986→Report generation
+   987→Document deletion
+   988→Consent revocation
+   989→[Heading 2] UI/UX requirements
+   990→[First Paragraph] Settings page must include:
+   991→[Source Code] View consent history
+   992→Delete document
+   993→Delete all documents
+   994→Delete account
+   995→Export summary
+   996→[First Paragraph] The user should feel in control of their data.
+   997→[Heading 2] Optimization rules
+   998→[Compact] Do not log sensitive financial values.
+   999→[Compact] Do not store duplicate raw documents.
+  1000→[Compact] Do not keep temporary files after processing.
+  1001→[Compact] Do not expose internal file paths to frontend.
+  1002→[Compact] Do not send unnecessary sensitive data to the client.
+  1003→[Heading 2] Deliverables
+  1004→[Compact] Privacy controls.
+  1005→[Compact] Consent history page.
+  1006→[Compact] Audit log backend.
+  1007→[Compact] Data deletion feature.
+  1008→[Compact] Sensitive field masking.
+  1009→[Heading 1] Phase 12: Frontend Development Plan
+  1010→[Heading 2] Goal
+  1011→[First Paragraph] Build a polished, fast, responsive frontend.
+  1012→[Heading 2] Frontend folder structure
+  1013→[Source Code] frontend/
+  1014→ ├── src/
+  1015→ │   ├── app/
+  1016→ │   ├── components/
+  1017→ │   ├── features/
+  1018→ │   │   ├── auth/
+  1019→ │   │   ├── dashboard/
+  1020→ │   │   ├── documents/
+  1021→ │   │   ├── tax/
+  1022→ │   │   ├── finance/
+  1023→ │   │   ├── goals/
+  1024→ │   │   ├── assistant/
+  1025→ │   │   └── reports/
+  1026→ │   ├── hooks/
+  1027→ │   ├── lib/
+  1028→ │   ├── types/
+  1029→ │   └── styles/
+  1030→[Heading 2] Required pages
+  1031→[Source Code] Landing page
+  1032→Login/register page
+  1033→Consent page
+  1034→Dashboard
+  1035→Document upload page
+  1036→Document processing page
+  1037→Data verification page
+  1038→Tax readiness page
+  1039→Financial health page
+  1040→Goal simulator page
+  1041→AI assistant page
+  1042→Reports page
+  1043→Settings/privacy page
+  1044→[Heading 2] Dashboard UI
+  1045→[First Paragraph] Dashboard cards:
+  1046→[Source Code] Tax Readiness Score
+  1047→Financial Health Score
+  1048→Monthly Income
+  1049→Monthly Expenses
+  1050→Savings Rate
+  1051→Missing Documents
+  1052→Goal Progress
+  1053→[Heading 2] Frontend optimization rules
+  1054→[Compact] Use reusable components.
+  1055→[Compact] Avoid duplicate card components.
+  1056→[Compact] Avoid unnecessary state.
+  1057→[Compact] Avoid large components doing too many things.
+  1058→[Compact] Use lazy loading for heavy pages.
+  1059→[Compact] Paginate large tables.
+  1060→[Compact] Avoid unnecessary re-renders.
+  1061→[Compact] Do not keep unused components.
+  1062→[Compact] Remove unused CSS classes.
+  1063→[Compact] Remove unused assets.
+  1064→[Compact] Do not install unnecessary UI libraries.
+  1065→[Heading 2] UI quality checklist
+  1066→[First Paragraph] Every screen must have:
+  1067→[Source Code] Clear heading
+  1068→Primary action
+  1069→Loading state
+  1070→Empty state
+  1071→Error state
+  1072→Success state
+  1073→Responsive layout
+  1074→Consistent spacing
+  1075→Readable font size
+  1076→[Heading 2] Deliverables
+  1077→[Compact] Complete responsive frontend.
+  1078→[Compact] Reusable UI component library.
+  1079→[Compact] Dashboard charts.
+  1080→[Compact] Clean navigation.
+  1081→[Compact] Polished user experience.
+  1082→[Heading 1] Phase 13: Backend Development Plan
+  1083→[Heading 2] Goal
+  1084→[First Paragraph] Build a modular and efficient backend.
+  1085→[Heading 2] Backend folder structure
+  1086→[Source Code] backend/
+  1087→ ├── app/
+  1088→ │   ├── main.py
+  1089→ │   ├── core/
+  1090→ │   ├── auth/
+  1091→ │   ├── users/
+  1092→ │   ├── documents/
+  1093→ │   ├── extraction/
+  1094→ │   ├── tax/
+  1095→ │   ├── finance/
+  1096→ │   ├── goals/
+  1097→ │   ├── assistant/
+  1098→ │   ├── reports/
+  1099→ │   └── security/
+  1100→ ├── tests/
+  1101→ ├── requirements.txt
+  1102→ └── Dockerfile
+  1103→[Heading 2] Backend API groups
+  1104→[Source Code] /auth
+  1105→/users
+  1106→/consent
+  1107→/documents
+  1108→/extraction
+  1109→/tax
+  1110→/finance
+  1111→/goals
+  1112→/assistant
+  1113→/reports
+  1114→/settings
+  1115→[Heading 2] Backend optimization rules
+  1116→[Compact] Keep route handlers thin.
+  1117→[Compact] Put business logic in services.
+  1118→[Compact] Put database logic in repositories.
+  1119→[Compact] Avoid repeated database queries.
+  1120→[Compact] Use pagination for large results.
+  1121→[Compact] Validate input at API boundary.
+  1122→[Compact] Reuse utility functions.
+  1123→[Compact] Avoid circular imports.
+  1124→[Compact] Remove unused endpoints.
+  1125→[Compact] Remove unused helper functions.
+  1126→[Compact] Remove debug-only code before final submission.
+  1127→[Heading 2] Deliverables
+  1128→[Compact] Modular backend.
+  1129→[Compact] API documentation.
+  1130→[Compact] Swagger page.
+  1131→[Compact] Unit-tested service functions.
+  1132→[Compact] Clean project structure.
+  1133→[Heading 1] Phase 14: Code Quality and Optimization Policy
+  1134→[Heading 2] Goal
+  1135→[First Paragraph] Ensure the project has no unnecessary code and no inefficient implementation.
+  1136→[Heading 2] Code quality rules
+  1137→[First Paragraph] Every function must satisfy at least one of these:
+  1138→[Source Code] Used by the application
+  1139→Used by tests
+  1140→Used by scripts
+  1141→Used by documented future extension
+  1142→[First Paragraph] If not, remove it.
+  1143→[Heading 2] No-dead-code checklist
+  1144→[First Paragraph] Before final submission, remove:
+  1145→[Source Code] Unused imports
+  1146→Unused variables
+  1147→Unused functions
+  1148→Unused components
+  1149→Unused CSS
+  1150→Commented-out old code
+  1151→Unused API routes
+  1152→Unused database columns
+  1153→Unused sample files
+  1154→Unused dependencies
+  1155→Duplicate utilities
+  1156→Debug print statements
+  1157→Temporary test code
+  1158→[Heading 2] Optimization checklist
+  1159→[Heading 3] Frontend
+  1160→[Source Code] Minimize unnecessary re-renders
+  1161→Use reusable components
+  1162→Lazy-load heavy pages
+  1163→Paginate large data tables
+  1164→Compress images
+  1165→Avoid unnecessary libraries
+  1166→Keep bundle size reasonable
+  1167→[Heading 3] Backend
+  1168→[Source Code] Avoid repeated database queries
+  1169→Use indexes
+  1170→Cache heavy calculated summaries
+  1171→Avoid processing the same document twice
+  1172→Use OCR only when needed
+  1173→Use AI only when rules fail
+  1174→Delete temporary files
+  1175→Use background tasks for long processing
+  1176→[Heading 3] Database
+  1177→[Source Code] Use proper indexes
+  1178→Avoid duplicate data
+  1179→Use foreign keys
+  1180→Store summaries where useful
+  1181→Avoid storing unnecessary raw values
+  1182→[Heading 3] AI
+  1183→[Source Code] Do not send full documents unnecessarily
+  1184→Use extracted summaries
+  1185→Use deterministic logic where possible
+  1186→Use AI only for messy extraction or explanation
+  1187→Cache repeated results
+  1188→[Heading 2] Tools to enforce quality
+  1189→[First Paragraph] Use:
+  1190→[Source Code] ESLint
+  1191→Prettier
+  1192→TypeScript strict mode
+  1193→Ruff or Flake8
+  1194→Black formatter
+  1195→Pytest
+  1196→Pre-commit hooks
+  1197→Dependency audit
+  1198→[Heading 2] Pull request rule
+  1199→[First Paragraph] Before merging any feature:
+  1200→[Source Code] Feature works
+  1201→UI is clean
+  1202→No console errors
+  1203→No unused imports
+  1204→No duplicate logic
+  1205→Tests pass
+  1206→No sensitive data exposed
+  1207→No unnecessary code added
+  1208→[Heading 2] Deliverables
+  1209→[Compact] Linting setup.
+  1210→[Compact] Formatting setup.
+  1211→[Compact] Test setup.
+  1212→[Compact] Code review checklist.
+  1213→[Compact] Final cleanup report.
+  1214→[Heading 1] Phase 15: Testing Plan
+  1215→[Heading 2] Goal
+  1216→[First Paragraph] Prove the system works properly.
+  1217→[Heading 2] Unit tests
+  1218→[First Paragraph] Test:
+  1219→[Source Code] Tax calculation
+  1220→Financial health score
+  1221→Goal simulation
+  1222→Expense categorization
+  1223→Document type detection
+  1224→Missing document detection
+  1225→Mismatch detection
+  1226→[Heading 2] Integration tests
+  1227→[First Paragraph] Test:
+  1228→[Source Code] Upload → Process → Extract → Verify → Dashboard
+  1229→Salary slip + Form 16 → Tax estimate
+  1230→Bank statement → Expense categorization → Financial score
+  1231→Goal input → Simulation output
+  1232→Report generation → PDF download
+  1233→[Heading 2] UI tests
+  1234→[First Paragraph] Test:
+  1235→[Source Code] Login works
+  1236→Consent appears before upload
+  1237→Upload page handles errors
+  1238→Dashboard loads correctly
+  1239→Charts render correctly
+  1240→Verification edits save correctly
+  1241→Reports download correctly
+  1242→[Heading 2] Security tests
+  1243→[First Paragraph] Test:
+  1244→[Source Code] User cannot access another user’s documents
+  1245→Password is hashed
+  1246→Consent is required
+  1247→Deleted documents are inaccessible
+  1248→Sensitive fields are masked
+  1249→Unauthorized API requests fail
+  1250→[Heading 2] Performance tests
+  1251→[First Paragraph] Test:
+  1252→[Source Code] Dashboard loads quickly
+  1253→Large bank statement does not freeze UI
+  1254→OCR processing does not block frontend
+  1255→PDF report generation works within acceptable time
+  1256→Repeated dashboard visits do not recalculate everything
+  1257→[Heading 2] Deliverables
+  1258→[Compact] Test cases.
+  1259→[Compact] Test results.
+  1260→[Compact] Screenshots.
+  1261→[Compact] Bug fix log.
+  1262→[Compact] Performance notes.
+  1263→[Heading 1] Phase 16: Final Demo Plan
+  1264→[Heading 2] Demo flow
+  1265→[Source Code] Open landing page
+  1266→ ↓
+  1267→Login
+  1268→ ↓
+  1269→Accept consent
+  1270→ ↓
+  1271→Upload salary slip
+  1272→ ↓
+  1273→Upload bank statement
+  1274→ ↓
+  1275→Show processing status
+  1276→ ↓
+  1277→Verify extracted fields
+  1278→ ↓
+  1279→View dashboard
+  1280→ ↓
+  1281→View tax readiness score
+  1282→ ↓
+  1283→Compare old vs new regime
+  1284→ ↓
+  1285→View missing documents
+  1286→ ↓
+  1287→View financial health analysis
+  1288→ ↓
+  1289→Create a financial goal
+  1290→ ↓
+  1291→Ask AI assistant a question
+  1292→ ↓
+  1293→Download CA-ready report
+  1294→[Heading 2] Demo must highlight
+  1295→[Source Code] Clean UI
+  1296→Simple user flow
+  1297→Document intelligence
+  1298→Tax readiness
+  1299→Financial health score
+  1300→Goal simulation
+  1301→Privacy controls
+  1302→PDF report
+  1303→Optimized architecture
+  1304→No unnecessary code
+  1305→[Heading 2] Important demo statement
+  1306→[First Paragraph] Use this during presentation:
+  1307→[Source Code] FinSight AI does not replace a CA or investment adviser. It helps users organize financial data, understand tax readiness, analyze financial health, and prepare a CA-ready report.
+  1308→[Heading 1] 17. Suggested Timeline
+  1309→[Heading 2] Week 1: Planning and UI research
+  1310→[Compact] Finalize title.
+  1311→[Compact] Finalize scope.
+  1312→[Compact] Create SRS.
+  1313→[Compact] Create user personas.
+  1314→[Compact] Create user flow.
+  1315→[Heading 2] Week 2: Wireframes and design system
+  1316→[Compact] Create page wireframes.
+  1317→[Compact] Create reusable component list.
+  1318→[Compact] Decide colors, typography, spacing.
+  1319→[Compact] Build initial frontend layout.
+  1320→[Heading 2] Week 3: Backend and database setup
+  1321→[Compact] Create FastAPI backend.
+  1322→[Compact] Create PostgreSQL schema.
+  1323→[Compact] Implement migrations.
+  1324→[Compact] Add authentication base.
+  1325→[Heading 2] Week 4: Auth, consent, and dashboard shell
+  1326→[Compact] Register/login.
+  1327→[Compact] Consent page.
+  1328→[Compact] Protected routes.
+  1329→[Compact] Dashboard layout.
+  1330→[Compact] Navigation.
+  1331→[Heading 2] Week 5: Document upload
+  1332→[Compact] Upload API.
+  1333→[Compact] Upload UI.
+  1334→[Compact] File validation.
+  1335→[Compact] Document metadata.
+  1336→[Compact] Status tracking.
+  1337→[Heading 2] Week 6: OCR and PDF extraction
+  1338→[Compact] PDF parser.
+  1339→[Compact] OCR fallback.
+  1340→[Compact] Text cleanup.
+  1341→[Compact] Document type detection.
+  1342→[Heading 2] Week 7: AI extraction and verification
+  1343→[Compact] Extract financial fields.
+  1344→[Compact] Add confidence scores.
+  1345→[Compact] Build verification UI.
+  1346→[Compact] Save verified data.
+  1347→[Heading 2] Week 8: Tax readiness engine
+  1348→[Compact] Income aggregation.
+  1349→[Compact] Deduction summary.
+  1350→[Compact] Old vs new regime comparison.
+  1351→[Compact] Missing document detection.
+  1352→[Compact] Tax readiness UI.
+  1353→[Heading 2] Week 9: Financial health engine
+  1354→[Compact] Expense categorization.
+  1355→[Compact] Savings rate.
+  1356→[Compact] Debt ratio.
+  1357→[Compact] Emergency fund.
+  1358→[Compact] Financial health dashboard.
+  1359→[Heading 2] Week 10: Goal simulator
+  1360→[Compact] Goal creation.
+  1361→[Compact] Monthly savings calculator.
+  1362→[Compact] Scenario comparison.
+  1363→[Compact] Goal progress UI.
+  1364→[Heading 2] Week 11: AI assistant
+  1365→[Compact] Assistant API.
+  1366→[Compact] Suggested questions.
+  1367→[Compact] Data-grounded answers.
+  1368→[Compact] Assistant UI.
+  1369→[Heading 2] Week 12: Report generation
+  1370→[Compact] CA-ready report.
+  1371→[Compact] Financial health report.
+  1372→[Compact] Goal report.
+  1373→[Compact] Download UI.
+  1374→[Heading 2] Week 13: Testing and optimization
+  1375→[Compact] Unit tests.
+  1376→[Compact] Integration tests.
+  1377→[Compact] UI testing.
+  1378→[Compact] Performance testing.
+  1379→[Compact] Remove dead code.
+  1380→[Compact] Remove unused dependencies.
+  1381→[Compact] Optimize queries.
+  1382→[Heading 2] Week 14: Final polish
+  1383→[Compact] UI polishing.
+  1384→[Compact] Documentation.
+  1385→[Compact] PPT.
+  1386→[Compact] Demo script.
+  1387→[Compact] Final code cleanup.
+  1388→[Compact] Deployment.
+  1389→[Heading 1] 18. MVP Version
+  1390→[First Paragraph] If time becomes limited, build only this first:
+  1391→[Source Code] Login
+  1392→Consent
+  1393→Document upload
+  1394→Salary slip extraction
+  1395→Bank statement extraction
+  1396→Data verification
+  1397→Tax readiness score
+  1398→Financial health score
+  1399→Simple dashboard
+  1400→PDF report
+  1401→[First Paragraph] This MVP is enough for a strong final-year project.
+  1402→[Body Text] After MVP, add:
+  1403→[Source Code] AI assistant
+  1404→Goal simulator
+  1405→Advanced reports
+  1406→AIS/TIS-style reconciliation
+  1407→Anomaly detection
+  1408→[Heading 1] 19. Final Deliverables
+  1409→[Heading 2] Software deliverables
+  1410→[Source Code] Frontend web app
+  1411→Backend API
+  1412→Database schema
+  1413→Document extraction engine
+  1414→Tax readiness engine
+  1415→Financial health engine
+  1416→Goal simulator
+  1417→AI assistant
+  1418→PDF report generator
+  1419→[Heading 2] Design deliverables
+  1420→[Source Code] User personas
+  1421→User journey map
+  1422→Wireframes
+  1423→Design system
+  1424→UI screenshots
+  1425→UX explanation
+  1426→[Heading 2] Academic deliverables
+  1427→[Source Code] Project report
+  1428→SRS document
+  1429→System architecture diagram
+  1430→ER diagram
+  1431→Test report
+  1432→Implementation screenshots
+  1433→PPT
+  1434→Demo video
+  1435→[Heading 2] Code-quality deliverables
+  1436→[Source Code] Clean repository
+  1437→README
+  1438→API documentation
+  1439→.env.example
+  1440→Linting setup
+  1441→Test cases
+  1442→Optimization notes
+  1443→Dead-code cleanup checklist
+  1444→[Heading 1] 20. Final Project Positioning
+  1445→[First Paragraph] The final version should be presented as:
+  1446→[Source Code] FinSight AI is a privacy-first financial assistant that combines document intelligence, tax readiness estimation, financial health analysis, goal-based planning, and explainable AI inside a clean and user-friendly interface.
+  1447→
+  1448→The project focuses not only on backend intelligence, but also on UI/UX quality, trust, performance, clean code, and practical real-world usability.
+  1449→[First Paragraph] The strongest selling point is this:
+  1450→[Source Code] It does not simply calculate numbers. It guides the user through a confusing financial process with a clean interface, clear explanations, privacy controls, and a CA-ready final report.
+  1451→
+  1452→================================================================================
+  1453→TABLES
+  1454→================================================================================

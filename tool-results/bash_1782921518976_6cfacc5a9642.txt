@@ -1,0 +1,1448 @@
+0: FinSight AI — Detailed Implementation Plan
+1: Project Title
+2: FinSight AI: AI-Powered Tax Readiness and Financial Health Assistant
+3: Core Idea
+4: FinSight AI is a privacy-first web application that helps users organize financial documents, estimate tax readiness, analyze spending behavior, understand financial health, and generate CA-ready summary reports.
+5: The project does not aim to replace a Chartered Accountant or investment adviser. Instead, it acts as a smart assistant that makes financial data easier to understand, verify, and prepare.
+6: A major focus of this project is UI/UX quality. Since finance and tax data can feel confusing, the interface must be simple, clean, trustworthy, and easy to use. The system should not only work correctly, but also feel professional and comfortable for real users.
+8: 1. Project Priorities
+9: The project will be built around five major priorities:
+10: 1. Functional correctness
+11: The system should correctly extract, organize, calculate, and display financial information.
+12: 2. UI/UX quality
+13: The application should be easy to navigate, visually clean, and understandable even for users with low financial knowledge.
+14: 3. Privacy and trust
+15: The system should clearly show consent, data usage, masking of sensitive information, and deletion controls.
+16: 4. Performance and optimization
+17: Every module must be efficient. No unnecessary database queries, no repeated calculations, no oversized components, and no wasteful processing.
+18: 5. Clean code discipline
+19: There must be no dead code, unused functions, unused imports, redundant logic, unnecessary files, duplicate components, or inefficient algorithms.
+20: Every line of code should have a purpose.
+22: 2. Final Scope
+23: The system will include
+24: User registration and login.
+25: Consent-based document upload.
+26: Financial document processing.
+27: OCR and PDF text extraction.
+28: AI-based field extraction.
+29: User verification of extracted data.
+30: Tax readiness estimation.
+31: Old vs new tax regime comparison.
+32: Missing document detection.
+33: Financial health score.
+34: Expense analysis.
+35: Goal-based financial simulation.
+36: AI explanation assistant.
+37: CA-ready PDF report generation.
+38: Clean dashboard with strong UI/UX.
+39: Privacy controls and data deletion.
+40: The system will not include
+41: Official income tax return filing.
+42: Direct integration with the government income tax portal.
+43: Legal tax advice.
+44: Direct investment recommendations.
+45: Stock or mutual fund buy/sell advice.
+46: Guaranteed tax savings.
+47: Guaranteed financial returns.
+49: 3. High-Level Architecture
+50: User
+ ↓
+Frontend Web Application
+ ↓
+Authentication + Consent Layer
+ ↓
+Document Upload Interface
+ ↓
+Backend API
+ ↓
+Document Processing Engine
+ ↓
+OCR / PDF Parser
+ ↓
+AI Extraction Engine
+ ↓
+User Verification Layer
+ ↓
+Structured Financial Database
+ ↓
+Tax Readiness Engine
+ ↓
+Financial Health Engine
+ ↓
+Goal Simulation Engine
+ ↓
+AI Explanation Assistant
+ ↓
+Dashboard + Reports
+52: 4. Recommended Tech Stack
+53: Frontend
+54: Use:
+55: React.js or Next.js.
+56: TypeScript.
+57: Tailwind CSS.
+58: ShadCN UI or Material UI.
+59: Recharts or Chart.js.
+60: React Hook Form.
+61: Zod for validation.
+62: Backend
+63: Use:
+64: FastAPI with Python.
+65: FastAPI is recommended because the project needs document parsing, OCR, AI extraction, and financial calculations, which are easier to build in Python.
+66: Database
+67: Use:
+68: PostgreSQL.
+69: AI and document processing
+70: Use:
+71: pdfplumber for PDF extraction.
+72: PyMuPDF for PDF reading.
+73: Tesseract or PaddleOCR for OCR.
+74: Regex and rule-based extraction for predictable fields.
+75: Optional LLM-based extraction for messy documents.
+76: Reports
+77: Use:
+78: ReportLab or WeasyPrint for PDF generation.
+79: Deployment
+80: Use:
+81: Docker.
+82: Render / Railway / Vercel / Supabase if cloud deployment is needed.
+84: 5. UI/UX Design Philosophy
+85: UI/UX is a core part of this project.
+86: The user should never feel lost. Every screen must clearly answer:
+87: Where am I?
+What do I need to do?
+What has the system understood?
+What is missing?
+What should I verify?
+What can I download?
+88: Design principles
+89: 5.1 Simplicity
+90: Finance and tax are already complicated. The UI must reduce complexity, not add to it.
+91: Use:
+92: Simple language.
+93: Short labels.
+94: Clear explanations.
+95: Visual indicators.
+96: Step-by-step flows.
+97: Avoid:
+98: Too many buttons.
+99: Dense tables without summaries.
+100: Unexplained financial terms.
+101: Overloaded dashboards.
+102: Long forms without grouping.
+103: 5.2 Trust
+104: Since users are uploading financial documents, the UI must feel secure.
+105: Add:
+106: Consent screen.
+107: Data masking.
+108: “Delete document” option.
+109: “Why we need this” tooltips.
+110: Processing status.
+111: Confidence scores.
+112: Clear disclaimers.
+113: 5.3 Explainability
+114: Do not just show numbers. Explain them.
+115: Example:
+116: Instead of only showing:
+117: Tax Readiness Score: 68
+118: Show:
+119: Tax Readiness Score: 68/100
+
+Your score is reduced because rent receipts and insurance proof are missing.
+120: 5.4 Progressive disclosure
+121: Do not show everything at once.
+122: Show summary first, details later.
+123: Example:
+124: Financial Health Score: 74/100
+Main issue: Emergency fund is low.
+View Details
+125: 5.5 Mobile-friendly design
+126: The app should work on laptops and mobile screens.
+127: Important pages must be responsive:
+128: Login.
+129: Dashboard.
+130: Document upload.
+131: Tax summary.
+132: Financial health page.
+133: Report download page.
+135: 6. UI/UX Phase Plan
+136: Phase UI-1: User Research and Flow Mapping
+137: Goal
+138: Understand the user journey before building screens.
+139: Tasks
+140: Create user personas:
+141: Persona 1: First-time taxpayer
+Persona 2: Salaried employee
+Persona 3: Student with internship income
+Persona 4: Freelancer with basic income
+142: Map the user journey:
+143: Login
+ → Consent
+ → Upload documents
+ → Processing
+ → Verify extracted data
+ → View tax readiness
+ → View financial health
+ → Ask assistant
+ → Download report
+144: Identify pain points:
+145: User does not know which documents are needed.
+User does not understand tax regime difference.
+User does not know whether extracted values are correct.
+User does not understand why financial health score is low.
+146: Deliverables
+147: User personas.
+148: User journey map.
+149: Feature priority list.
+150: UI flow diagram.
+152: Phase UI-2: Wireframing
+153: Goal
+154: Create low-fidelity screen layouts before coding.
+155: Required wireframes
+156: Landing page.
+157: Login/register page.
+158: Consent page.
+159: Main dashboard.
+160: Document upload page.
+161: Processing status page.
+162: Extracted data verification page.
+163: Tax readiness page.
+164: Financial health page.
+165: Goal simulator page.
+166: AI assistant page.
+167: Report download page.
+168: Settings and data deletion page.
+169: Wireframe rules
+170: Every page must have:
+171: Clear title
+One main action
+Readable layout
+Minimal clutter
+Obvious navigation
+172: Deliverables
+173: Figma wireframes or hand-drawn wireframes.
+174: Screen flow diagram.
+175: Navigation structure.
+177: Phase UI-3: Visual Design System
+178: Goal
+179: Create consistent design before full development.
+180: Design system components
+181: Define:
+182: Color palette
+Typography
+Spacing scale
+Button styles
+Card styles
+Form input styles
+Alert styles
+Table styles
+Chart styles
+Icon style
+Loading states
+Empty states
+Error states
+183: Suggested visual tone
+184: The app should feel:
+185: Clean
+Professional
+Calm
+Trustworthy
+Modern
+Financially serious
+186: Avoid
+187: Neon-heavy design
+Overly playful finance UI
+Too many colors
+Tiny fonts
+Dense unstructured tables
+188: Core UI components
+189: Build reusable components:
+190: Button
+Input
+Select
+FileUploader
+DashboardCard
+ScoreCard
+ProgressBar
+AlertBox
+DataTable
+VerificationField
+ChartCard
+DocumentStatusBadge
+ReportDownloadCard
+AssistantMessage
+ConsentCard
+191: Each component should be reused. Do not duplicate similar UI code.
+192: Deliverables
+193: Design system file.
+194: Reusable component list.
+195: UI style guide.
+197: 7. Development Phases
+198: Phase 0: Scope Lock and Project Setup
+199: Goal
+200: Prepare the project foundation.
+201: Tasks
+202: Finalize title.
+203: Finalize problem statement.
+204: Define modules.
+205: Define limitations.
+206: Create GitHub repository.
+207: Set up frontend folder.
+208: Set up backend folder.
+209: Set up database.
+210: Add README.
+211: Add .env.example.
+212: Add code formatter.
+213: Add linter.
+214: Add pre-commit checks.
+215: Folder structure
+216: finsight-ai/
+ ├── frontend/
+ ├── backend/
+ ├── docs/
+ ├── sample-data/
+ ├── reports/
+ ├── docker-compose.yml
+ ├── README.md
+ └── .gitignore
+217: Clean-code rules from day one
+218: No unused imports.
+219: No unused variables.
+220: No commented-out code.
+221: No duplicate functions.
+222: No large files without reason.
+223: No hardcoded secrets.
+224: No temporary debug logs in final code.
+225: No meaningless variable names.
+226: No unnecessary dependencies.
+227: Deliverables
+228: Repository initialized.
+229: Project structure ready.
+230: Development rules documented.
+231: Basic frontend and backend running.
+233: Phase 1: Database Design
+234: Goal
+235: Create a clean database schema.
+236: Main tables
+237: users
+238: id
+name
+email
+password_hash
+created_at
+updated_at
+239: user_consents
+240: id
+user_id
+consent_type
+consent_text
+accepted_at
+revoked_at
+241: documents
+242: id
+user_id
+document_type
+file_name
+file_path
+file_hash
+processing_status
+confidence_score
+created_at
+243: extracted_fields
+244: id
+document_id
+field_name
+field_value
+confidence_score
+verified_by_user
+created_at
+245: incomes
+246: id
+user_id
+income_type
+source
+amount
+month
+financial_year
+document_id
+247: expenses
+248: id
+user_id
+transaction_date
+description
+category
+amount
+document_id
+249: deductions
+250: id
+user_id
+deduction_type
+amount
+financial_year
+document_id
+verified
+251: tax_estimations
+252: id
+user_id
+financial_year
+gross_income
+total_deductions
+taxable_income_old_regime
+taxable_income_new_regime
+estimated_tax_old_regime
+estimated_tax_new_regime
+recommended_regime
+created_at
+253: financial_health_scores
+254: id
+user_id
+month
+savings_rate
+debt_to_income_ratio
+emergency_fund_months
+subscription_total
+score
+created_at
+255: goals
+256: id
+user_id
+goal_name
+target_amount
+current_amount
+monthly_contribution
+target_date
+created_at
+257: audit_logs
+258: id
+user_id
+action
+details
+timestamp
+259: Optimization rules
+260: Add indexes on frequently queried columns.
+261: Avoid storing duplicate calculated data unless needed.
+262: Avoid repeated joins where cached summaries make sense.
+263: Keep document metadata separate from extracted financial data.
+264: Use foreign keys properly.
+265: Deliverables
+266: ER diagram.
+267: SQL schema.
+268: Database migration files.
+269: Seed data.
+271: Phase 2: Authentication and Consent System
+272: Goal
+273: Build secure access and privacy foundation.
+274: Features
+275: Register.
+276: Login.
+277: Logout.
+278: JWT authentication.
+279: Password hashing.
+280: Consent acceptance.
+281: Consent revocation.
+282: User data deletion.
+283: UX requirements
+284: The consent screen should be simple.
+285: Example text:
+286: FinSight AI needs your permission to process uploaded financial documents for tax-readiness and financial-health analysis. You can delete your documents at any time.
+287: Buttons:
+288: Accept and Continue
+Cancel
+289: Backend APIs
+290: POST /auth/register
+POST /auth/login
+POST /auth/logout
+GET /users/me
+DELETE /users/me
+POST /consent/accept
+POST /consent/revoke
+GET /consent/history
+291: Clean-code rules
+292: Keep auth logic separate from business logic.
+293: Do not repeat JWT validation code in every route.
+294: Use middleware/dependencies.
+295: Do not store plain passwords.
+296: Do not expose internal error traces to frontend.
+297: Deliverables
+298: Auth backend.
+299: Consent backend.
+300: Login UI.
+301: Consent UI.
+302: Protected routes.
+304: Phase 3: Document Upload Module
+305: Goal
+306: Allow users to upload financial documents safely and clearly.
+307: Supported files
+308: PDF
+JPG
+PNG
+CSV
+XLSX
+309: Upload flow
+310: Select document type
+ ↓
+Upload file
+ ↓
+Validate file
+ ↓
+Store file
+ ↓
+Generate hash
+ ↓
+Create document record
+ ↓
+Show processing status
+311: UI/UX requirements
+312: The upload page must show:
+313: Supported file types
+Maximum file size
+Document type selector
+Upload progress
+Processing status
+Error messages
+Delete option
+314: Use clear document categories:
+315: Salary Slip
+Form 16
+Bank Statement
+Rent Receipt
+Insurance Receipt
+Loan Certificate
+Investment Statement
+Other
+316: Backend validation
+317: Check:
+318: File type
+File size
+Duplicate file
+Empty file
+Corrupted file
+Unsupported extension
+319: Optimization rules
+320: Do not process the same uploaded file twice.
+321: Use file hash to detect duplicates.
+322: Keep upload handling separate from document processing.
+323: Avoid loading large files fully into memory when not needed.
+324: Deliverables
+325: Upload UI.
+326: Upload API.
+327: File validation.
+328: Document metadata storage.
+329: Processing status badge.
+331: Phase 4: OCR and Document Processing
+332: Goal
+333: Convert uploaded documents into text and structured content.
+334: Processing pipeline
+335: Document uploaded
+ ↓
+Detect file type
+ ↓
+Extract text if PDF has selectable text
+ ↓
+Use OCR only if text extraction fails
+ ↓
+Clean extracted text
+ ↓
+Extract tables if available
+ ↓
+Detect document type
+ ↓
+Send to field extraction module
+336: Important optimization decision
+337: OCR is expensive. Do not run OCR on every PDF.
+338: Use this logic:
+339: Try direct PDF text extraction first.
+If extracted text is too short or empty, then use OCR.
+340: Document type detection
+341: Rule-based detection first:
+342: Contains "Form 16" → Form 16
+Contains "Net Salary" → Salary Slip
+Contains "Statement of Account" → Bank Statement
+Contains "Premium Receipt" → Insurance Receipt
+Contains "Interest Certificate" → Loan Certificate
+343: Use AI classification only when rules are uncertain.
+344: Clean-code rules
+345: Keep OCR code in one module.
+346: Keep PDF parsing in one module.
+347: Keep text cleanup in one module.
+348: Do not mix extraction logic with API route code.
+349: Delete temporary OCR images after processing.
+350: Do not keep unused intermediate files.
+351: Deliverables
+352: PDF parser.
+353: OCR fallback.
+354: Table extraction.
+355: Document type detector.
+356: Processing status update.
+358: Phase 5: AI Field Extraction Engine
+359: Goal
+360: Extract useful financial fields from document text.
+361: Extraction strategy
+362: Use three layers:
+363: Layer 1: Regex/rule-based extraction
+Layer 2: Table-based extraction
+Layer 3: AI extraction for messy cases
+364: This avoids unnecessary AI calls and improves efficiency.
+365: Example fields
+366: Salary slip
+367: Employee name
+Employer name
+Month
+Basic salary
+HRA
+Gross salary
+PF deduction
+Professional tax
+Net salary
+368: Form 16
+369: Employee PAN
+Employer TAN
+Gross salary
+Deductions
+Taxable income
+TDS deducted
+Financial year
+370: Bank statement
+371: Date
+Description
+Debit
+Credit
+Balance
+Transaction category
+372: Insurance receipt
+373: Policyholder name
+Premium amount
+Policy type
+Payment date
+Insurer name
+374: Extraction output format
+375: {
+  "document_type": "salary_slip",
+  "fields": {
+    "gross_salary": {
+      "value": 65000,
+      "confidence": 0.94
+    },
+    "net_salary": {
+      "value": 58200,
+      "confidence": 0.91
+    }
+  }
+}
+376: Confidence handling
+377: 90–100% → Auto-accept but allow edit
+70–89% → Ask user to verify
+Below 70% → Mark as uncertain
+378: UI/UX requirement
+379: The extracted data verification page must be extremely clear.
+380: Show:
+381: Field name
+Extracted value
+Confidence score
+Original source preview
+Edit button
+Verify button
+382: Optimization rules
+383: Do not call AI for fields already extracted confidently.
+384: Cache extraction results.
+385: Avoid repeated parsing of the same document.
+386: Validate extracted numbers before saving.
+387: Store confidence score with every extracted field.
+388: Do not save meaningless empty fields.
+389: Deliverables
+390: Field extraction engine.
+391: Confidence scoring.
+392: User verification UI.
+393: Extracted field storage.
+394: Validation logic.
+396: Phase 6: Tax Readiness Engine
+397: Goal
+398: Estimate whether the user is ready for tax filing and generate useful summaries.
+399: Inputs
+400: Salary data
+Form 16 data
+Bank interest
+Deductions
+Rent data
+Insurance data
+Loan certificate data
+User-entered values
+401: Core functions
+402: Income aggregation
+403: Salary income
++ Interest income
++ Other income
+= Gross income
+404: Deduction aggregation
+405: Insurance deduction
+Rent-related data
+Loan interest
+Investment proofs
+Other deductions
+406: Old vs new regime comparison
+407: Show:
+408: Estimated old regime tax
+Estimated new regime tax
+Difference
+Regime that appears better based on uploaded data
+409: Missing document detection
+410: Examples:
+411: Salary detected but Form 16 missing.
+Rent claimed but rent receipt missing.
+Insurance deduction found but receipt missing.
+Loan interest entered but certificate missing.
+412: Mismatch detection
+413: Examples:
+414: Salary slip total does not match Form 16.
+Bank salary credits do not match declared salary.
+TDS value missing.
+Deduction amount has no supporting proof.
+415: Tax readiness score
+416: Suggested formula:
+417: Tax Readiness Score =
+Document Completeness Score
++ Data Verification Score
++ Income Consistency Score
++ Deduction Proof Score
++ Mismatch Penalty Adjustment
+418: UI/UX requirements
+419: The tax page should show:
+420: Tax Readiness Score
+Old vs New Regime Comparison
+Missing Documents
+Mismatch Alerts
+Verified Income Summary
+Download Report Button
+421: Avoid overwhelming users with too many tables at once.
+422: Use cards:
+423: Income Summary Card
+Deduction Summary Card
+Regime Comparison Card
+Missing Documents Card
+Warnings Card
+424: Optimization rules
+425: Keep tax formulas in a separate service.
+426: Do not hardcode values across multiple files.
+427: Store tax parameters in a config file.
+428: Avoid recalculating tax on every page refresh if data has not changed.
+429: Recalculate only when relevant inputs change.
+430: Deliverables
+431: Tax calculation service.
+432: Missing document detector.
+433: Mismatch detector.
+434: Tax readiness score.
+435: Tax summary UI.
+437: Phase 7: Financial Health Engine
+438: Goal
+439: Analyze the user’s income, spending, savings, debt, and emergency fund.
+440: Inputs
+441: Bank transactions
+Salary credits
+Expense data
+EMI data
+Subscription data
+User-entered savings
+User-entered emergency fund
+442: Expense categories
+443: Food
+Rent
+Travel
+Shopping
+Education
+Medical
+Entertainment
+Subscriptions
+EMI / Loan
+Investment
+Transfer
+Cash Withdrawal
+Other
+444: Classification method
+445: Start with optimized keyword classification.
+446: Example:
+447: SWIGGY/ZOMATO → Food
+UBER/OLA → Travel
+NETFLIX/PRIME → Subscription
+EMI/LOAN → Debt
+SIP/MUTUAL FUND → Investment
+448: Later, add ML classification if time allows.
+449: Financial metrics
+450: Savings rate
+451: Savings Rate = Monthly Savings / Monthly Income × 100
+452: Expense ratio
+453: Expense Ratio = Monthly Expenses / Monthly Income × 100
+454: Debt-to-income ratio
+455: Debt-to-Income = Monthly EMI / Monthly Income × 100
+456: Emergency fund months
+457: Emergency Fund Months = Emergency Fund / Monthly Essential Expenses
+458: Subscription leakage
+459: Monthly Subscription Total = Sum of recurring subscription transactions
+460: Financial health score
+461: Suggested factors:
+462: Savings rate
+Debt-to-income ratio
+Emergency fund
+Expense stability
+Subscription control
+Investment consistency
+463: UI/UX requirements
+464: The financial health page must be visual.
+465: Show:
+466: Financial Health Score
+Monthly Income vs Expense Chart
+Category-wise Spending Chart
+Savings Rate
+Emergency Fund Status
+Subscription Leakage
+Top 3 Improvement Suggestions
+467: The page should not feel like an accounting table. It should feel like a smart dashboard.
+468: Optimization rules
+469: Categorize each transaction once and store the category.
+470: Avoid reprocessing the full bank statement every time.
+471: Use monthly summaries for dashboard charts.
+472: Use efficient grouping queries.
+473: Avoid sending large raw transaction lists to frontend unless needed.
+474: Paginate transaction tables.
+475: Deliverables
+476: Expense classifier.
+477: Financial metrics engine.
+478: Financial health score.
+479: Dashboard charts.
+480: Spending insights.
+482: Phase 8: Goal-Based Financial Simulator
+483: Goal
+484: Help users plan financial goals safely without giving investment advice.
+485: Supported goals
+486: Emergency fund
+Laptop purchase
+Bike/car down payment
+Education fund
+Vacation
+Loan repayment
+General savings
+487: User inputs
+488: Goal name
+Target amount
+Current amount
+Monthly contribution
+Target date
+Expected return assumption
+489: Simulation outputs
+490: Required monthly saving
+Expected completion date
+Shortfall amount
+Alternative saving scenarios
+491: Example output
+492: To reach ₹1,00,000 in 12 months, you need to save around ₹8,334 per month.
+
+At your current saving rate of ₹5,000 per month, you may reach this goal in about 20 months.
+493: UI/UX requirements
+494: Use:
+495: Goal progress bar
+Monthly contribution slider
+Scenario cards
+Timeline chart
+Simple explanation
+496: Optimization rules
+497: Keep formulas simple and transparent.
+498: Avoid overcomplicated financial modeling.
+499: Do not calculate unnecessary scenarios.
+500: Do not use AI for simple math.
+501: Keep simulation deterministic and explainable.
+502: Deliverables
+503: Goal creation page.
+504: Goal simulation engine.
+505: Scenario comparison UI.
+506: Goal progress tracker.
+508: Phase 9: AI Explanation Assistant
+509: Goal
+510: Allow users to ask questions about their own uploaded financial data.
+511: Example questions
+512: Why is my tax readiness score low?
+Which documents are missing?
+Why is my financial health score low?
+Where am I spending the most?
+Which tax regime appears better?
+How much should I save monthly for my goal?
+513: Assistant architecture
+514: User question
+ ↓
+Fetch verified user data
+ ↓
+Fetch relevant calculated summaries
+ ↓
+Generate grounded answer
+ ↓
+Return explanation with numbers
+515: Important rule
+516: The assistant must answer only from available user data.
+517: It should not invent values.
+518: Safe response behavior
+519: The assistant can say:
+520: Based on your uploaded data, the new regime appears better by ₹8,200.
+521: It should not say:
+522: You must choose the new regime.
+523: The assistant can say:
+524: Your food delivery spending increased this month.
+525: It should not say:
+526: Invest in this specific stock to improve your finances.
+527: UI/UX requirements
+528: The assistant page should show suggested questions.
+529: Example:
+530: Why is my tax readiness score low?
+What documents are missing?
+How can I improve my savings rate?
+Explain my spending pattern.
+531: Optimization rules
+532: Do not send full raw documents to the AI assistant.
+533: Send only summarized, relevant data.
+534: Use structured prompts.
+535: Cache repeated common answers.
+536: Keep assistant responses short and explainable.
+537: Avoid unnecessary AI calls for simple deterministic answers.
+538: Deliverables
+539: Assistant chat UI.
+540: Assistant backend endpoint.
+541: Data-grounded answer system.
+542: Suggested questions.
+544: Phase 10: Report Generation
+545: Goal
+546: Generate professional downloadable reports.
+547: Report 1: CA-Ready Tax Summary
+548: Sections:
+549: User details
+Uploaded documents
+Income summary
+Deduction summary
+TDS summary
+Old vs new regime comparison
+Missing documents
+Mismatch warnings
+Verified extracted fields
+Disclaimer
+550: Report 2: Financial Health Report
+551: Sections:
+552: Monthly income
+Monthly expenses
+Savings rate
+Debt-to-income ratio
+Emergency fund status
+Top spending categories
+Subscription leakage
+Financial health score
+Improvement suggestions
+553: Report 3: Goal Simulation Report
+554: Sections:
+555: Goal name
+Target amount
+Current savings
+Monthly contribution
+Expected completion date
+Scenario comparison
+556: UI/UX requirements
+557: The report download page should show:
+558: Report name
+Short description
+Last generated date
+Download button
+Regenerate button
+559: Optimization rules
+560: Generate reports only when requested.
+561: Cache recently generated reports if data has not changed.
+562: Do not regenerate PDF on every page load.
+563: Use reusable report templates.
+564: Avoid duplicate report-building logic.
+565: Deliverables
+566: PDF report generator.
+567: Report templates.
+568: Download page.
+569: Sample demo reports.
+571: Phase 11: Privacy and Security Layer
+572: Goal
+573: Make the system trustworthy and safe for financial data.
+574: Features
+575: Password hashing
+JWT authentication
+Consent tracking
+Sensitive data masking
+Document deletion
+Account deletion
+Audit logs
+File hash validation
+Role-based access
+576: Sensitive data masking
+577: Examples:
+578: PAN: ABCDE****F
+Account Number: XXXX1234
+Email: f***@gmail.com
+579: Audit logs
+580: Track:
+581: Login
+Document upload
+Document processing
+Data verification
+Report generation
+Document deletion
+Consent revocation
+582: UI/UX requirements
+583: Settings page must include:
+584: View consent history
+Delete document
+Delete all documents
+Delete account
+Export summary
+585: The user should feel in control of their data.
+586: Optimization rules
+587: Do not log sensitive financial values.
+588: Do not store duplicate raw documents.
+589: Do not keep temporary files after processing.
+590: Do not expose internal file paths to frontend.
+591: Do not send unnecessary sensitive data to the client.
+592: Deliverables
+593: Privacy controls.
+594: Consent history page.
+595: Audit log backend.
+596: Data deletion feature.
+597: Sensitive field masking.
+599: Phase 12: Frontend Development Plan
+600: Goal
+601: Build a polished, fast, responsive frontend.
+602: Frontend folder structure
+603: frontend/
+ ├── src/
+ │   ├── app/
+ │   ├── components/
+ │   ├── features/
+ │   │   ├── auth/
+ │   │   ├── dashboard/
+ │   │   ├── documents/
+ │   │   ├── tax/
+ │   │   ├── finance/
+ │   │   ├── goals/
+ │   │   ├── assistant/
+ │   │   └── reports/
+ │   ├── hooks/
+ │   ├── lib/
+ │   ├── types/
+ │   └── styles/
+604: Required pages
+605: Landing page
+Login/register page
+Consent page
+Dashboard
+Document upload page
+Document processing page
+Data verification page
+Tax readiness page
+Financial health page
+Goal simulator page
+AI assistant page
+Reports page
+Settings/privacy page
+606: Dashboard UI
+607: Dashboard cards:
+608: Tax Readiness Score
+Financial Health Score
+Monthly Income
+Monthly Expenses
+Savings Rate
+Missing Documents
+Goal Progress
+609: Frontend optimization rules
+610: Use reusable components.
+611: Avoid duplicate card components.
+612: Avoid unnecessary state.
+613: Avoid large components doing too many things.
+614: Use lazy loading for heavy pages.
+615: Paginate large tables.
+616: Avoid unnecessary re-renders.
+617: Do not keep unused components.
+618: Remove unused CSS classes.
+619: Remove unused assets.
+620: Do not install unnecessary UI libraries.
+621: UI quality checklist
+622: Every screen must have:
+623: Clear heading
+Primary action
+Loading state
+Empty state
+Error state
+Success state
+Responsive layout
+Consistent spacing
+Readable font size
+624: Deliverables
+625: Complete responsive frontend.
+626: Reusable UI component library.
+627: Dashboard charts.
+628: Clean navigation.
+629: Polished user experience.
+631: Phase 13: Backend Development Plan
+632: Goal
+633: Build a modular and efficient backend.
+634: Backend folder structure
+635: backend/
+ ├── app/
+ │   ├── main.py
+ │   ├── core/
+ │   ├── auth/
+ │   ├── users/
+ │   ├── documents/
+ │   ├── extraction/
+ │   ├── tax/
+ │   ├── finance/
+ │   ├── goals/
+ │   ├── assistant/
+ │   ├── reports/
+ │   └── security/
+ ├── tests/
+ ├── requirements.txt
+ └── Dockerfile
+636: Backend API groups
+637: /auth
+/users
+/consent
+/documents
+/extraction
+/tax
+/finance
+/goals
+/assistant
+/reports
+/settings
+638: Backend optimization rules
+639: Keep route handlers thin.
+640: Put business logic in services.
+641: Put database logic in repositories.
+642: Avoid repeated database queries.
+643: Use pagination for large results.
+644: Validate input at API boundary.
+645: Reuse utility functions.
+646: Avoid circular imports.
+647: Remove unused endpoints.
+648: Remove unused helper functions.
+649: Remove debug-only code before final submission.
+650: Deliverables
+651: Modular backend.
+652: API documentation.
+653: Swagger page.
+654: Unit-tested service functions.
+655: Clean project structure.
+657: Phase 14: Code Quality and Optimization Policy
+658: Goal
+659: Ensure the project has no unnecessary code and no inefficient implementation.
+660: Code quality rules
+661: Every function must satisfy at least one of these:
+662: Used by the application
+Used by tests
+Used by scripts
+Used by documented future extension
+663: If not, remove it.
+664: No-dead-code checklist
+665: Before final submission, remove:
+666: Unused imports
+Unused variables
+Unused functions
+Unused components
+Unused CSS
+Commented-out old code
+Unused API routes
+Unused database columns
+Unused sample files
+Unused dependencies
+Duplicate utilities
+Debug print statements
+Temporary test code
+667: Optimization checklist
+668: Frontend
+669: Minimize unnecessary re-renders
+Use reusable components
+Lazy-load heavy pages
+Paginate large data tables
+Compress images
+Avoid unnecessary libraries
+Keep bundle size reasonable
+670: Backend
+671: Avoid repeated database queries
+Use indexes
+Cache heavy calculated summaries
+Avoid processing the same document twice
+Use OCR only when needed
+Use AI only when rules fail
+Delete temporary files
+Use background tasks for long processing
+672: Database
+673: Use proper indexes
+Avoid duplicate data
+Use foreign keys
+Store summaries where useful
+Avoid storing unnecessary raw values
+674: AI
+675: Do not send full documents unnecessarily
+Use extracted summaries
+Use deterministic logic where possible
+Use AI only for messy extraction or explanation
+Cache repeated results
+676: Tools to enforce quality
+677: Use:
+678: ESLint
+Prettier
+TypeScript strict mode
+Ruff or Flake8
+Black formatter
+Pytest
+Pre-commit hooks
+Dependency audit
+679: Pull request rule
+680: Before merging any feature:
+681: Feature works
+UI is clean
+No console errors
+No unused imports
+No duplicate logic
+Tests pass
+No sensitive data exposed
+No unnecessary code added
+682: Deliverables
+683: Linting setup.
+684: Formatting setup.
+685: Test setup.
+686: Code review checklist.
+687: Final cleanup report.
+689: Phase 15: Testing Plan
+690: Goal
+691: Prove the system works properly.
+692: Unit tests
+693: Test:
+694: Tax calculation
+Financial health score
+Goal simulation
+Expense categorization
+Document type detection
+Missing document detection
+Mismatch detection
+695: Integration tests
+696: Test:
+697: Upload → Process → Extract → Verify → Dashboard
+Salary slip + Form 16 → Tax estimate
+Bank statement → Expense categorization → Financial score
+Goal input → Simulation output
+Report generation → PDF download
+698: UI tests
+699: Test:
+700: Login works
+Consent appears before upload
+Upload page handles errors
+Dashboard loads correctly
+Charts render correctly
+Verification edits save correctly
+Reports download correctly
+701: Security tests
+702: Test:
+703: User cannot access another user’s documents
+Password is hashed
+Consent is required
+Deleted documents are inaccessible
+Sensitive fields are masked
+Unauthorized API requests fail
+704: Performance tests
+705: Test:
+706: Dashboard loads quickly
+Large bank statement does not freeze UI
+OCR processing does not block frontend
+PDF report generation works within acceptable time
+Repeated dashboard visits do not recalculate everything
+707: Deliverables
+708: Test cases.
+709: Test results.
+710: Screenshots.
+711: Bug fix log.
+712: Performance notes.
+714: Phase 16: Final Demo Plan
+715: Demo flow
+716: Open landing page
+ ↓
+Login
+ ↓
+Accept consent
+ ↓
+Upload salary slip
+ ↓
+Upload bank statement
+ ↓
+Show processing status
+ ↓
+Verify extracted fields
+ ↓
+View dashboard
+ ↓
+View tax readiness score
+ ↓
+Compare old vs new regime
+ ↓
+View missing documents
+ ↓
+View financial health analysis
+ ↓
+Create a financial goal
+ ↓
+Ask AI assistant a question
+ ↓
+Download CA-ready report
+717: Demo must highlight
+718: Clean UI
+Simple user flow
+Document intelligence
+Tax readiness
+Financial health score
+Goal simulation
+Privacy controls
+PDF report
+Optimized architecture
+No unnecessary code
+719: Important demo statement
+720: Use this during presentation:
+721: FinSight AI does not replace a CA or investment adviser. It helps users organize financial data, understand tax readiness, analyze financial health, and prepare a CA-ready report.
+723: 17. Suggested Timeline
+724: Week 1: Planning and UI research
+725: Finalize title.
+726: Finalize scope.
+727: Create SRS.
+728: Create user personas.
+729: Create user flow.
+730: Week 2: Wireframes and design system
+731: Create page wireframes.
+732: Create reusable component list.
+733: Decide colors, typography, spacing.
+734: Build initial frontend layout.
+735: Week 3: Backend and database setup
+736: Create FastAPI backend.
+737: Create PostgreSQL schema.
+738: Implement migrations.
+739: Add authentication base.
+740: Week 4: Auth, consent, and dashboard shell
+741: Register/login.
+742: Consent page.
+743: Protected routes.
+744: Dashboard layout.
+745: Navigation.
+746: Week 5: Document upload
+747: Upload API.
+748: Upload UI.
+749: File validation.
+750: Document metadata.
+751: Status tracking.
+752: Week 6: OCR and PDF extraction
+753: PDF parser.
+754: OCR fallback.
+755: Text cleanup.
+756: Document type detection.
+757: Week 7: AI extraction and verification
+758: Extract financial fields.
+759: Add confidence scores.
+760: Build verification UI.
+761: Save verified data.
+762: Week 8: Tax readiness engine
+763: Income aggregation.
+764: Deduction summary.
+765: Old vs new regime comparison.
+766: Missing document detection.
+767: Tax readiness UI.
+768: Week 9: Financial health engine
+769: Expense categorization.
+770: Savings rate.
+771: Debt ratio.
+772: Emergency fund.
+773: Financial health dashboard.
+774: Week 10: Goal simulator
+775: Goal creation.
+776: Monthly savings calculator.
+777: Scenario comparison.
+778: Goal progress UI.
+779: Week 11: AI assistant
+780: Assistant API.
+781: Suggested questions.
+782: Data-grounded answers.
+783: Assistant UI.
+784: Week 12: Report generation
+785: CA-ready report.
+786: Financial health report.
+787: Goal report.
+788: Download UI.
+789: Week 13: Testing and optimization
+790: Unit tests.
+791: Integration tests.
+792: UI testing.
+793: Performance testing.
+794: Remove dead code.
+795: Remove unused dependencies.
+796: Optimize queries.
+797: Week 14: Final polish
+798: UI polishing.
+799: Documentation.
+800: PPT.
+801: Demo script.
+802: Final code cleanup.
+803: Deployment.
+805: 18. MVP Version
+806: If time becomes limited, build only this first:
+807: Login
+Consent
+Document upload
+Salary slip extraction
+Bank statement extraction
+Data verification
+Tax readiness score
+Financial health score
+Simple dashboard
+PDF report
+808: This MVP is enough for a strong final-year project.
+809: After MVP, add:
+810: AI assistant
+Goal simulator
+Advanced reports
+AIS/TIS-style reconciliation
+Anomaly detection
+812: 19. Final Deliverables
+813: Software deliverables
+814: Frontend web app
+Backend API
+Database schema
+Document extraction engine
+Tax readiness engine
+Financial health engine
+Goal simulator
+AI assistant
+PDF report generator
+815: Design deliverables
+816: User personas
+User journey map
+Wireframes
+Design system
+UI screenshots
+UX explanation
+817: Academic deliverables
+818: Project report
+SRS document
+System architecture diagram
+ER diagram
+Test report
+Implementation screenshots
+PPT
+Demo video
+819: Code-quality deliverables
+820: Clean repository
+README
+API documentation
+.env.example
+Linting setup
+Test cases
+Optimization notes
+Dead-code cleanup checklist
+822: 20. Final Project Positioning
+823: The final version should be presented as:
+824: FinSight AI is a privacy-first financial assistant that combines document intelligence, tax readiness estimation, financial health analysis, goal-based planning, and explainable AI inside a clean and user-friendly interface.
+
+The project focuses not only on backend intelligence, but also on UI/UX quality, trust, performance, clean code, and practical real-world usability.
+825: The strongest selling point is this:
+826: It does not simply calculate numbers. It guides the user through a confusing financial process with a clean interface, clear explanations, privacy controls, and a CA-ready final report.
+---TABLES---
