@@ -15,19 +15,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for token in localStorage
     const token = typeof window !== "undefined" ? localStorage.getItem("finsight_token") : null;
     if (!token) {
       setLoading(false);
       return;
     }
-    // Verify the token by fetching /api/users/me
     auth.me()
       .then((u) => setUser(u))
-      .catch(() => {
-        // Token is invalid — clear it
-        setToken(null);
-      })
+      .catch(() => { setToken(null); })
       .finally(() => setLoading(false));
   }, []);
 

@@ -1,10 +1,9 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import Link from "next/link";
 import { Loader2 } from "lucide-react";
 
 export default function LoginPage() {
@@ -15,33 +14,39 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login, register } = useAuth();
-  const loadingRef = useRef(false);
+  const { login, register, user } = useAuth();
 
   useEffect(() => { setMounted(true); }, []);
 
+  // When user state changes (after login), show a redirect screen.
+  // This avoids ALL browser navigation APIs that cause "Load failed" in Safari iframes.
+  // The ProtectedRoute on /dashboard will see the token in localStorage and let the user in.
+  if (user && mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-mesh p-4">
+        <Card className="w-full max-w-md glass">
+          <CardContent className="py-12 text-center">
+            <Loader2 className="h-6 w-6 animate-spin text-emerald-500 mx-auto mb-3" />
+            <p className="text-sm text-slate-500">Welcome, {user.name}! Redirecting...</p>
+            <a href="/dashboard" className="mt-4 inline-block text-sm text-emerald-600 underline">Click here if not redirected</a>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const doLogin = async () => {
-    if (loadingRef.current) return;
-    loadingRef.current = true;
+    if (loading) return;
     setError("");
     setLoading(true);
     try {
       if (mode === "login") await login(email, password);
       else await register(name, email, password);
-
-      // Navigate using a hidden anchor click — most compatible with Safari iframes.
-      // Avoids "Load failed" TypeError from window.location.assign/replace.
-      // Avoids document.write() which clears localStorage.
-      const a = document.createElement("a");
-      a.href = "/dashboard";
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      // Don't navigate — the `if (user)` block above will render the redirect screen.
+      // The user state update triggers a re-render, showing the redirect screen with a link.
     } catch (err: any) {
       setError(err?.detail || "Something went wrong");
       setLoading(false);
-      loadingRef.current = false;
     }
   };
 
@@ -95,7 +100,7 @@ export default function LoginPage() {
             <p>Admin: admin@finsight.ai / admin1234</p>
           </div>
           <p className="text-xs text-slate-400 text-center mt-4">By continuing you agree to our privacy policy.</p>
-          <div className="text-center mt-3"><Link href="/" className="text-xs text-slate-400 hover:text-slate-600">Back to home</Link></div>
+          <a href="/" className="text-xs text-slate-400 hover:text-slate-600 block text-center mt-3">Back to home</a>
         </CardContent>
       </Card>
     </div>
