@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,7 +16,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, register } = useAuth();
-  const router = useRouter();
   const loadingRef = useRef(false);
 
   useEffect(() => { setMounted(true); }, []);
@@ -30,8 +28,16 @@ export default function LoginPage() {
     try {
       if (mode === "login") await login(email, password);
       else await register(name, email, password);
-      router.push("/dashboard");
-      setTimeout(() => window.location.reload(), 300);
+
+      // Navigate using a hidden anchor click — most compatible with Safari iframes.
+      // Avoids "Load failed" TypeError from window.location.assign/replace.
+      // Avoids document.write() which clears localStorage.
+      const a = document.createElement("a");
+      a.href = "/dashboard";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     } catch (err: any) {
       setError(err?.detail || "Something went wrong");
       setLoading(false);

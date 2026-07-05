@@ -29,8 +29,13 @@ export default function ConsentPage() {
     setAccepting(true); setError("");
     try {
       await consent.accept({ consent_type: "document_processing", consent_text: consentText });
-      router.push("/dashboard");
-      setTimeout(() => window.location.reload(), 300);
+      // Navigate using anchor click — works in all browsers + iframes
+      const a = document.createElement("a");
+      a.href = "/dashboard";
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     } catch (err: any) { setError(err.detail || "Failed"); setAccepting(false); }
   };
 
