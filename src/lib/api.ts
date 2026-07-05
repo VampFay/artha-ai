@@ -18,42 +18,56 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   const headers: Record<string, string> = { ...(options.headers as Record<string, string>) };
   if (!(options.body instanceof FormData)) headers["Content-Type"] = "application/json";
   if (token) headers["Authorization"] = `Bearer ${token}`;
-  const res = await fetch(path, { ...options, headers });
-  if (res.status === 401 && typeof window !== "undefined") {
-    setToken(null);
-    window.location.href = "/login";
-    throw { detail: "Session expired", status: 401 } as ApiError;
+  try {
+    const res = await fetch(path, { ...options, headers });
+    if (res.status === 401) {
+      setToken(null);
+      throw { detail: "Session expired", status: 401 } as ApiError;
+    }
+    if (!res.ok) {
+      let detail = "Request failed";
+      try { const err = await res.json(); detail = err.detail || detail; } catch {}
+      throw { detail, status: res.status } as ApiError;
+    }
+    if (res.status === 204) return undefined as T;
+    return res.json();
+  } catch (e: any) {
+    if (e?.detail) throw e;
+    throw { detail: "Network error", status: 0 } as ApiError;
   }
-  if (!res.ok) {
-    let detail = "Request failed";
-    try { const err = await res.json(); detail = err.detail || detail; } catch {}
-    throw { detail, status: res.status } as ApiError;
-  }
-  if (res.status === 204) return undefined as T;
-  return res.json();
 }
 
+// Auth
 export const auth = {
   register: (d: { name: string; email: string; password: string }) => apiFetch<{ access_token: string; user: User }>("/api/auth/register", { method: "POST", body: JSON.stringify(d) }),
   login: (d: { email: string; password: string }) => apiFetch<{ access_token: string; user: User }>("/api/auth/login", { method: "POST", body: JSON.stringify(d) }),
   logout: () => apiFetch<{ message: string }>("/api/auth/logout", { method: "POST" }),
   me: () => apiFetch<User>("/api/users/me"),
 };
+
+// Consent
 export const consent = {
   getCurrentText: () => apiFetch<{ consent_type: string; consent_text: string }>("/api/consent"),
   accept: (d: { consent_type: string; consent_text: string }) => apiFetch<{ id: string }>("/api/consent", { method: "POST", body: JSON.stringify(d) }),
   history: () => apiFetch<{ items: Consent[]; total: number }>("/api/consent/history"),
 };
+
+// Tax + Finance
 export const tax = { summary: (fy = "2024-25") => apiFetch<TaxSummary>(`/api/tax/summary?financial_year=${fy}`) };
 export const finance = { summary: (ef = 0) => apiFetch<FinanceSummary>(`/api/finance/summary?emergency_fund=${ef}`) };
+
+// Goals
 export const goals = {
   list: () => apiFetch<{ items: Goal[]; total: number }>("/api/goals"),
   create: (d: any) => apiFetch<Goal>("/api/goals", { method: "POST", body: JSON.stringify(d) }),
   delete: (id: string) => apiFetch<void>(`/api/goals/${id}`, { method: "DELETE" }),
 };
+
+// Audit + Export
 export const audit = { list: () => apiFetch<{ items: AuditLogEntry[]; total: number }>("/api/audit-log") };
 export const userData = { exportUrl: () => `/api/users/me/export` };
 
+// Types
 export interface User { id: string; name: string; email: string; role: string; created_at: string }
 export interface Consent { id: string; consent_type: string; consent_text: string; accepted_at: string; revoked_at: string | null }
 export interface TaxSummary {
