@@ -14,6 +14,7 @@ export default function ConsentPage() {
   const [mounted, setMounted] = useState(false);
   const [consentText, setConsentText] = useState("");
   const [accepting, setAccepting] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => { setMounted(true); }, []);
@@ -21,7 +22,7 @@ export default function ConsentPage() {
     if (loading) return;
     if (!user) { router.replace("/login"); return; }
     consent.getCurrentText().then((r) => setConsentText(r.consent_text));
-    consent.history().then((h) => { if (h.items.some((c) => c.consent_type === "document_processing" && !c.revoked_at)) router.replace("/dashboard"); });
+    consent.history().then((h) => { if (h.items.some((c) => c.consent_type === "document_processing" && !c.revoked_at)) setAccepted(true); });
   }, [user, loading, router]);
 
   const handleAccept = async () => {
@@ -29,15 +30,24 @@ export default function ConsentPage() {
     setAccepting(true); setError("");
     try {
       await consent.accept({ consent_type: "document_processing", consent_text: consentText });
-      // Navigate using anchor click — works in all browsers + iframes
-      const a = document.createElement("a");
-      a.href = "/dashboard";
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      setAccepted(true);
     } catch (err: any) { setError(err.detail || "Failed"); setAccepting(false); }
   };
+
+  // After consent is accepted, show redirect screen with a link (no window.location)
+  if (accepted && mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-mesh p-4">
+        <Card className="w-full max-w-md glass">
+          <CardContent className="py-12 text-center">
+            <Loader2 className="h-6 w-6 animate-spin text-emerald-500 mx-auto mb-3" />
+            <p className="text-sm text-slate-500">Consent accepted! Redirecting...</p>
+            <a href="/dashboard" className="mt-4 inline-block text-sm text-emerald-600 underline">Click here if not redirected</a>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!mounted || loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-emerald-500" /></div>;
 
