@@ -20,9 +20,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
+    // Validate token — catch network errors silently (don't crash the page)
     auth.me()
       .then((u) => setUser(u))
-      .catch(() => { setToken(null); })
+      .catch(() => {
+        // Token invalid or network error — clear it silently
+        setToken(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
