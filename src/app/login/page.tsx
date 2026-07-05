@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,25 +16,17 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login, register, user } = useAuth();
+  const router = useRouter();
 
   useEffect(() => { setMounted(true); }, []);
 
-  // When user state changes (after login), show a redirect screen.
-  // This avoids ALL browser navigation APIs that cause "Load failed" in Safari iframes.
-  // The ProtectedRoute on /dashboard will see the token in localStorage and let the user in.
-  if (user && mounted) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-mesh p-4">
-        <Card className="w-full max-w-md glass">
-          <CardContent className="py-12 text-center">
-            <Loader2 className="h-6 w-6 animate-spin text-emerald-500 mx-auto mb-3" />
-            <p className="text-sm text-slate-500">Welcome, {user.name}! Redirecting...</p>
-            <a href="/dashboard" className="mt-4 inline-block text-sm text-emerald-600 underline">Click here if not redirected</a>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // When user becomes set after login, use Next.js router for client-side navigation.
+  // This does NOT trigger a full page load, so it works in Safari iframes.
+  useEffect(() => {
+    if (user && mounted) {
+      router.push("/dashboard");
+    }
+  }, [user, mounted, router]);
 
   const doLogin = async () => {
     if (loading) return;
@@ -42,8 +35,7 @@ export default function LoginPage() {
     try {
       if (mode === "login") await login(email, password);
       else await register(name, email, password);
-      // Don't navigate — the `if (user)` block above will render the redirect screen.
-      // The user state update triggers a re-render, showing the redirect screen with a link.
+      // The useEffect above will detect user state change and call router.push.
     } catch (err: any) {
       setError(err?.detail || "Something went wrong");
       setLoading(false);
@@ -54,6 +46,20 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-mesh p-4">
         <Card className="w-full max-w-md glass"><CardContent className="py-16 text-center"><Loader2 className="h-6 w-6 animate-spin text-emerald-500 mx-auto" /></CardContent></Card>
+      </div>
+    );
+  }
+
+  // Show loading screen while redirecting (after login succeeds)
+  if (user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-mesh p-4">
+        <Card className="w-full max-w-md glass">
+          <CardContent className="py-12 text-center">
+            <Loader2 className="h-6 w-6 animate-spin text-emerald-500 mx-auto mb-3" />
+            <p className="text-sm text-slate-500">Welcome, {user.name}! Loading dashboard...</p>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -100,7 +106,7 @@ export default function LoginPage() {
             <p>Admin: admin@finsight.ai / admin1234</p>
           </div>
           <p className="text-xs text-slate-400 text-center mt-4">By continuing you agree to our privacy policy.</p>
-          <a href="/" className="text-xs text-slate-400 hover:text-slate-600 block text-center mt-3">Back to home</a>
+          <button type="button" onClick={() => router.push("/")} className="text-xs text-slate-400 hover:text-slate-600 block text-center mt-3 w-full">Back to home</button>
         </CardContent>
       </Card>
     </div>
