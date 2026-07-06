@@ -30,10 +30,10 @@ export default function TaxContent() {
   if (!data) return null;
   const r = data.regime_comparison;
   const breakdown = [
-    { label: "Document Completeness", val: data.score.breakdown.document_completeness, max: 40, color: "#d4a017" },
-    { label: "Data Verification", val: data.score.breakdown.data_verification, max: 25, color: "#4a7c59" },
-    { label: "Income Consistency", val: data.score.breakdown.income_consistency, max: 20, color: "#1a5c47" },
-    { label: "Deduction Proof", val: data.score.breakdown.deduction_proof, max: 15, color: "#c65d3a" },
+    { label: "Document Completeness", val: data.score.breakdown.document_completeness, max: 40, color: "#d97706" },
+    { label: "Data Verification", val: data.score.breakdown.data_verification, max: 25, color: "#6b6258" },
+    { label: "Income Consistency", val: data.score.breakdown.income_consistency, max: 20, color: "#2e2e2e" },
+    { label: "Deduction Proof", val: data.score.breakdown.deduction_proof, max: 15, color: "#b91c1c" },
   ];
   const totalIncome = Object.values(data.income_summary).reduce((a: number, b: any) => a + Number(b || 0), 0);
 
@@ -63,7 +63,7 @@ export default function TaxContent() {
           <motion.div whileHover={{ y: -4 }} className="bento bento-dark p-7 w-full h-full relative overflow-hidden">
             <motion.div
               className="absolute -top-20 -right-20 w-72 h-72 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(212,160,23,0.25) 0%, transparent 60%)" }}
+              style={{ background: "radial-gradient(circle, rgba(217,119,6,0.25) 0%, transparent 60%)" }}
               animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -74,7 +74,7 @@ export default function TaxContent() {
                   value={data.score.score}
                   size={140}
                   strokeWidth={10}
-                  color="#d4a017"
+                  color="#d97706"
                   trackColor="rgba(250,247,242,0.08)"
                   label={<AnimatedNumber value={data.score.score} />}
                   sublabel="/ 100"
@@ -208,8 +208,8 @@ export default function TaxContent() {
                     <LiquidProgress
                       value={pct}
                       height={4}
-                      color={i === 0 ? "linear-gradient(90deg, #0d3b2e, #1a5c47)" : i === 1 ? "linear-gradient(90deg, #4a7c59, #6fa37e)" : "linear-gradient(90deg, #d4a017, #e8c14a)"}
-                      trackColor="rgba(13,59,46,0.06)"
+                      color={i === 0 ? "linear-gradient(90deg, #1a1a1a, #2e2e2e)" : i === 1 ? "linear-gradient(90deg, #6b6258, #8f8678)" : "linear-gradient(90deg, #d97706, #f59e0b)"}
+                      trackColor="rgba(26,26,26,0.06)"
                       showShimmer={false}
                     />
                   </motion.div>
@@ -223,7 +223,7 @@ export default function TaxContent() {
           <Reveal delay={0.3}>
             <motion.div whileHover={{ y: -4 }} className="bento bento-light p-6 w-full h-full" style={{ borderLeft: "3px solid var(--color-clay)" }}>
               <div className="flex items-center gap-2 mb-4">
-                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(198,93,58,0.08)" }}>
+                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(185,28,28,0.08)" }}>
                   <FileWarning className="h-4 w-4" style={{ color: "var(--color-clay)" }} />
                 </div>
                 <p className="text-caption">Missing Documents</p>
@@ -241,7 +241,7 @@ export default function TaxContent() {
                       whileHover={{ scale: 1.05 }}
                       className="text-[9px] font-bold uppercase px-2 py-0.5 rounded mt-0.5 flex-shrink-0"
                       style={{
-                        background: m.severity === "high" ? "rgba(198,93,58,0.1)" : "rgba(212,160,23,0.1)",
+                        background: m.severity === "high" ? "rgba(185,28,28,0.1)" : "rgba(217,119,6,0.1)",
                         color: m.severity === "high" ? "var(--color-clay)" : "var(--color-gold)"
                       }}
                     >
@@ -259,7 +259,7 @@ export default function TaxContent() {
           <Reveal delay={0.3}>
             <motion.div whileHover={{ y: -4 }} className="bento bento-warm p-6 w-full h-full" style={{ borderLeft: "3px solid var(--color-moss)" }}>
               <div className="flex items-center gap-2 mb-3">
-                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(74,124,89,0.1)" }}>
+                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(107,98,88,0.1)" }}>
                   <Info className="h-4 w-4" style={{ color: "var(--color-moss)" }} />
                 </div>
                 <p className="text-caption">All Documents Captured</p>

@@ -28,10 +28,10 @@ export function FinancialPulseOrb({
 
   const palette = useMemo(() => {
     const pct = (value / max) * 100;
-    if (pct >= 80) return { primary: "#4a7c59", secondary: "#6fa37e", glow: "rgba(74,124,89,0.4)" };
-    if (pct >= 60) return { primary: "#d4a017", secondary: "#e8c14a", glow: "rgba(212,160,23,0.4)" };
-    if (pct >= 40) return { primary: "#e8c14a", secondary: "#d4a017", glow: "rgba(232,193,74,0.4)" };
-    return { primary: "#c65d3a", secondary: "#e08866", glow: "rgba(198,93,58,0.4)" };
+    if (pct >= 80) return { primary: "#6b6258", secondary: "#8f8678", glow: "rgba(107,98,88,0.4)" };
+    if (pct >= 60) return { primary: "#d97706", secondary: "#f59e0b", glow: "rgba(217,119,6,0.4)" };
+    if (pct >= 40) return { primary: "#f59e0b", secondary: "#d97706", glow: "rgba(245,158,11,0.4)" };
+    return { primary: "#b91c1c", secondary: "#dc2626", glow: "rgba(185,28,28,0.4)" };
   }, [value, max]);
 
   useEffect(() => {

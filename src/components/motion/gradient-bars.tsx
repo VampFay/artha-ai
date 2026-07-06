@@ -6,8 +6,8 @@ export function GradientBars({
   data,
   orientation = "horizontal",
   height = 140,
-  barColor = "#0d3b2e",
-  accentColor = "#d4a017",
+  barColor = "#1a1a1a",
+  accentColor = "#d97706",
   formatValue = (n: number) => n.toString(),
   formatLabel = (s: string) => s,
 }: {
@@ -49,7 +49,7 @@ export function GradientBars({
       <div ref={ref} className="space-y-2.5">
         {data.map((d, i) => {
           const w = (d.value / max) * 100 * progress;
-          const c = d.color || (i === 0 ? barColor : i === 1 ? "#4a7c59" : accentColor);
+          const c = d.color || (i === 0 ? barColor : i === 1 ? "#6b6258" : accentColor);
           return (
             <div key={i} className="flex items-center gap-3">
               <span className="text-xs font-medium w-24 truncate" style={{ color: "var(--color-ink-soft)" }}>

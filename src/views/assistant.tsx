@@ -61,7 +61,7 @@ export default function AssistantContent() {
         <div className="flex items-center justify-between px-5 py-3" style={{ borderBottom: "1px solid var(--color-line-soft)" }}>
           <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="h-8 w-8 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
+              <div className="h-8 w-8 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}>
                 <Bot className="h-4 w-4" style={{ color: "var(--color-gold-light)" }} />
               </div>
               <motion.div
@@ -100,7 +100,7 @@ export default function AssistantContent() {
                 className={`flex gap-2.5 ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {m.role === "ai" && (
-                  <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
+                  <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}>
                     <Bot className="h-3.5 w-3.5" style={{ color: "var(--color-gold-light)" }} />
                   </div>
                 )}
@@ -108,14 +108,14 @@ export default function AssistantContent() {
                   className="max-w-[75%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed"
                   style={
                     m.role === "user"
-                      ? { background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", borderBottomRightRadius: "4px", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.3)" }
+                      ? { background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", borderBottomRightRadius: "4px", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.3)" }
                       : { background: "var(--color-cream-dark)", color: "var(--color-ink-soft)", borderBottomLeftRadius: "4px" }
                   }
                 >
                   {m.text}
                 </div>
                 {m.role === "user" && (
-                  <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(13,59,46,0.06)" }}>
+                  <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "rgba(26,26,26,0.06)" }}>
                     <User className="h-3.5 w-3.5" style={{ color: "var(--color-forest)" }} />
                   </div>
                 )}
@@ -125,7 +125,7 @@ export default function AssistantContent() {
 
           {loading && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex gap-2.5 justify-start">
-              <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
+              <div className="h-7 w-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}>
                 <Bot className="h-3.5 w-3.5" style={{ color: "var(--color-gold-light)" }} />
               </div>
               <div className="rounded-2xl px-4 py-3.5 flex items-center gap-1.5" style={{ background: "var(--color-cream-dark)", borderBottomLeftRadius: "4px" }}>
@@ -162,7 +162,7 @@ export default function AssistantContent() {
                 whileTap={{ scale: 0.96 }}
                 onClick={() => send(s.q)}
                 className="text-xs px-3 py-2 rounded-full flex items-center gap-1.5 font-medium"
-                style={{ background: "rgba(13,59,46,0.04)", color: "var(--color-forest)", border: "1px solid rgba(13,59,46,0.1)" }}
+                style={{ background: "rgba(26,26,26,0.04)", color: "var(--color-forest)", border: "1px solid rgba(26,26,26,0.1)" }}
               >
                 <span>{s.icon}</span>{s.q}
               </motion.button>
@@ -186,7 +186,7 @@ export default function AssistantContent() {
             onClick={() => send()}
             disabled={loading || !input.trim()}
             className="h-11 w-11 rounded-xl flex items-center justify-center flex-shrink-0"
-            style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }}
+            style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }}
           >
             <Send className="h-4 w-4" />
           </motion.button>

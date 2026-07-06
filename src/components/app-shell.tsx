@@ -38,12 +38,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
         className="relative z-10 flex flex-col items-center gap-4"
       >
         <div className="relative">
-          <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
+          <div className="h-12 w-12 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}>
             <span className="text-xl font-bold" style={{ color: "var(--color-gold-light)" }}>F</span>
           </div>
           <motion.div
             className="absolute -inset-1 rounded-2xl"
-            style={{ background: "radial-gradient(circle, rgba(212,160,23,0.4) 0%, transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, rgba(217,119,6,0.4) 0%, transparent 70%)" }}
             animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0.2, 0.5] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -70,7 +70,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             style={{
               background: "#ffffff",
               border: "1px solid rgba(232,226,214,0.9)",
-              boxShadow: "0 8px 24px -12px rgba(13,59,46,0.12)",
+              boxShadow: "0 8px 24px -12px rgba(26,26,26,0.12)",
             }}
           >
             {/* Logo */}
@@ -78,7 +78,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               <div className="relative">
                 <motion.div
                   className="h-10 w-10 rounded-xl flex items-center justify-center relative"
-                  style={{ background: "linear-gradient(135deg, #0d3b2e 0%, #062418 100%)", boxShadow: "0 4px 12px -2px rgba(13,59,46,0.4)" }}
+                  style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)", boxShadow: "0 4px 12px -2px rgba(26,26,26,0.4)" }}
                   whileHover={{ scale: 1.05, rotate: -3 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -86,7 +86,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 </motion.div>
                 <motion.div
                   className="absolute -inset-0.5 rounded-xl pointer-events-none"
-                  style={{ background: "radial-gradient(circle, rgba(212,160,23,0.35) 0%, transparent 70%)" }}
+                  style={{ background: "radial-gradient(circle, rgba(217,119,6,0.35) 0%, transparent 70%)" }}
                   animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.1, 1] }}
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 />
@@ -118,9 +118,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
                         className="absolute inset-0 rounded-xl"
                         style={{
                           background: active
-                            ? "linear-gradient(135deg, #0d3b2e 0%, #062418 100%)"
-                            : "rgba(13,59,46,0.06)",
-                          boxShadow: active ? "0 4px 12px -3px rgba(13,59,46,0.35)" : "none",
+                            ? "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)"
+                            : "rgba(26,26,26,0.06)",
+                          boxShadow: active ? "0 4px 12px -3px rgba(26,26,26,0.35)" : "none",
                         }}
                         transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       />
@@ -135,7 +135,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             {/* User footer */}
             <div className="px-3 pb-3 pt-3 border-t" style={{ borderColor: "var(--color-line-soft)" }}>
               <div className="flex items-center gap-2.5 mb-2 px-1">
-                <div className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "linear-gradient(135deg, #0d3b2e, #1a5c47)", color: "var(--color-gold-light)" }}>
+                <div className="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: "linear-gradient(135deg, #1a1a1a, #2e2e2e)", color: "var(--color-gold-light)" }}>
                   {user?.name?.[0]?.toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -143,7 +143,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   <p className="text-[10px] truncate" style={{ color: "var(--color-ink-muted)" }}>{user?.email}</p>
                 </div>
                 {user?.role === "admin" && (
-                  <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: "rgba(212,160,23,0.18)", color: "var(--color-gold)" }}>Admin</span>
+                  <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: "rgba(217,119,6,0.18)", color: "var(--color-gold)" }}>Admin</span>
                 )}
               </div>
               <motion.button
@@ -152,7 +152,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 onClick={async () => { await logout(); navigate("dashboard"); }}
                 className="flex items-center gap-2 text-xs px-3 py-2 rounded-xl w-full transition-colors"
                 style={{ color: "var(--color-ink-muted)", background: "transparent" }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-clay)"; e.currentTarget.style.background = "rgba(198,93,58,0.08)"; }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--color-clay)"; e.currentTarget.style.background = "rgba(185,28,28,0.08)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.color = "var(--color-ink-muted)"; e.currentTarget.style.background = "transparent"; }}
               >
                 <LogOut className="h-3.5 w-3.5" />Logout
@@ -164,7 +164,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         {/* Mobile top bar */}
         <div className="md:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between" style={{ background: "#faf7f2", borderBottom: "1px solid var(--color-line)" }}>
           <button onClick={() => navigate("dashboard")} className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
+            <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}>
               <span className="text-sm font-bold" style={{ color: "var(--color-gold-light)" }}>F</span>
             </div>
             <span className="text-sm font-bold" style={{ color: "var(--color-forest)" }}>FinSight</span>
@@ -219,7 +219,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                   transition={{ delay: 0.05 + navItems.length * 0.04 }}
                   onClick={async () => { await logout(); navigate("dashboard"); }}
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium mt-4"
-                  style={{ color: "var(--color-clay)", background: "rgba(198,93,58,0.08)" }}
+                  style={{ color: "var(--color-clay)", background: "rgba(185,28,28,0.08)" }}
                 >
                   <LogOut className="h-5 w-5" />Logout
                 </motion.button>

@@ -28,9 +28,9 @@ export default function ReportsContent() {
   };
 
   const types = [
-    { type: "tax_summary", icon: FileText, title: "Tax Summary", desc: "Income, deductions, regime comparison, missing documents.", color: "#0d3b2e", accent: "rgba(13,59,46,0.08)" },
-    { type: "finance_health", icon: TrendingUp, title: "Financial Health", desc: "Score, metrics, top categories, suggestions.", color: "#d4a017", accent: "rgba(212,160,23,0.1)" },
-    { type: "goal_simulation", icon: Target, title: "Goal Simulation", desc: "Projection, shortfall, multi-scenario comparison.", color: "#4a7c59", accent: "rgba(74,124,89,0.1)" },
+    { type: "tax_summary", icon: FileText, title: "Tax Summary", desc: "Income, deductions, regime comparison, missing documents.", color: "#1a1a1a", accent: "rgba(26,26,26,0.08)" },
+    { type: "finance_health", icon: TrendingUp, title: "Financial Health", desc: "Score, metrics, top categories, suggestions.", color: "#d97706", accent: "rgba(217,119,6,0.1)" },
+    { type: "goal_simulation", icon: Target, title: "Goal Simulation", desc: "Projection, shortfall, multi-scenario comparison.", color: "#6b6258", accent: "rgba(107,98,88,0.1)" },
   ];
   const lastGen = (t: string) => reports.find(r => r.report_type === t);
 
@@ -93,7 +93,7 @@ export default function ReportsContent() {
                     onClick={() => handleGenerate(r.type)}
                     disabled={isGenerating}
                     className="w-full h-10 rounded-xl text-sm font-semibold flex items-center justify-center gap-1.5 transition-all relative overflow-hidden"
-                    style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }}
+                    style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }}
                   >
                     <span className="absolute inset-0 shine" />
                     {isGenerating ? (

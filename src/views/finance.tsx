@@ -12,7 +12,7 @@ import { GradientBars } from "@/components/motion/gradient-bars";
 import { Sparkline } from "@/components/motion/sparkline";
 import { TrendingUp, TrendingDown, Sparkles, Wallet, CreditCard, PiggyBank, Bell } from "lucide-react";
 
-const DONUT_COLORS = ["#0d3b2e", "#1a5c47", "#4a7c59", "#d4a017", "#e8c14a", "#c65d3a", "#8a8a8a", "#4a4a4a"];
+const DONUT_COLORS = ["#1a1a1a", "#2e2e2e", "#6b6258", "#d97706", "#f59e0b", "#b91c1c", "#8a8a8a", "#4a4a4a"];
 
 export default function FinanceContent() {
   const [data, setData] = useState<FinanceSummary | null>(null);
@@ -75,7 +75,7 @@ export default function FinanceContent() {
           <motion.div whileHover={{ y: -4 }} className="bento bento-dark p-7 w-full h-full relative overflow-hidden">
             <motion.div
               className="absolute -top-20 -right-20 w-72 h-72 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(212,160,23,0.25) 0%, transparent 60%)" }}
+              style={{ background: "radial-gradient(circle, rgba(217,119,6,0.25) 0%, transparent 60%)" }}
               animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -86,7 +86,7 @@ export default function FinanceContent() {
                   value={data.score}
                   size={140}
                   strokeWidth={10}
-                  color="#d4a017"
+                  color="#d97706"
                   trackColor="rgba(250,247,242,0.08)"
                   label={<AnimatedNumber value={data.score} />}
                   sublabel="/ 100"
@@ -97,7 +97,7 @@ export default function FinanceContent() {
                     {data.score >= 80 ? "Excellent" : data.score >= 60 ? "Good" : data.score >= 40 ? "Fair" : "Needs Attention"}
                   </p>
                   <p className="text-[10px] uppercase tracking-wider opacity-50 mb-1">6-month Trend</p>
-                  <Sparkline data={savingsTrend} width={130} height={32} color="#e8c14a" />
+                  <Sparkline data={savingsTrend} width={130} height={32} color="#f59e0b" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 pt-5" style={{ borderTop: "1px solid rgba(250,247,242,0.08)" }}>
@@ -122,7 +122,7 @@ export default function FinanceContent() {
               <motion.div whileHover={{ y: -4 }} className="bento bento-light p-5 w-full h-full">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-label">{m.label}</p>
-                  <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: `${m.color === "var(--color-forest)" ? "rgba(13,59,46,0.06)" : m.color === "var(--color-clay)" ? "rgba(198,93,58,0.08)" : m.color === "var(--color-gold)" ? "rgba(212,160,23,0.1)" : "rgba(0,0,0,0.04)"}` }}>
+                  <div className="h-7 w-7 rounded-lg flex items-center justify-center" style={{ background: `${m.color === "var(--color-forest)" ? "rgba(26,26,26,0.06)" : m.color === "var(--color-clay)" ? "rgba(185,28,28,0.08)" : m.color === "var(--color-gold)" ? "rgba(217,119,6,0.1)" : "rgba(0,0,0,0.04)"}` }}>
                     <Icon className="h-3.5 w-3.5" style={{ color: m.color }} />
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export default function FinanceContent() {
                   />
                 </p>
                 <div className="mt-2">
-                  <Sparkline data={m.trend} width={130} height={24} color={m.color === "var(--color-forest)" ? "#0d3b2e" : m.color === "var(--color-clay)" ? "#c65d3a" : m.color === "var(--color-gold)" ? "#d4a017" : "#4a4a4a"} />
+                  <Sparkline data={m.trend} width={130} height={24} color={m.color === "var(--color-forest)" ? "#1a1a1a" : m.color === "var(--color-clay)" ? "#b91c1c" : m.color === "var(--color-gold)" ? "#d97706" : "#4a4a4a"} />
                 </div>
               </motion.div>
             </Reveal>
@@ -147,14 +147,14 @@ export default function FinanceContent() {
           <motion.div whileHover={{ y: -4 }} className="bento bento-light p-6 w-full h-full">
             <div className="flex items-center justify-between mb-5">
               <p className="text-caption">Income vs Expenses</p>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,89,0.1)", color: "var(--color-moss)" }}>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(107,98,88,0.1)", color: "var(--color-moss)" }}>
                 Net +{formatINR(data.monthly_income - data.monthly_expenses)}
               </span>
             </div>
             <GradientBars
               data={[
-                { label: "Income", value: data.monthly_income, color: "#0d3b2e" },
-                { label: "Expenses", value: data.monthly_expenses, color: "#c65d3a" },
+                { label: "Income", value: data.monthly_income, color: "#1a1a1a" },
+                { label: "Expenses", value: data.monthly_expenses, color: "#b91c1c" },
               ]}
               orientation="vertical"
               height={180}
@@ -201,7 +201,7 @@ export default function FinanceContent() {
         <Reveal delay={0.35}>
           <motion.div whileHover={{ y: -4 }} className="bento bento-warm p-6 w-full" style={{ borderLeft: "3px solid var(--color-gold)" }}>
             <div className="flex items-center gap-2 mb-4">
-              <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(212,160,23,0.1)" }}>
+              <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(217,119,6,0.1)" }}>
                 <Sparkles className="h-4 w-4" style={{ color: "var(--color-gold)" }} />
               </div>
               <p className="text-caption">Suggestions</p>
@@ -238,7 +238,7 @@ function AnimatedDonut({ data }: { data: { label: string; value: number }[] }) {
 
   return (
     <svg width={130} height={130} viewBox="0 0 130 130" className="-rotate-90 flex-shrink-0">
-      <circle cx={65} cy={65} r={radius} fill="none" stroke="rgba(13,59,46,0.06)" strokeWidth={14} />
+      <circle cx={65} cy={65} r={radius} fill="none" stroke="rgba(26,26,26,0.06)" strokeWidth={14} />
       {data.map((d, i) => {
         const pct = d.value / total;
         const dash = pct * circ;

@@ -101,8 +101,8 @@ export default function DocumentsContent() {
                 onClick={() => setDocType(t.value)}
                 className="text-xs px-3 py-1.5 rounded-full font-medium transition-all"
                 style={docType === t.value
-                  ? { background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }
-                  : { background: "rgba(13,59,46,0.04)", color: "var(--color-ink-soft)", border: "1px solid rgba(13,59,46,0.08)" }
+                  ? { background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }
+                  : { background: "rgba(26,26,26,0.04)", color: "var(--color-ink-soft)", border: "1px solid rgba(26,26,26,0.08)" }
                 }
               >
                 {t.label}
@@ -118,7 +118,7 @@ export default function DocumentsContent() {
             whileTap={{ scale: 0.995 }}
             className="block border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer relative overflow-hidden transition-all"
             style={dragOver
-              ? { borderColor: "var(--color-forest)", background: "rgba(13,59,46,0.04)" }
+              ? { borderColor: "var(--color-forest)", background: "rgba(26,26,26,0.04)" }
               : { borderColor: "var(--color-line)" }
             }
           >
@@ -128,7 +128,7 @@ export default function DocumentsContent() {
               <div className="relative">
                 <motion.div
                   className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4 relative"
-                  style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}
+                  style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}
                 >
                   <Loader2 className="h-7 w-7 animate-spin" style={{ color: "var(--color-gold-light)" }} />
                 </motion.div>
@@ -138,7 +138,7 @@ export default function DocumentsContent() {
                   <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--color-cream-dark)" }}>
                     <motion.div
                       className="h-full rounded-full"
-                      style={{ background: "linear-gradient(90deg, #0d3b2e, #d4a017)" }}
+                      style={{ background: "linear-gradient(90deg, #1a1a1a, #d97706)" }}
                       animate={{ width: `${uploadProgress}%` }}
                       transition={{ duration: 0.3 }}
                     />
@@ -152,7 +152,7 @@ export default function DocumentsContent() {
                   animate={dragOver ? { y: -6, scale: 1.05 } : { y: 0, scale: 1 }}
                   transition={{ duration: 0.3 }}
                   className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-                  style={{ background: "linear-gradient(135deg, rgba(13,59,46,0.08), rgba(212,160,23,0.08))" }}
+                  style={{ background: "linear-gradient(135deg, rgba(26,26,26,0.08), rgba(217,119,6,0.08))" }}
                 >
                   <UploadCloud className="h-7 w-7" style={{ color: dragOver ? "var(--color-forest)" : "var(--color-ink-soft)" }} />
                 </motion.div>
@@ -201,7 +201,7 @@ export default function DocumentsContent() {
                   <motion.div
                     whileHover={{ rotate: 5, scale: 1.05 }}
                     className="h-10 w-10 rounded-lg flex items-center justify-center"
-                    style={{ background: "linear-gradient(135deg, rgba(13,59,46,0.08), rgba(212,160,23,0.08))" }}
+                    style={{ background: "linear-gradient(135deg, rgba(26,26,26,0.08), rgba(217,119,6,0.08))" }}
                   >
                     <FileText className="h-4 w-4" style={{ color: "var(--color-forest)" }} />
                   </motion.div>
@@ -219,8 +219,8 @@ export default function DocumentsContent() {
                     initial={{ scale: 0.9 }} animate={{ scale: 1 }}
                     className="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full flex items-center gap-1"
                     style={d.processing_status === "extracted"
-                      ? { background: "rgba(74,124,89,0.1)", color: "var(--color-moss)" }
-                      : { background: "rgba(198,93,58,0.1)", color: "var(--color-clay)" }
+                      ? { background: "rgba(107,98,88,0.1)", color: "var(--color-moss)" }
+                      : { background: "rgba(185,28,28,0.1)", color: "var(--color-clay)" }
                     }
                   >
                     {d.processing_status === "extracted" ? <CheckCircle2 className="h-2.5 w-2.5" /> : <AlertCircle className="h-2.5 w-2.5" />}
@@ -236,7 +236,7 @@ export default function DocumentsContent() {
                     whileTap={{ scale: 0.9 }}
                     onClick={() => navigate("document-verify", { id: d.id })}
                     className="p-2 rounded-lg"
-                    style={{ background: "rgba(13,59,46,0.06)", color: "var(--color-forest)" }}
+                    style={{ background: "rgba(26,26,26,0.06)", color: "var(--color-forest)" }}
                   >
                     <ArrowRight className="h-4 w-4" />
                   </motion.button>

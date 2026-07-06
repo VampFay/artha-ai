@@ -82,7 +82,7 @@ export function OnboardingFlow() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
           className="fixed inset-0 z-[90] flex items-center justify-center p-4"
-          style={{ background: "rgba(6,36,24,0.7)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+          style={{ background: "rgba(10,10,10,0.7)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.94, y: 20 }}
@@ -91,9 +91,9 @@ export function OnboardingFlow() {
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="w-full max-w-md rounded-3xl overflow-hidden relative"
             style={{
-              background: "linear-gradient(155deg, rgba(13,59,46,0.98) 0%, rgba(6,36,24,0.98) 100%)",
-              border: "1px solid rgba(212,160,23,0.2)",
-              boxShadow: "0 32px 80px -20px rgba(6,36,24,0.6)",
+              background: "linear-gradient(155deg, rgba(26,26,26,0.98) 0%, rgba(10,10,10,0.98) 100%)",
+              border: "1px solid rgba(217,119,6,0.2)",
+              boxShadow: "0 32px 80px -20px rgba(10,10,10,0.6)",
             }}
           >
             {/* Ambient glow */}
@@ -105,7 +105,7 @@ export function OnboardingFlow() {
             />
             <motion.div
               className="absolute -bottom-32 -left-32 w-72 h-72 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(74,124,89,0.3) 0%, transparent 60%)", filter: "blur(40px)" }}
+              style={{ background: "radial-gradient(circle, rgba(107,98,88,0.3) 0%, transparent 60%)", filter: "blur(40px)" }}
               animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             />

@@ -81,7 +81,7 @@ export default function SettingsContent() {
         >
           <motion.div
             className="absolute -top-24 -right-24 w-72 h-72 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(212,160,23,0.25) 0%, transparent 60%)" }}
+            style={{ background: "radial-gradient(circle, rgba(217,119,6,0.25) 0%, transparent 60%)" }}
             animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -89,12 +89,12 @@ export default function SettingsContent() {
             <motion.div
               whileHover={{ scale: 1.05, rotate: -3 }}
               className="h-16 w-16 rounded-2xl flex items-center justify-center text-2xl font-bold relative"
-              style={{ background: "rgba(212,160,23,0.18)", color: "var(--color-gold-light)", border: "1px solid rgba(212,160,23,0.3)" }}
+              style={{ background: "rgba(217,119,6,0.18)", color: "var(--color-gold-light)", border: "1px solid rgba(217,119,6,0.3)" }}
             >
               {user?.name?.[0]?.toUpperCase()}
               <motion.div
                 className="absolute -inset-1 rounded-2xl"
-                style={{ background: "radial-gradient(circle, rgba(212,160,23,0.3), transparent 70%)" }}
+                style={{ background: "radial-gradient(circle, rgba(217,119,6,0.3), transparent 70%)" }}
                 animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}
                 transition={{ duration: 3, repeat: Infinity }}
               />
@@ -106,7 +106,7 @@ export default function SettingsContent() {
                   <motion.span
                     initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }}
                     className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full flex items-center gap-1"
-                    style={{ background: "rgba(212,160,23,0.2)", color: "var(--color-gold-light)", border: "1px solid rgba(212,160,23,0.3)" }}
+                    style={{ background: "rgba(217,119,6,0.2)", color: "var(--color-gold-light)", border: "1px solid rgba(217,119,6,0.3)" }}
                   >
                     <Crown className="h-2.5 w-2.5" />Admin
                   </motion.span>
@@ -126,7 +126,7 @@ export default function SettingsContent() {
           <motion.div whileHover={{ y: -3 }} className="bento bento-light p-6 w-full h-full">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(13,59,46,0.06)" }}>
+                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(26,26,26,0.06)" }}>
                   <Shield className="h-4 w-4" style={{ color: "var(--color-forest)" }} />
                 </div>
                 <p className="text-caption">Consent History</p>
@@ -138,7 +138,7 @@ export default function SettingsContent() {
                   onClick={handleRevoke}
                   disabled={revoking}
                   className="text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium"
-                  style={{ color: "var(--color-clay)", border: "1px solid rgba(198,93,58,0.2)" }}
+                  style={{ color: "var(--color-clay)", border: "1px solid rgba(185,28,28,0.2)" }}
                 >
                   <ShieldX className="h-3 w-3" />{revoking ? "..." : "Revoke"}
                 </motion.button>
@@ -160,7 +160,7 @@ export default function SettingsContent() {
                     <div>
                       <span style={{ color: "var(--color-ink-soft)" }}>{c.consent_type.replace(/_/g, " ")}</span>
                       {c.revoked_at && (
-                        <span className="ml-2 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: "rgba(198,93,58,0.1)", color: "var(--color-clay)" }}>Revoked</span>
+                        <span className="ml-2 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: "rgba(185,28,28,0.1)", color: "var(--color-clay)" }}>Revoked</span>
                       )}
                     </div>
                     <span className="text-xs font-mono" style={{ color: "var(--color-ink-muted)" }}>{formatDateTime(c.accepted_at)}</span>
@@ -174,7 +174,7 @@ export default function SettingsContent() {
         <Reveal delay={0.15}>
           <motion.div whileHover={{ y: -3 }} className="bento bento-light p-6 w-full h-full">
             <div className="flex items-center gap-2 mb-4">
-              <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(13,59,46,0.06)" }}>
+              <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(26,26,26,0.06)" }}>
                 <ScrollText className="h-4 w-4" style={{ color: "var(--color-forest)" }} />
               </div>
               <p className="text-caption">Audit Log</p>
@@ -206,7 +206,7 @@ export default function SettingsContent() {
       <Reveal delay={0.2}>
         <motion.div whileHover={{ y: -3 }} className="bento bento-warm p-6" style={{ borderLeft: "3px solid var(--color-gold)" }}>
           <div className="flex items-center gap-2 mb-4">
-            <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(212,160,23,0.1)" }}>
+            <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(217,119,6,0.1)" }}>
               <Database className="h-4 w-4" style={{ color: "var(--color-gold)" }} />
             </div>
             <p className="text-caption">Data Controls</p>
@@ -226,7 +226,7 @@ export default function SettingsContent() {
               whileTap={{ scale: 0.97 }}
               onClick={async () => { await logout(); navigate("dashboard"); }}
               className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-1.5"
-              style={{ background: "rgba(198,93,58,0.08)", color: "var(--color-clay)", border: "1px solid rgba(198,93,58,0.2)" }}
+              style={{ background: "rgba(185,28,28,0.08)", color: "var(--color-clay)", border: "1px solid rgba(185,28,28,0.2)" }}
             >
               <LogOut className="h-3.5 w-3.5" />Logout
             </motion.button>
