@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Send, MessageSquare, Sparkles, Loader2, Bot, User } from "lucide-react";
+import { EmptyState, IllusChat } from "@/components/empty-state";
 
 interface Msg { role: "user" | "ai"; text: string; ts: number; }
 
@@ -81,29 +82,12 @@ export default function AssistantContent() {
         {/* Messages */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {messages.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-center py-12"
-            >
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4 relative"
-                style={{ background: "linear-gradient(135deg, rgba(13,59,46,0.08), rgba(212,160,23,0.08))" }}
-              >
-                <MessageSquare className="h-7 w-7" style={{ color: "var(--color-forest)" }} />
-                <motion.div
-                  className="absolute -inset-1 rounded-2xl"
-                  style={{ background: "radial-gradient(circle, rgba(212,160,23,0.3), transparent 70%)" }}
-                  animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                />
-              </motion.div>
-              <p className="text-sm font-medium" style={{ color: "var(--color-ink)" }}>Ask me anything about your finances</p>
-              <p className="text-xs mt-1" style={{ color: "var(--color-ink-muted)" }}>I answer only from your verified data.</p>
-            </motion.div>
+            <EmptyState
+              illustration={<IllusChat />}
+              personalization="AI-Powered"
+              title="Ask me anything about your finances"
+              description="I know your tax score, spending patterns, and goals. Try: 'How can I save more tax?' or 'What documents am I missing?'"
+            />
           )}
 
           <AnimatePresence>

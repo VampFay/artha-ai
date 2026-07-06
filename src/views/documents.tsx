@@ -5,6 +5,7 @@ import { useNav } from "@/lib/nav-context";
 import { formatDate, formatBytes } from "@/lib/format";
 import { UploadCloud, FileText, Trash2, Loader2, ArrowRight, CheckCircle2, AlertCircle } from "lucide-react";
 import { Reveal } from "@/components/motion/reveal";
+import { EmptyState, IllusDocuments } from "@/components/empty-state";
 const { useToast } = require("@/hooks/use-toast");
 
 const DOC_TYPES = [
@@ -178,22 +179,13 @@ export default function DocumentsContent() {
           </div>
 
           {docs.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center py-12"
-            >
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                className="h-14 w-14 rounded-2xl flex items-center justify-center mx-auto mb-3"
-                style={{ background: "rgba(13,59,46,0.06)" }}
-              >
-                <FileText className="h-7 w-7" style={{ color: "var(--color-ink-muted)" }} />
-              </motion.div>
-              <p className="text-sm font-medium" style={{ color: "var(--color-ink-soft)" }}>No documents yet</p>
-              <p className="text-xs mt-1" style={{ color: "var(--color-ink-muted)" }}>Upload your first document to get started.</p>
-            </motion.div>
+            <EmptyState
+              illustration={<IllusDocuments />}
+              personalization="Let's get started"
+              title="No documents yet"
+              description="Upload your salary slip, Form 16, or bank statement. Our AI extracts the fields automatically — you'll see your tax score in 60 seconds."
+              action={{ label: "Choose a file", onClick: () => fileRef.current?.click(), icon: <UploadCloud className="h-4 w-4" /> }}
+            />
           ) : (
             <div className="space-y-2">
               {docs.map((d, i) => (

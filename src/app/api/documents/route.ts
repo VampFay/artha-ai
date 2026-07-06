@@ -70,6 +70,43 @@ export async function POST(req: NextRequest) {
         extractedText = result?.text || (typeof result === "string" ? result : "") || "";
       }
 
+      // === BANK STATEMENT PARSING (CSV/XLSX) ===
+      if (ext === ".csv" || ext === ".xlsx") {
+        const { parseBankStatement, summarizeTransactions } = await import("@/lib/parsers/bank-statement");
+        const result = parseBankStatement(buffer, file.name);
+        if (result.transactions.length > 0) {
+          detectedType = "bank_statement";
+          confidence = 0.95;
+          extractedText = `Bank: ${result.sourceFormat.toUpperCase()}\nTransactions: ${result.transactionCount}\nTotal Credits: ${result.totals.credits}\nTotal Debits: ${result.totals.debits}\nNet: ${result.totals.net}\n\nTop categories:\n${Object.entries(result.transactions.reduce((acc: any, t: any) => { acc[t.category] = (acc[t.category] || 0) + t.amount; return acc; }, {})).sort((a: any, b: any) => b[1] - a[1]).slice(0, 10).map(([k, v]: any) => `  ${k}: ₹${v.toFixed(0)}`).join("\n")}`;
+
+          // Create extracted fields from bank statement summary
+          const summary = summarizeTransactions(result.transactions, result.sourceFormat);
+          const bankFields = [
+            { name: "bank_name", value: result.sourceFormat.toUpperCase(), confidence: 0.95, snippet: `Detected from headers` },
+            { name: "transaction_count", value: String(result.transactionCount), confidence: 1.0, snippet: `${result.transactionCount} rows parsed` },
+            { name: "total_credits", value: String(Math.round(summary.totals.credits)), confidence: 0.95, snippet: `Sum of all credit transactions` },
+            { name: "total_debits", value: String(Math.round(summary.totals.debits)), confidence: 0.95, snippet: `Sum of all debit transactions` },
+            { name: "net_cash_flow", value: String(Math.round(summary.totals.net)), confidence: 0.95, snippet: `Credits minus debits` },
+            { name: "month_detected", value: summary.monthDetected || "unknown", confidence: 0.85, snippet: `From first transaction date` },
+          ];
+          if (bankFields.length > 0) {
+            await db.$transaction(
+              bankFields.map((f) =>
+                db.extractedField.create({ data: { documentId: doc.id, fieldName: f.name, fieldValue: f.value, confidenceScore: f.confidence, sourceSnippet: f.snippet } })
+              )
+            );
+          }
+          // Mark as extracted with high confidence
+          await db.document.update({ where: { id: doc.id }, data: { processingStatus: "extracted", detectedDocType: detectedType, confidenceScore: confidence, rawText: extractedText.slice(0, 10000) } });
+          await db.auditLog.create({ data: { userId: payload.sub, action: "bank_statement_parsed", details: JSON.stringify({ document_id: doc.id, transaction_count: result.transactionCount, bank: result.sourceFormat }) } });
+
+          return NextResponse.json({ id: doc.id, document_type: doc.documentType, file_name: doc.fileName, file_size_bytes: doc.fileSizeBytes, mime_type: doc.mimeType, processing_status: "extracted", confidence_score: confidence, detected_doc_type: detectedType, created_at: doc.createdAt, updated_at: doc.updatedAt, transaction_count: result.transactionCount, totals: result.totals, source_format: result.sourceFormat }, { status: 201 });
+        } else {
+          confidence = 0.40;
+          extractedText = "Could not parse bank statement — unknown format or empty file.";
+        }
+      }
+
       if (extractedText.length > 20) {
         const lowerText = extractedText.toLowerCase();
         if (lowerText.includes("form 16") || lowerText.includes("part a") || lowerText.includes("part b")) { detectedType = "form16"; confidence = 0.92; }

@@ -9,6 +9,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { LiquidProgress } from "@/components/motion/liquid-progress";
 import { Sparkline } from "@/components/motion/sparkline";
 import { Plus, Target, Trash2, TrendingUp, Calendar, IndianRupee, X } from "lucide-react";
+import { EmptyState, IllusGoals } from "@/components/empty-state";
 const { useToast } = require("@/hooks/use-toast");
 
 export default function GoalsContent() {
@@ -139,25 +140,14 @@ export default function GoalsContent() {
             animate={{ scale: 1, opacity: 1 }}
             className="bento bento-light p-16 text-center"
           >
-            <motion.div
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-              className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: "linear-gradient(135deg, rgba(13,59,46,0.08), rgba(212,160,23,0.08))" }}
-            >
-              <Target className="h-7 w-7" style={{ color: "var(--color-forest)" }} />
-            </motion.div>
-            <p className="text-lg font-semibold" style={{ color: "var(--color-ink)" }}>No goals yet</p>
-            <p className="text-sm mt-1 mb-4" style={{ color: "var(--color-ink-muted)" }}>Create a goal to start planning your financial future.</p>
-            <motion.button
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setShowForm(true)}
-              className="h-10 px-5 rounded-xl text-sm font-semibold"
-              style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)" }}
-            >
-              Create your first goal
-            </motion.button>
+            <EmptyState
+              illustration={<IllusGoals />}
+              personalization="Let's plan ahead"
+              title="You haven't set a goal yet"
+              description="Most users start with an Emergency Fund — 3-6 months of expenses saved. Want to try? It takes 30 seconds."
+              action={{ label: "Create Emergency Fund", onClick: () => { setForm({ goal_name: "Emergency Fund", target_amount: "300000", monthly_contribution: "15000", target_date: "" }); setShowForm(true); } }}
+              secondary={{ label: "Custom goal", onClick: () => setShowForm(true) }}
+            />
           </motion.div>
         </Reveal>
       ) : (
