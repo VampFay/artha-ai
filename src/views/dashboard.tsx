@@ -1,29 +1,24 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tax, finance } from "@/lib/api";
 import { useNav } from "@/lib/nav-context";
 import { formatINR, formatPercent } from "@/lib/format";
 import type { TaxSummary, FinanceSummary } from "@/lib/api";
-import { TrendingUp, TrendingDown, FileWarning, Target, Calculator, Wallet, ArrowRight } from "lucide-react";
+import { TrendingUp, TrendingDown, FileWarning, ArrowRight } from "lucide-react";
 
 export default function DashboardContent() {
   const [taxData, setTaxData] = useState<TaxSummary | null>(null);
   const [financeData, setFinanceData] = useState<FinanceSummary | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const { navigate } = useNav();
 
   useEffect(() => {
     Promise.all([tax.summary().catch(() => null), finance.summary(300000).catch(() => null)])
       .then(([t, f]) => { setTaxData(t); setFinanceData(f); })
-      .catch(() => setError("Failed to load dashboard"))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <DashboardSkeleton />;
-  if (error) return <Alert variant="destructive"><AlertDescription>{error}</AlertDescription></Alert>;
 
   const taxScore = taxData?.score.score ?? 0;
   const finScore = financeData?.score ?? 0;
@@ -35,73 +30,102 @@ export default function DashboardContent() {
   const savingsAmount = taxData?.regime_comparison.savings_amount ?? 0;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 animate-fade-in">
+      {/* Page header */}
       <div className="animate-slide-up">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
-        <p className="text-sm text-slate-400 mt-0.5">Your financial overview at a glance.</p>
+        <p className="text-caption mb-1">Overview</p>
+        <h1 className="text-heading">Dashboard</h1>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[minmax(0,1fr)]">
-        <button onClick={() => navigate("tax")} className="md:col-span-2 md:row-span-2 animate-slide-up stagger-1 text-left">
-          <div className="glass rounded-2xl p-6 card-hover h-full relative overflow-hidden">
-            <div className="absolute top-0 left-0 h-1 bg-emerald-500" style={{ width: `${taxScore}%`, transition: "width 800ms cubic-bezier(0.16,1,0.3,1)" }} />
+
+      {/* Hero score card */}
+      <button onClick={() => navigate("tax")} className="block w-full text-left animate-slide-up stagger-1">
+        <div className="card-featured p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 rounded-full opacity-5" style={{ background: "var(--color-gold)" }} />
+          <div className="flex items-start justify-between mb-6">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-wider opacity-60 mb-1">Tax Readiness Score</p>
+              <div className="flex items-baseline gap-2">
+                <span className="text-display font-mono">{taxScore}</span>
+                <span className="text-lg opacity-50">/100</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[11px] font-semibold uppercase tracking-wider opacity-60 mb-1">You Save</p>
+              <p className="text-2xl font-mono font-semibold" style={{ color: "var(--color-gold-light)" }}>{formatINR(savingsAmount)}</p>
+              <p className="text-xs opacity-60 mt-0.5">with {recommended} regime</p>
+            </div>
+          </div>
+          {/* Progress bar */}
+          <div className="h-1 rounded-full overflow-hidden mb-4" style={{ background: "rgba(250,247,242,0.1)" }}>
+            <div className="h-full rounded-full transition-all duration-1000" style={{ width: `${taxScore}%`, background: "var(--color-gold)" }} />
+          </div>
+          {missing > 0 && (
+            <div className="flex items-center gap-2 text-sm opacity-80">
+              <FileWarning className="h-4 w-4" style={{ color: "var(--color-gold-light)" }} />
+              {missing} document{missing > 1 ? "s" : ""} missing — upload to improve score
+            </div>
+          )}
+        </div>
+      </button>
+
+      {/* Metric grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <MetricCard label="Health Score" value={`${finScore}`} suffix="/100" delay="stagger-2" onClick={() => navigate("finance")} color={finScore >= 70 ? "var(--color-forest)" : "var(--color-clay)"} />
+        <MetricCard label="Monthly Income" value={formatINR(income)} delay="stagger-3" onClick={() => navigate("finance")} />
+        <MetricCard label="Monthly Expenses" value={formatINR(expenses)} delay="stagger-4" onClick={() => navigate("finance")} />
+        <MetricCard label="Savings Rate" value={formatPercent(savings)} delay="stagger-5" onClick={() => navigate("finance")} color="var(--color-forest)" />
+      </div>
+
+      {/* Insights row */}
+      <div className="grid md:grid-cols-2 gap-4 animate-slide-up stagger-6">
+        {/* Top suggestion */}
+        {financeData?.suggestions?.[0] && (
+          <div className="card p-6">
             <div className="flex items-center gap-2 mb-3">
-              <div className="h-8 w-8 rounded-lg bg-emerald-50 flex items-center justify-center"><Calculator className="h-4 w-4 text-emerald-600" /></div>
-              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Tax Readiness</span>
+              <div className="dot" style={{ background: "var(--color-gold)" }} />
+              <p className="text-caption">Top Insight</p>
             </div>
-            <div className={`text-6xl font-bold tracking-tight animate-count ${taxScore >= 70 ? "text-emerald-600" : "text-amber-500"}`}>{taxScore}<span className="text-2xl text-slate-300">/100</span></div>
-            <div className="mt-4 flex items-center gap-4">
-              <div><p className="text-xs text-slate-400">Recommended Regime</p><p className="text-lg font-semibold text-emerald-600 capitalize">{recommended}</p></div>
-              <div><p className="text-xs text-slate-400">You Save</p><p className="text-lg font-semibold text-slate-900">{formatINR(savingsAmount)}</p></div>
-            </div>
-            {missing > 0 && <div className="mt-4 flex items-center gap-2 text-sm text-amber-600"><FileWarning className="h-4 w-4" />{missing} document{missing > 1 ? "s" : ""} missing</div>}
+            <p className="text-body leading-relaxed" style={{ color: "var(--color-ink-soft)" }}>{financeData.suggestions[0]}</p>
           </div>
-        </button>
-        <button onClick={() => navigate("finance")} className="animate-slide-up stagger-2 text-left">
-          <div className="glass rounded-2xl p-5 card-hover h-full">
-            <div className="flex items-center gap-2 mb-2"><div className="h-7 w-7 rounded-lg bg-sky-50 flex items-center justify-center"><TrendingUp className="h-3.5 w-3.5 text-sky-600" /></div><span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Health Score</span></div>
-            <div className={`text-4xl font-bold tracking-tight animate-count ${finScore >= 70 ? "text-emerald-600" : "text-amber-500"}`}>{finScore}<span className="text-lg text-slate-300">/100</span></div>
-            <p className="text-xs text-slate-400 mt-1">{financeData ? new Date(financeData.month).toLocaleDateString("en-IN", { month: "long", year: "numeric" }) : ""}</p>
-          </div>
-        </button>
-        <div className="animate-slide-up stagger-3">
-          <div className="glass rounded-2xl p-5 card-hover h-full">
-            <div className="flex items-center gap-2 mb-2"><div className="h-7 w-7 rounded-lg bg-violet-50 flex items-center justify-center"><Wallet className="h-3.5 w-3.5 text-violet-600" /></div><span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Savings Rate</span></div>
-            <div className="text-4xl font-bold tracking-tight text-slate-900 animate-count">{formatPercent(savings)}</div>
-            <p className="text-xs text-slate-400 mt-1">Income saved this month</p>
+        )}
+        {/* Quick actions */}
+        <div className="card p-6">
+          <p className="text-caption mb-4">Quick Actions</p>
+          <div className="space-y-2">
+            {[
+              { label: "Upload Document", page: "documents" as const },
+              { label: "View Tax Breakdown", page: "tax" as const },
+              { label: "Create Financial Goal", page: "goals" as const },
+            ].map((a) => (
+              <button key={a.label} onClick={() => navigate(a.page)} className="w-full flex items-center justify-between py-2.5 px-3 rounded-lg transition-colors text-sm font-medium"
+                style={{ color: "var(--color-ink-soft)" }}
+                onMouseEnter={(e) => e.currentTarget.style.background = "var(--color-cream-dark)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+                {a.label}<ArrowRight className="h-3.5 w-3.5" style={{ color: "var(--color-ink-muted)" }} />
+              </button>
+            ))}
           </div>
         </div>
-        <button onClick={() => navigate("finance")} className="animate-slide-up stagger-4 text-left">
-          <div className="glass rounded-2xl p-5 card-hover h-full">
-            <div className="flex items-center justify-between mb-2"><span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Monthly Income</span><TrendingUp className="h-4 w-4 text-emerald-500" /></div>
-            <div className="text-3xl font-bold text-slate-900">{formatINR(income)}</div>
-            <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-emerald-500 rounded-full" style={{ width: "100%", transition: "width 800ms" }} /></div>
-          </div>
-        </button>
-        <button onClick={() => navigate("finance")} className="animate-slide-up stagger-5 text-left">
-          <div className="glass rounded-2xl p-5 card-hover h-full">
-            <div className="flex items-center justify-between mb-2"><span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Monthly Expenses</span><TrendingDown className="h-4 w-4 text-amber-500" /></div>
-            <div className="text-3xl font-bold text-slate-900">{formatINR(expenses)}</div>
-            <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-amber-500 rounded-full" style={{ width: `${income > 0 ? (expenses / income) * 100 : 0}%`, transition: "width 800ms" }} /></div>
-          </div>
-        </button>
-        <button onClick={() => navigate("goals")} className="animate-slide-up stagger-6 text-left">
-          <div className="glass rounded-2xl p-5 card-hover h-full flex items-center gap-4">
-            <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center"><Target className="h-5 w-5 text-emerald-600" /></div>
-            <div className="flex-1"><span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Goals</span><p className="text-sm font-medium text-slate-900">Emergency Fund</p></div>
-            <ArrowRight className="h-4 w-4 text-slate-300" />
-          </div>
-        </button>
       </div>
-      {financeData?.suggestions?.[0] && (
-        <div className="glass rounded-2xl p-5 animate-slide-up stagger-6 border-l-4 border-emerald-400">
-          <span className="text-xs font-medium text-emerald-600 uppercase tracking-wider">Top Suggestion</span>
-          <p className="text-sm text-slate-700 mt-1.5 leading-relaxed">{financeData.suggestions[0]}</p>
-        </div>
-      )}
     </div>
   );
 }
 
+function MetricCard({ label, value, suffix, delay, onClick, color }: { label: string; value: string; suffix?: string; delay: string; onClick: () => void; color?: string }) {
+  return (
+    <button onClick={onClick} className={`card p-5 text-left animate-slide-up ${delay} transition-all duration-300 hover:shadow-md`}>
+      <p className="text-label mb-2">{label}</p>
+      <p className="text-xl font-mono font-semibold animate-count" style={{ color: color || "var(--color-ink)" }}>{value}<span className="text-sm font-normal" style={{ color: "var(--color-ink-muted)" }}>{suffix}</span></p>
+    </button>
+  );
+}
+
 function DashboardSkeleton() {
-  return <div className="space-y-4"><div className="skeleton h-8 w-48" /><div className="grid grid-cols-1 md:grid-cols-3 gap-4"><div className="md:col-span-2 md:row-span-2 skeleton h-64" /><div className="skeleton h-32" /><div className="skeleton h-32" /><div className="skeleton h-32" /><div className="skeleton h-32" /><div className="skeleton h-32" /></div></div>;
+  return (
+    <div className="space-y-6">
+      <div className="skeleton h-6 w-24" />
+      <div className="skeleton h-48 w-full rounded-xl" />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton h-24 rounded-lg" />)}</div>
+    </div>
+  );
 }
