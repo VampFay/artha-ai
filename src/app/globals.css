@@ -1,12 +1,7 @@
 @import "tailwindcss";
 
-@import "@fontsource-variable/inter";
-@import "@fontsource/jetbrains-mono/400.css";
-@import "@fontsource/jetbrains-mono/500.css";
-@import "@fontsource/jetbrains-mono/600.css";
-
 @theme {
-  /* Forest + Cream palette */
+  /* Forest + Cream */
   --color-cream: #faf7f2;
   --color-cream-dark: #f3ede3;
   --color-forest: #0d3b2e;
@@ -23,110 +18,70 @@
   --color-line-soft: #f0ebe0;
   --color-surface: #ffffff;
   --color-surface-warm: #fdfcfa;
-
-  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-* {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+* { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { background: var(--color-cream); color: var(--color-ink); font-family: var(--font-sans); font-feature-settings: "cv11","ss01"; text-rendering: optimizeLegibility; }
 
-body {
-  background: var(--color-cream);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
-  font-feature-settings: "cv11", "ss01", "ss03";
-  text-rendering: optimizeLegibility;
-}
+/* ========== LIQUID SMOOTH ANIMATIONS ========== */
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.94) } to { opacity: 1; transform: scale(1) } }
+@keyframes countUp { 0% { opacity: 0; transform: translateY(10px) } 100% { opacity: 1; transform: translateY(0) } }
+@keyframes drawChart { from { transform: scaleY(0); opacity: 0 } to { transform: scaleY(1); opacity: 1 } }
+@keyframes shimmer { 0% { background-position: -1000px 0 } 100% { background-position: 1000px 0 } }
+@keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.5 } }
+@keyframes floatY { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
+@keyframes glowPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(13,59,46,0) } 50% { box-shadow: 0 0 24px 4px rgba(13,59,46,0.06) } }
+@keyframes barRise { from { height: 0 } }
+@keyframes ringFill { from { stroke-dashoffset: 283 } }
 
-/* ========== ANIMATIONS — Liquid Smooth ========== */
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-@keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
-@keyframes countUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-@keyframes drawLine { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-@keyframes barGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.animate-fade-in { animation: fadeIn 500ms cubic-bezier(0.22,1,0.36,1) both; }
+.animate-slide-up { animation: slideUp 600ms cubic-bezier(0.22,1,0.36,1) both; }
+.animate-scale-in { animation: scaleIn 400ms cubic-bezier(0.22,1,0.36,1) both; }
+.animate-count { animation: countUp 700ms cubic-bezier(0.22,1,0.36,1) both; }
+.animate-glow { animation: glowPulse 4s ease-in-out infinite; }
+.animate-float { animation: floatY 3s ease-in-out infinite; }
+.skeleton { background: linear-gradient(90deg, var(--color-line) 0%, var(--color-line-soft) 50%, var(--color-line) 100%); background-size: 1000px 100%; animation: shimmer 2s infinite linear; border-radius: 8px; }
+.stagger-1 { animation-delay: 50ms } .stagger-2 { animation-delay: 100ms } .stagger-3 { animation-delay: 150ms } .stagger-4 { animation-delay: 200ms } .stagger-5 { animation-delay: 250ms } .stagger-6 { animation-delay: 300ms } .stagger-7 { animation-delay: 350ms }
 
-.animate-fade-in { animation: fadeIn 400ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.animate-slide-up { animation: slideUp 500ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.animate-slide-down { animation: slideDown 300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.animate-scale-in { animation: scaleIn 300ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-.animate-count { animation: countUp 600ms cubic-bezier(0.22, 1, 0.36, 1) both; }
-
-.skeleton {
-  background: linear-gradient(90deg, var(--color-line) 0%, var(--color-line-soft) 50%, var(--color-line) 100%);
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite linear;
-  border-radius: 4px;
-}
-
-.stagger-1 { animation-delay: 60ms; }
-.stagger-2 { animation-delay: 120ms; }
-.stagger-3 { animation-delay: 180ms; }
-.stagger-4 { animation-delay: 240ms; }
-.stagger-5 { animation-delay: 300ms; }
-.stagger-6 { animation-delay: 360ms; }
-
-/* ========== CARD STYLES — Editorial ========== */
-.card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: 12px;
-  transition: box-shadow 300ms cubic-bezier(0.22, 1, 0.36, 1), border-color 300ms ease;
-}
-.card:hover {
-  box-shadow: 0 4px 24px -8px rgba(13, 59, 46, 0.08);
-  border-color: var(--color-line);
-}
-.card-featured {
-  background: var(--color-forest);
-  color: var(--color-cream);
-  border: none;
-  border-radius: 16px;
-}
-.card-warm {
-  background: var(--color-surface-warm);
-  border: 1px solid var(--color-line-soft);
-  border-radius: 12px;
-}
+/* ========== BENTO CARDS ========== */
+.bento { border-radius: 16px; transition: transform 300ms cubic-bezier(0.22,1,0.36,1), box-shadow 300ms cubic-bezier(0.22,1,0.36,1); overflow: hidden; }
+.bento-light { background: var(--color-surface); border: 1px solid var(--color-line); }
+.bento-light:hover { transform: translateY(-3px); box-shadow: 0 12px 32px -10px rgba(13,59,46,0.1); }
+.bento-dark { background: var(--color-forest); color: var(--color-cream); border: none; }
+.bento-dark:hover { transform: translateY(-3px); box-shadow: 0 16px 40px -12px rgba(13,59,46,0.25); }
+.bento-gold { background: linear-gradient(135deg, var(--color-gold) 0%, #b88810 100%); color: var(--color-cream); border: none; }
+.bento-gold:hover { transform: translateY(-3px); box-shadow: 0 12px 32px -10px rgba(212,160,23,0.3); }
+.bento-warm { background: var(--color-surface-warm); border: 1px solid var(--color-line-soft); }
+.bento-warm:hover { transform: translateY(-3px); box-shadow: 0 8px 24px -8px rgba(13,59,46,0.06); }
 
 /* ========== TYPOGRAPHY ========== */
 .font-mono { font-family: var(--font-mono); font-feature-settings: "tnum"; }
-.text-display { font-size: 3rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.text-display { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
 .text-heading { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.3; }
 .text-body { font-size: 0.875rem; font-weight: 400; line-height: 1.6; }
-.text-caption { font-size: 0.75rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-ink-muted); }
-.text-label { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-ink-muted); }
+.text-caption { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-muted); }
+.text-label { font-size: 0.625rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-ink-muted); }
 
 /* ========== INTERACTIONS ========== */
-button:active:not(:disabled) { transform: scale(0.98); transition: transform 100ms ease; }
+button:active:not(:disabled) { transform: scale(0.97); transition: transform 80ms ease; }
 input, select, textarea { transition: border-color 200ms ease, box-shadow 200ms ease; }
 
 /* ========== SCROLLBAR ========== */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 6px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-ink-muted); }
+::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 6px; } ::-webkit-scrollbar-thumb:hover { background: var(--color-ink-muted); }
 
 /* ========== FOCUS ========== */
 *:focus-visible { outline: 2px solid var(--color-forest); outline-offset: 2px; border-radius: 4px; }
 *:focus:not(:focus-visible) { outline: none; }
-
-/* ========== SELECTION ========== */
-::selection { background: rgba(13, 59, 46, 0.12); }
+::selection { background: rgba(13,59,46,0.12); }
 
 /* ========== REDUCED MOTION ========== */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
 
 /* ========== UTILITIES ========== */
-.divider { height: 1px; background: var(--color-line); }
-.divider-soft { height: 1px; background: var(--color-line-soft); }
-.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-.dot-live { animation: pulse 2s ease-in-out infinite; }
+.divider { height: 1px; background: var(--color-line); } .divider-soft { height: 1px; background: var(--color-line-soft); }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; } .dot-live { animation: pulse 2s ease-in-out infinite; }
+.gradient-overlay { background: linear-gradient(180deg, transparent 0%, rgba(13,59,46,0.03) 100%); }
