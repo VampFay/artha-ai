@@ -3,8 +3,9 @@ import { ReactNode, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "@/lib/auth-context";
 import { useNav } from "@/lib/nav-context";
-import { AuroraBackground } from "@/components/motion/aurora-background";
+import { GradientMesh } from "@/components/motion/gradient-mesh";
 import { PageTransition } from "@/components/motion/page-transition";
+import { CursorSpotlight } from "@/components/motion/cursor-spotlight";
 import { LayoutDashboard, FileText, Calculator, TrendingUp, Target, MessageSquare, Download, Settings, LogOut, Loader2 } from "lucide-react";
 
 const navItems = [
@@ -28,8 +29,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => { setMobileOpen(false); }, [page]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center relative" style={{ background: "var(--color-cream)" }}>
-      <AuroraBackground />
+    <div className="min-h-screen flex items-center justify-center relative">
+      <GradientMesh />
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -58,13 +59,14 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen relative">
-      <AuroraBackground />
+      <GradientMesh />
 
       <div className="relative z-10 min-h-screen flex">
         {/* Sidebar — desktop */}
         <aside className="hidden md:flex w-56 fixed inset-y-0 left-0 z-40 flex-col p-4">
+          <CursorSpotlight className="flex-1 rounded-3xl flex flex-col h-full" radius={220} color="rgba(212,160,23,0.08)">
           <div
-            className="flex-1 rounded-3xl flex flex-col"
+            className="flex-1 rounded-3xl flex flex-col h-full"
             style={{
               background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(253,252,250,0.75) 100%)",
               backdropFilter: "blur(24px) saturate(140%)",
@@ -159,6 +161,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               </motion.button>
             </div>
           </div>
+          </CursorSpotlight>
         </aside>
 
         {/* Mobile top bar */}
