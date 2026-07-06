@@ -16,22 +16,37 @@ export default function AssistantView() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  const handleSend = (text: string) => {
-    if (!text.trim()) return;
+  const handleSend = async (text: string) => {
+    if (!text.trim() || isTyping) return;
     const newMsg: Message = { id: Date.now().toString(), text, sender: 'user' };
     setMessages(prev => [...prev, newMsg]);
     setInput('');
     setIsTyping(true);
 
-    setTimeout(() => {
-      const aiResponse: Message = { 
-        id: (Date.now() + 1).toString(), 
-        text: `Based on your recent uploads, you can save an additional ₹15,000 in taxes under the Old Regime if you declare your Life Insurance premium (80C). Would you like me to update your tax projection?`, 
-        sender: 'ai' 
+    try {
+      const token = localStorage.getItem("finsight_token");
+      const res = await fetch("/api/assistant/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ question: text }),
+      });
+      const data = await res.json();
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: data.answer || data.reply || "I couldn't process that. Please try again.",
+        sender: 'ai',
       };
       setMessages(prev => [...prev, aiResponse]);
+    } catch {
+      const aiResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Connection error. Please try again.",
+        sender: 'ai',
+      };
+      setMessages(prev => [...prev, aiResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+    }
   };
 
   const SUGGESTIONS = [

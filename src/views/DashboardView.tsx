@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ViewState } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -12,15 +12,44 @@ interface DashboardViewProps {
 
 export default function DashboardView({ onNavigate }: DashboardViewProps) {
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
+  const [data, setData] = useState<any>({});
 
-  const SPENDING_DATA = [
-    { label: 'JAN', h: '60%', value: '₹1.2L', category: 'Travel', color: 'bg-[#111]' },
-    { label: 'FEB', h: '40%', value: '₹85K', category: 'Shopping', color: 'bg-[#111]' },
-    { label: 'MAR', h: '85%', value: '₹1.8L', category: 'Lifestyle', color: 'bg-saffron' },
-    { label: 'APR', h: '30%', value: '₹65K', category: 'Groceries', color: 'bg-[#111]' },
-    { label: 'MAY', h: '55%', value: '₹1.1L', category: 'Utilities', color: 'bg-[#111]' },
-    { label: 'JUN', h: '70%', value: '₹1.4L', category: 'Rent', color: 'bg-stone-light/50' },
-  ];
+  useEffect(() => {
+    const token = localStorage.getItem("finsight_token");
+    if (!token) return;
+    Promise.all([
+      fetch("/api/portfolio/summary", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/cashflow/summary", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/cashflow/income-vs-expenses?months=6", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/tax/summary", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/oracle/insight", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/documents", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+    ]).then(([portfolio, cashflow, ie, tax, oracle, docs, estate]) => {
+      setData({ portfolio, cashflow, ie, tax, oracle, docs, estate });
+    });
+  }, []);
+
+  const netWorth = data.portfolio?.totalValue || 0;
+  const liquidAmount = data.cashflow?.liquidAmount || 0;
+  const lockedAmount = data.cashflow?.lockedAmount || 0;
+  const runwayMonths = data.cashflow?.runwayMonths || 0;
+  const totalAssets = liquidAmount + lockedAmount;
+  const liquidPct = totalAssets > 0 ? (liquidAmount / totalAssets) * 100 : 0;
+  const lockedPct = totalAssets > 0 ? (lockedAmount / totalAssets) * 100 : 0;
+  const taxScore = data.tax?.score?.score ?? 0;
+  const taxSavings = data.tax?.regime_comparison?.savings_amount ?? 0;
+  const oracleText = data.oracle?.text || "Upload documents to receive personalized AI insights.";
+  const docCount = data.docs?.items?.length || 0;
+  const estateAction = data.estate?.audit?.unassignedAssetsCount > 0;
+
+  const SPENDING_DATA = (data.ie?.items || []).map((d: any) => ({
+    label: d.month.toUpperCase(),
+    h: `${Math.max(10, (d.expense / Math.max(...(data.ie?.items || []).map((x: any) => x.expense), 1)) * 100)}%`,
+    value: `₹${(d.expense / 100000).toFixed(1)}L`,
+    category: d.expense > 100000 ? "High" : "Normal",
+    color: 'bg-[#111]',
+  }));
 
   return (
     <div className="flex flex-col min-h-full px-6 lg:px-12 pb-12 max-w-[1200px] mx-auto w-full">
@@ -48,8 +77,8 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             
             <div className="flex items-baseline gap-2">
               <span className="text-4xl lg:text-5xl font-serif text-white/50">₹</span>
-              <KineticNumber 
-                value={14250000} 
+              <KineticNumber
+                value={netWorth}
                 className="text-[4rem] lg:text-[5.5rem] font-serif tracking-tighter leading-none text-white"
               />
             </div>
@@ -69,27 +98,27 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             <div>
               <div className="flex justify-between text-xs mb-2">
                 <span className="font-bold text-stone uppercase tracking-wider">Liquid Assets</span>
-                <span className="font-mono text-carbon">₹42.5L</span>
+                <span className="font-mono text-carbon">₹{(liquidAmount / 100000).toFixed(1)}L</span>
               </div>
               <div className="w-full h-1.5 bg-carbon/5 rounded-full overflow-hidden">
-                <div className="h-full bg-saffron w-[30%]" />
+                <div className="h-full bg-saffron" style={{ width: `${liquidPct}%` }} />
               </div>
             </div>
-            
+
             <div>
               <div className="flex justify-between text-xs mb-2">
                 <span className="font-bold text-stone uppercase tracking-wider">Locked (PF/RE)</span>
-                <span className="font-mono text-carbon">₹1.0Cr</span>
+                <span className="font-mono text-carbon">₹{(lockedAmount / 10000000).toFixed(2)}Cr</span>
               </div>
               <div className="w-full h-1.5 bg-carbon/5 rounded-full overflow-hidden">
-                <div className="h-full bg-carbon w-[70%]" />
+                <div className="h-full bg-carbon" style={{ width: `${lockedPct}%` }} />
               </div>
             </div>
           </div>
 
           <div className="mt-8 pt-6 border-t border-carbon/10 flex items-center justify-between">
             <span className="text-[10px] font-bold tracking-widest text-stone uppercase">Runway</span>
-            <span className="font-serif italic text-carbon">14 Months</span>
+            <span className="font-serif italic text-carbon">{runwayMonths.toFixed(0)} Months</span>
           </div>
         </motion.div>
       </div>
@@ -115,11 +144,11 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
               </div>
               
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-serif text-carbon tracking-tight">84</span>
+                <span className="text-4xl font-serif text-carbon tracking-tight"><KineticNumber value={taxScore} /></span>
                 <span className="text-xl text-stone-dark font-serif italic">/100</span>
               </div>
               <p className="text-xs text-stone leading-relaxed">
-                Potential savings of <span className="font-bold text-carbon">₹42,800</span> found.
+                Potential savings of <span className="font-bold text-carbon">₹{taxSavings.toLocaleString("en-IN")}</span> found.
               </p>
             </motion.div>
 
@@ -161,7 +190,9 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             </div>
             
             <div className="flex gap-2 items-end h-32 mt-6">
-              {SPENDING_DATA.map((bar, i) => (
+              {SPENDING_DATA.length === 0 ? (
+                <div className="w-full text-center text-xs text-stone py-8">No spending data yet. Upload a bank statement to see patterns.</div>
+              ) : SPENDING_DATA.map((bar, i) => (
                 <div 
                   key={i} 
                   className="flex-1 flex flex-col justify-end items-center gap-3 h-full cursor-pointer relative"
@@ -225,7 +256,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
                 </div>
                 
                 <p className="font-serif italic text-[22px] leading-[1.4] text-white mb-10">
-                  "Your savings rate dropped 4% this month. Re-allocating your ₹8,500 recurring subscriptions could bolster your Emergency Fund by 0.5 months."
+                  "{oracleText}"
                 </p>
               </div>
               
@@ -263,18 +294,18 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
                 <Wallet className="w-4 h-4" />
               </div>
               <h4 className="text-[10px] font-bold tracking-widest uppercase text-carbon mb-1">Vault</h4>
-              <p className="text-xs text-stone">2 new artifacts</p>
+              <p className="text-xs text-stone">{docCount} document{docCount !== 1 ? "s" : ""}</p>
             </div>
 
-            <div 
+            <div
               onClick={() => onNavigate('estate')}
               className="bg-canvas border border-carbon/10 p-6 rounded-2xl cursor-pointer hover:border-carbon/30 transition-colors group"
             >
-              <div className="w-8 h-8 rounded-full bg-red-500/10 text-red-600 flex items-center justify-center mb-4 group-hover:bg-red-600 group-hover:text-white transition-colors">
+              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center mb-4 transition-colors", estateAction ? "bg-red-500/10 text-red-600 group-hover:bg-red-600 group-hover:text-white" : "bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white")}>
                 <AlertCircle className="w-4 h-4" />
               </div>
               <h4 className="text-[10px] font-bold tracking-widest uppercase text-carbon mb-1">Estate</h4>
-              <p className="text-xs text-stone">Action required</p>
+              <p className="text-xs text-stone">{estateAction ? "Action required" : "All clear"}</p>
             </div>
           </motion.div>
           
