@@ -123,9 +123,8 @@ function LoginScreen() {
             style={{ background: "linear-gradient(155deg, #0d3b2e 0%, #062418 60%, #031711 100%)" }}
           />
           {/* Liquid morphing blobs */}
-          <motion.div className="absolute -top-32 -right-32 w-96 h-96 rounded-full" style={{ background: "radial-gradient(circle, rgba(212,160,23,0.25) 0%, transparent 60%)", filter: "blur(40px)" }} animate={{ x: [0, 60, 0], y: [0, 40, 0], scale: [1, 1.15, 1] }} transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }} />
-          <motion.div className="absolute -bottom-32 -left-20 w-80 h-80 rounded-full" style={{ background: "radial-gradient(circle, rgba(74,124,89,0.4) 0%, transparent 60%)", filter: "blur(50px)" }} animate={{ x: [0, -40, 0], y: [0, -30, 0], scale: [1, 1.2, 1] }} transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }} />
-          <motion.div className="absolute top-1/3 right-1/4 w-64 h-64 rounded-full" style={{ background: "radial-gradient(circle, rgba(232,193,74,0.15) 0%, transparent 60%)", filter: "blur(40px)" }} animate={{ x: [0, 30, 0], y: [0, -50, 0], scale: [1, 1.1, 1] }} transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }} />
+          {/* OPTIMIZED: Static radial gradients instead of 3 animated blur blobs */}
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(at 80% 20%, rgba(212,160,23,0.20) 0%, transparent 50%), radial-gradient(at 20% 80%, rgba(74,124,89,0.25) 0%, transparent 50%), radial-gradient(at 50% 50%, rgba(232,193,74,0.10) 0%, transparent 40%)" }} />
 
           {/* Dot grid overlay for tech feel */}
           <div className="absolute inset-0 dot-grid opacity-20" />

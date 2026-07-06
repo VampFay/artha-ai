@@ -8,8 +8,6 @@ import type { TaxSummary, FinanceSummary } from "@/lib/api";
 import { KineticNumber } from "@/components/motion/kinetic-number";
 import { FinancialPulseOrb } from "@/components/motion/financial-pulse-orb";
 import { Reveal } from "@/components/motion/reveal";
-import { TiltCard } from "@/components/motion/tilt-card";
-import { CursorSpotlight } from "@/components/motion/cursor-spotlight";
 import { Sparkline } from "@/components/motion/sparkline";
 import { LiquidProgress } from "@/components/motion/liquid-progress";
 import { GradientBars } from "@/components/motion/gradient-bars";
@@ -59,24 +57,14 @@ export default function DashboardContent() {
       <Reveal>
         <motion.div
           whileHover={{ y: -2 }}
-          className="bento bento-dark p-8 md:p-10 relative overflow-hidden grain"
+          className="bento bento-dark p-8 md:p-10 relative overflow-hidden"
           style={{ minHeight: "320px" }}
         >
-          {/* Animated mesh blobs */}
-          <motion.div
-            className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(212,160,23,0.25) 0%, transparent 60%)", filter: "blur(60px)" }}
-            animate={{ x: [0, 60, 0], y: [0, 40, 0], scale: [1, 1.15, 1] }}
-            transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+          {/* OPTIMIZED: Single static radial gradient instead of 2 animated blur blobs */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "radial-gradient(at 80% 20%, rgba(212,160,23,0.18) 0%, transparent 50%), radial-gradient(at 20% 80%, rgba(74,124,89,0.15) 0%, transparent 50%)" }}
           />
-          <motion.div
-            className="absolute -bottom-40 -left-40 w-[400px] h-[400px] rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(74,124,89,0.3) 0%, transparent 60%)", filter: "blur(60px)" }}
-            animate={{ x: [0, -40, 0], y: [0, -30, 0], scale: [1, 1.2, 1] }}
-            transition={{ duration: 22, repeat: Infinity, ease: "easeInOut" }}
-          />
-          {/* Dot grid overlay */}
-          <div className="absolute inset-0 dot-grid opacity-10" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
             {/* LEFT: Massive kinetic typography */}
@@ -99,7 +87,7 @@ export default function DashboardContent() {
                 className="flex items-baseline gap-4 mb-2"
               >
                 <span
-                  className="font-mono font-bold leading-none kinetic"
+                  className="font-mono font-bold leading-none"
                   style={{
                     fontSize: "clamp(5rem, 12vw, 9rem)",
                     background: "linear-gradient(135deg, #e8c14a 0%, #d4a017 50%, #b88810 100%)",
@@ -107,7 +95,6 @@ export default function DashboardContent() {
                     backgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     letterSpacing: "-0.06em",
-                    textShadow: "0 0 60px rgba(212,160,23,0.3)",
                   }}
                 >
                   <KineticNumber value={taxScore} duration={2000} />
@@ -183,12 +170,11 @@ export default function DashboardContent() {
 
         {/* Row 1: Income (5 cols) + Expenses (4 cols) + Savings Rate (3 cols) */}
         <Reveal delay={0.15} className="col-span-12 md:col-span-5">
-          <TiltCard maxTilt={4} className="bento bento-light p-6 h-full">
-            <CursorSpotlight className="h-full w-full" radius={260}>
+          <motion.div whileHover={{ y: -3 }} className="bento bento-light p-6 h-full">
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <p className="text-label mb-1">Monthly Income</p>
-                  <p className="text-3xl font-mono font-bold kinetic" style={{ color: "var(--color-ink)" }}>
+                  <p className="text-3xl font-mono font-bold" style={{ color: "var(--color-ink)" }}>
                     <KineticNumber value={income} format={(n) => formatINR(n)} />
                   </p>
                 </div>
@@ -205,16 +191,15 @@ export default function DashboardContent() {
               <div className="mt-3">
                 <Sparkline data={[80, 85, 82, 90, 95, 100]} width={240} height={36} color="#0d3b2e" />
               </div>
-            </CursorSpotlight>
-          </TiltCard>
+          </motion.div>
         </Reveal>
 
         <Reveal delay={0.2} className="col-span-12 md:col-span-4">
-          <TiltCard maxTilt={4} className="bento bento-warm p-6 h-full">
+          <motion.div whileHover={{ y: -3 }} className="bento bento-warm p-6 h-full">
             <div className="flex items-start justify-between mb-3">
               <div>
                 <p className="text-label mb-1">Monthly Expenses</p>
-                <p className="text-3xl font-mono font-bold kinetic" style={{ color: "var(--color-clay)" }}>
+                <p className="text-3xl font-mono font-bold" style={{ color: "var(--color-clay)" }}>
                   <KineticNumber value={expenses} format={(n) => formatINR(n)} />
                 </p>
               </div>
@@ -228,26 +213,25 @@ export default function DashboardContent() {
               </span>
               <span style={{ color: "var(--color-ink-muted)" }}>vs last month</span>
             </div>
-          </TiltCard>
+          </motion.div>
         </Reveal>
 
         <Reveal delay={0.25} className="col-span-12 md:col-span-3">
-          <TiltCard maxTilt={6} className="bento bento-gold p-6 h-full shine-sweep">
+          <motion.div whileHover={{ y: -3 }} className="bento bento-gold p-6 h-full">
             <p className="text-[10px] font-semibold uppercase tracking-wider opacity-70 mb-2">Savings Rate</p>
-            <p className="text-4xl font-mono font-bold kinetic">
+            <p className="text-4xl font-mono font-bold">
               <KineticNumber value={savings} format={(n) => formatPercent(n)} />
             </p>
             <div className="mt-3 h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(250,247,242,0.2)" }}>
               <LiquidProgress value={savings} height={6} color="rgba(250,247,242,0.95)" trackColor="transparent" duration={1400} showShimmer={false} />
             </div>
             <p className="text-[10px] opacity-70 mt-2 font-medium">Health: <span className="font-mono font-bold"><KineticNumber value={finScore} /></span>/100</p>
-          </TiltCard>
+          </motion.div>
         </Reveal>
 
         {/* Row 2: Top categories (7 cols, tall) + Quick Actions (5 cols) */}
         <Reveal delay={0.3} className="col-span-12 md:col-span-7 row-span-2">
-          <TiltCard maxTilt={3} className="bento bento-light p-6 h-full">
-            <CursorSpotlight className="h-full w-full" radius={300}>
+          <motion.div whileHover={{ y: -3 }} className="bento bento-light p-6 h-full">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <p className="text-label">Top Spending Categories</p>
@@ -270,12 +254,11 @@ export default function DashboardContent() {
                   formatLabel={(s) => s.charAt(0).toUpperCase() + s.slice(1)}
                 />
               )}
-            </CursorSpotlight>
-          </TiltCard>
+          </motion.div>
         </Reveal>
 
         <Reveal delay={0.35} className="col-span-12 md:col-span-5">
-          <TiltCard maxTilt={4} className="bento bento-dark p-6 h-full shine-sweep">
+          <motion.div whileHover={{ y: -3 }} className="bento bento-dark p-6 h-full">
             <p className="text-[10px] uppercase tracking-wider opacity-50 mb-3">Quick Actions</p>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -303,12 +286,12 @@ export default function DashboardContent() {
                 );
               })}
             </div>
-          </TiltCard>
+          </motion.div>
         </Reveal>
 
         <Reveal delay={0.4} className="col-span-12 md:col-span-5">
           <motion.div
-            whileHover={{ y: -4 }}
+            whileHover={{ y: -3 }}
             className="bento bento-warm p-6 h-full relative"
             style={{ borderLeft: "3px solid var(--color-gold)" }}
           >
@@ -330,8 +313,7 @@ export default function DashboardContent() {
 
         {/* Row 3: Score breakdown (full width) */}
         <Reveal delay={0.45} className="col-span-12">
-          <TiltCard maxTilt={2} className="bento bento-light p-6 h-full">
-            <CursorSpotlight className="h-full w-full" radius={400}>
+          <motion.div whileHover={{ y: -3 }} className="bento bento-light p-6 h-full">
               <div className="flex items-center justify-between mb-5">
                 <div>
                   <p className="text-label">Score Breakdown</p>
@@ -374,8 +356,7 @@ export default function DashboardContent() {
                   </motion.div>
                 ))}
               </div>
-            </CursorSpotlight>
-          </TiltCard>
+          </motion.div>
         </Reveal>
       </div>
     </div>
