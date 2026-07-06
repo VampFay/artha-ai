@@ -52,7 +52,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
   }));
 
   return (
-    <div className="flex flex-col min-h-full px-6 lg:px-12 pb-12 max-w-[1200px] mx-auto w-full">
+    <div className="flex flex-col px-6 lg:px-12 max-w-[1200px] mx-auto w-full">
       
       {/* Top Main Metrics Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -240,11 +240,11 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
         <div className="lg:col-span-5 flex flex-col gap-10">
           
           {/* Oracle Insight */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col h-full"
+            className="flex flex-col"
           >
             <div className="bg-[#111] rounded-3xl p-8 lg:p-10 flex-1 flex flex-col justify-between shadow-xl relative overflow-hidden">
               <div className="absolute top-0 right-0 w-64 h-64 bg-saffron/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />

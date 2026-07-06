@@ -27,7 +27,7 @@ export default function PortfolioView() {
   }, []);
 
   if (loading) return (
-    <div className="px-6 lg:px-12 py-20 max-w-[1200px] mx-auto">
+    <div className="px-6 lg:px-12 pt-8 max-w-[1200px] mx-auto">
       <div className="skeleton h-16 w-72 mb-8" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12"><div className="skeleton h-64" /><div className="skeleton h-64" /></div>
     </div>
@@ -39,8 +39,8 @@ export default function PortfolioView() {
   const irrPct = data?.irrPct || 0;
 
   return (
-    <div className="flex flex-col min-h-full px-6 lg:px-12 pb-12 max-w-[1200px] mx-auto w-full">
-      <div className="py-12 md:py-20 border-b border-carbon/10 mb-12">
+    <div className="flex flex-col px-6 lg:px-12 max-w-[1200px] mx-auto w-full">
+      <div className="pt-8 pb-6 border-b border-carbon/10 mb-12">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-4">
           <div className="w-1.5 h-1.5 rounded-full bg-saffron" />
           <span className="text-[10px] font-bold tracking-[0.2em] text-stone uppercase">Portfolio Overview</span>

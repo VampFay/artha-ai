@@ -43,8 +43,8 @@ export default function SettingsView({ user, onLogout }: SettingsViewProps) {
   };
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto">
-      <div className="px-8 py-8 lg:px-12 max-w-5xl mx-auto w-full pb-20">
+    <div className="flex flex-col">
+      <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10">
           <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Settings</h1>
           <p className="text-stone">Manage your profile, privacy, and data.</p>
