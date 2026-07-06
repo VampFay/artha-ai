@@ -1,44 +1,26 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { formatDateTime } from "@/lib/format";
 import { FileText, TrendingUp, Target, Download, Loader2, Check } from "lucide-react";
+const { useToast } = require("@/hooks/use-toast");
 export default function ReportsContent() {
   const [reports, setReports] = useState<{ id: string; report_type: string; generated_at: string }[]>([]);
   const [generating, setGenerating] = useState<string | null>(null);
   const { toast } = useToast();
-  const handleGenerate = async (type: string) => {
-    setGenerating(type);
-    try {
-      const res = await fetch(`/api/reports?type=${type}`, { headers: { Authorization: `Bearer ${localStorage.getItem("finsight_token")}` } });
-      if (!res.ok) { const d = await res.json(); throw new Error(d.detail || "Failed"); }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a"); a.href = url; a.download = `${type}_report.pdf`; a.click();
-      URL.revokeObjectURL(url);
-      toast({ title: "PDF report generated & downloaded!" });
-      setReports((r) => [{ id: `r_${Date.now()}`, report_type: type, generated_at: new Date().toISOString() }, ...r]);
-    } catch (e: any) { toast({ title: "Failed", description: e.message, variant: "destructive" }); }
-    finally { setGenerating(null); }
-  };
-  const reportTypes = [
-    { type: "tax_summary", icon: FileText, title: "CA-Ready Tax Summary", desc: "Income, deductions, regime comparison, missing docs." },
-    { type: "finance_health", icon: TrendingUp, title: "Financial Health Report", desc: "Score, metrics, top categories, suggestions." },
-    { type: "goal_simulation", icon: Target, title: "Goal Simulation Report", desc: "Goal details, projection, shortfall." },
-  ];
-  const lastGenerated = (type: string) => reports.find((r) => r.report_type === type);
+  const handleGenerate = async (type: string) => { setGenerating(type); try { const res = await fetch(`/api/reports?type=${type}`, { headers: { Authorization: `Bearer ${localStorage.getItem("finsight_token")}` } }); if (!res.ok) throw new Error(); const blob = await res.blob(); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `${type}_report.pdf`; a.click(); URL.revokeObjectURL(url); toast({ title: "PDF generated!" }); setReports(r => [{ id: `r_${Date.now()}`, report_type: type, generated_at: new Date().toISOString() }, ...r]); } catch { toast({ title: "Failed", variant: "destructive" }); } finally { setGenerating(null); } };
+  const types = [{ type: "tax_summary", icon: FileText, title: "Tax Summary", desc: "Income, deductions, regime comparison." }, { type: "finance_health", icon: TrendingUp, title: "Financial Health", desc: "Score, metrics, top categories." }, { type: "goal_simulation", icon: Target, title: "Goal Simulation", desc: "Projection, shortfall, scenarios." }];
+  const lastGen = (t: string) => reports.find(r => r.report_type === t);
   return (
-    <div className="space-y-4 animate-fade-in">
-      <div><h1 className="text-2xl font-bold text-slate-900 tracking-tight">Reports</h1><p className="text-sm text-slate-400 mt-0.5">Generate downloadable PDF reports.</p></div>
+    <div className="space-y-5 animate-fade-in">
+      <div className="animate-slide-up"><p className="text-caption mb-1">Export</p><h1 className="text-heading">Reports</h1></div>
       <div className="grid md:grid-cols-3 gap-4">
-        {reportTypes.map((r, i) => { const Icon = r.icon; const last = lastGenerated(r.type); return (
-          <div key={r.type} className="glass rounded-2xl p-5 card-hover animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
-            <div className="h-10 w-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3"><Icon className="h-5 w-5 text-emerald-600" /></div>
-            <h3 className="font-semibold text-slate-900 text-sm mb-1">{r.title}</h3>
-            <p className="text-xs text-slate-400 mb-3">{r.desc}</p>
-            <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-3">{last ? <span className="text-emerald-600 flex items-center gap-1"><Check className="h-3 w-3" />Last: {formatDateTime(last.generated_at)}</span> : "Not generated yet"}</p>
-            <Button size="sm" onClick={() => handleGenerate(r.type)} disabled={generating === r.type} className="bg-emerald-500 hover:bg-emerald-600 w-full">{generating === r.type ? <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1" />Generating PDF...</> : <><Download className="h-3.5 w-3.5 mr-1" />Generate PDF</>}</Button>
+        {types.map((r, i) => { const Icon = r.icon; const last = lastGen(r.type); return (
+          <div key={r.type} className="bento bento-light p-6 animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+            <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4" style={{ background: "rgba(13,59,46,0.06)" }}><Icon className="h-5 w-5" style={{ color: "var(--color-forest)" }} /></div>
+            <h3 className="font-semibold text-sm mb-1" style={{ color: "var(--color-ink)" }}>{r.title}</h3>
+            <p className="text-xs mb-3" style={{ color: "var(--color-ink-muted)" }}>{r.desc}</p>
+            <p className="text-[10px] uppercase tracking-wider mb-3" style={{ color: last ? "var(--color-forest)" : "var(--color-ink-muted)" }}>{last ? <span className="flex items-center gap-1"><Check className="h-3 w-3" />{formatDateTime(last.generated_at)}</span> : "Not generated"}</p>
+            <button onClick={() => handleGenerate(r.type)} disabled={generating === r.type} className="w-full h-9 rounded-lg text-sm font-medium flex items-center justify-center gap-1.5 transition-all duration-200" style={{ background: "var(--color-forest)", color: "var(--color-cream)" }}>{generating === r.type ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <><Download className="h-3.5 w-3.5" />Generate PDF</>}</button>
           </div> ); })}
       </div>
     </div>
