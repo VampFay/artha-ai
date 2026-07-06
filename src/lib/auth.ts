@@ -2,8 +2,14 @@ import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
 import { db } from "./db";
 
+// JWT secret: read from env. In dev, a known fallback is used (safe because
+// the dev environment is sandboxed). In production, the env var is REQUIRED.
 const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "f7a3c9e1b4d8a2f5c7e9b1d3a4f6c8e0b2d4f6a8c0e2b4d6f8a0c2e4b6d8f0a2"
+  process.env.JWT_SECRET || (
+    process.env.NODE_ENV === "production"
+      ? (() => { throw new Error("JWT_SECRET env var required in production"); })()
+      : "dev-only-secret-not-for-production-use-f7a3c9e1b4d8"
+  )
 );
 
 export async function hashPassword(plain: string): Promise<string> {

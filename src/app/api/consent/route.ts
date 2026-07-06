@@ -13,6 +13,7 @@ export async function POST(req: NextRequest) {
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     const body = await req.json();
+    if (body.consent_type !== "document_processing") return NextResponse.json({ detail: "Invalid consent type" }, { status: 400 });
     if (body.consent_text !== CONSENT_TEXT) return NextResponse.json({ detail: "Consent text mismatch." }, { status: 400 });
     const consent = await db.userConsent.create({ data: { userId: payload.sub, consentType: body.consent_type, consentText: body.consent_text } });
     await db.auditLog.create({ data: { userId: payload.sub, action: "consent_accepted" } });

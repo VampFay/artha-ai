@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
 
-function safeParse(s: string | null): any { if (!s) return null; try { return JSON.parse(s); } catch { return s; } }
+function safeParse(s: string | null): any { if (!s || s.length > 4096) return null; try { return JSON.parse(s); } catch { return s; } }
 
 export async function GET(req: NextRequest) {
   try {
