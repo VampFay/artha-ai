@@ -111,12 +111,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const TICKER_ITEMS = tickerItems;
 
   return (
-    <div className="min-h-screen bg-canvas text-carbon font-sans flex w-full overflow-hidden relative">
+    <div className="bg-canvas text-carbon font-sans flex w-full relative">
       <CommandPaletteNew isOpen={cmdOpen} onClose={() => setCmdOpen(false)} onNavigate={handleNav} />
       <OnboardingFlowNew user={user as any} onComplete={() => {}} />
 
       {/* Desktop Sidebar (Dark) */}
-      <aside className="hidden lg:flex w-[260px] flex-col bg-[#111111] text-stone-light relative z-20 shrink-0">
+      <aside className="hidden lg:flex w-[260px] flex-col bg-[#111111] text-stone-light relative z-20 shrink-0" style={{ position: "sticky", top: 0, height: "100vh", alignSelf: "flex-start" }}>
         <div className="pt-12 pb-10 px-8 cursor-pointer" onClick={() => handleNav("dashboard")}>
           <h1 className="font-serif italic text-2xl tracking-tight text-saffron mb-1">Artha AI</h1>
           <p className="text-[9px] font-bold tracking-[0.2em] text-stone uppercase">Wealth Intelligence</p>
@@ -233,8 +233,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Main Content — extra bottom padding to clear the fixed footer ticker bar */}
-      <main className="flex-1 relative lg:h-screen lg:overflow-y-auto pt-16 lg:pt-0 pb-40 lg:pb-44 bg-canvas flex flex-col">
+      {/* Main Content — no forced height, content determines page height */}
+      <main className="flex-1 relative pt-16 lg:pt-0 pb-16 bg-canvas flex flex-col" style={{ minHeight: 0 }}>
         {/* Desktop Header */}
         <div className="hidden lg:flex shrink-0 top-0 z-10 h-20 items-center justify-between px-12 max-w-[1200px] mx-auto w-full">
           <div className="text-[10px] font-bold text-carbon uppercase tracking-[0.2em]">Assessment Period: FY 2024-25</div>
@@ -260,7 +260,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="min-h-full"
             >
               {renderView()}
             </motion.div>
@@ -268,15 +267,15 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </div>
       </main>
 
-      {/* Fixed Footer Ticker Bar */}
-      <div className="fixed bottom-0 left-0 lg:left-[260px] right-0 z-40 bg-gradient-to-t from-[#EFEFE9] via-[#EFEFE9] to-transparent pt-12 pb-6 px-6 lg:px-12 pointer-events-none">
-        <div className="flex items-center justify-between mb-4 w-full max-w-[1200px] mx-auto">
+      {/* Fixed Footer Ticker Bar — compact */}
+      <div className="fixed bottom-0 left-0 lg:left-[260px] right-0 z-40 bg-canvas/95 pt-3 pb-3 px-6 lg:px-12 pointer-events-none" style={{ backdropFilter: "blur(8px)" }}>
+        <div className="flex items-center justify-between mb-2 w-full max-w-[1200px] mx-auto">
           <div />
-          <div className="text-[10px] font-bold text-carbon/50 uppercase tracking-[0.1em] flex items-center gap-2 bg-canvas/80 px-3 py-1 rounded-full pointer-events-auto shadow-sm">
-            <Command className="w-3 h-3" /> Press <span className="font-mono bg-carbon/5 px-1 rounded text-carbon">⌘K</span> for command palette
+          <div className="text-[9px] font-bold text-carbon/40 uppercase tracking-[0.1em] flex items-center gap-1.5 pointer-events-auto">
+            <Command className="w-2.5 h-2.5" /> <span className="font-mono bg-carbon/5 px-1 rounded text-carbon">⌘K</span> command palette
           </div>
         </div>
-        <div className="w-full bg-white rounded-full h-12 shadow-sm border border-carbon/5 overflow-hidden flex items-center relative pointer-events-auto">
+        <div className="w-full bg-white rounded-full h-10 shadow-sm border border-carbon/5 overflow-hidden flex items-center relative pointer-events-auto">
           <motion.div
             animate={{ x: [0, -1000] }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}

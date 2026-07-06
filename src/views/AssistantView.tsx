@@ -57,7 +57,7 @@ export default function AssistantView() {
   ];
 
   return (
-    <div className="flex flex-col h-full bg-canvas relative">
+    <div className="flex flex-col bg-canvas relative">
       
       {/* Status Bar */}
       <div className="h-16 border-b border-stone/10 bg-white/80 backdrop-blur-md flex items-center justify-between px-6 shrink-0 sticky top-0 z-10">
@@ -99,7 +99,7 @@ export default function AssistantView() {
             </div>
           </div>
         ) : (
-          <div className="space-y-6 pb-20">
+          <div className="space-y-6">
             <AnimatePresence>
               {messages.map(msg => (
                 <motion.div

@@ -20,7 +20,7 @@ export default function TaxView() {
   }, []);
 
   if (loading) return (
-    <div className="px-8 py-8 lg:px-12 max-w-5xl mx-auto">
+    <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto">
       <div className="skeleton h-12 w-48 mb-8" />
       <div className="skeleton h-48 rounded-3xl mb-8" />
       <div className="skeleton h-32 rounded-3xl mb-8" />
@@ -42,8 +42,8 @@ export default function TaxView() {
   ];
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto">
-      <div className="px-8 py-8 lg:px-12 max-w-5xl mx-auto w-full pb-20">
+    <div className="flex flex-col">
+      <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10">
           <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Tax Readiness</h1>
           <p className="text-stone">AI-driven analysis of your tax profile for FY {data?.financial_year || "2024-25"}.</p>

@@ -25,8 +25,8 @@ export default function RetirementView() {
                       (((Math.pow(1 + returnRate/12, yearsToRetire * 12) - 1) / (returnRate/12)) * (1 + returnRate/12));
 
   return (
-    <div className="flex flex-col min-h-full px-6 lg:px-12 pb-12 max-w-[1200px] mx-auto w-full">
-      <div className="py-12 md:py-20 border-b border-carbon/10 mb-12">
+    <div className="flex flex-col px-6 lg:px-12 max-w-[1200px] mx-auto w-full">
+      <div className="pt-8 pb-6 border-b border-carbon/10 mb-12">
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

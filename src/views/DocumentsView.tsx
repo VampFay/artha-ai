@@ -92,8 +92,8 @@ export default function DocumentsView({ onNavigate }: DocumentsViewProps) {
   const formatSize = (bytes: number) => bytes < 1024 ? `${bytes} B` : bytes < 1048576 ? `${(bytes / 1024).toFixed(0)} KB` : `${(bytes / 1048576).toFixed(1)} MB`;
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto">
-      <div className="px-8 py-8 lg:px-12 max-w-5xl mx-auto w-full pb-20">
+    <div className="flex flex-col">
+      <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10">
           <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Documents</h1>
           <p className="text-stone">Upload and manage your financial documents securely.</p>

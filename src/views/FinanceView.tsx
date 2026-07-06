@@ -20,7 +20,7 @@ export default function FinanceView() {
   }, [emergencyFund]);
 
   if (loading) return (
-    <div className="px-8 py-8 lg:px-12 max-w-5xl mx-auto">
+    <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto">
       <div className="skeleton h-12 w-48 mb-8" />
       <div className="skeleton h-40 rounded-3xl mb-8" />
       <div className="grid grid-cols-4 gap-4 mb-8">{Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton h-36 rounded-2xl" />)}</div>
@@ -50,8 +50,8 @@ export default function FinanceView() {
   const statusDesc = score >= 80 ? "Your financial health is excellent. Keep maintaining your discipline." : score >= 60 ? "Your financial health is stable. Focus on reducing debt to improve your score." : "Your financial health needs attention. Focus on increasing savings and reducing debt.";
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto">
-      <div className="px-8 py-8 lg:px-12 max-w-5xl mx-auto w-full pb-20">
+    <div className="flex flex-col">
+      <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Financial Health</h1>
