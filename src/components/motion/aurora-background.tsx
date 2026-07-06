@@ -1,12 +1,11 @@
 "use client";
 
-/** AuroraBackground — fixed background with 3 floating gradient blobs + noise overlay. */
+/**
+ * AuroraBackground — alias for GradientMesh (the upgraded animated mesh background).
+ * Kept for backward compatibility with existing imports.
+ */
 export function AuroraBackground() {
-  return (
-    <div className="aurora-bg" aria-hidden>
-      <div className="aurora-blob aurora-blob-1" />
-      <div className="aurora-blob aurora-blob-2" />
-      <div className="aurora-blob aurora-blob-3" />
-    </div>
-  );
+  // Lazy import to avoid circular deps
+  const { GradientMesh } = require("./gradient-mesh");
+  return <GradientMesh />;
 }
