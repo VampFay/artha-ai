@@ -1,140 +1,139 @@
 "use client";
-import { useState } from 'react';
-import { Target, Plus, Trash2, ArrowRight, TrendingUp } from 'lucide-react';
-import { KineticNumber } from '@/components/ui/KineticNumber';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '@/lib/utils';
+import { useState, useEffect } from "react";
+import { Target, Plus, Trash2, TrendingUp } from "lucide-react";
+import { KineticNumber } from "@/components/ui/KineticNumber";
+import { motion, AnimatePresence } from "motion/react";
 
-const INITIAL_GOALS = [
-  { id: '1', name: 'House Down Payment', target: 1500000, saved: 450000, monthly: 25000, date: '2026-12-01' },
-  { id: '2', name: 'Emergency Fund', target: 300000, saved: 280000, monthly: 10000, date: '2024-10-01' },
-];
+interface Goal { id: string; goalName: string; targetAmount: number; currentAmount: number; monthlyContribution: number; targetDate: string | null; projection?: { projected_completion_date?: string; shortfall?: number }; }
 
 export default function GoalsView() {
-  const [goals, setGoals] = useState(INITIAL_GOALS);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [form, setForm] = useState({ goalName: "", targetAmount: "", monthlyContribution: "", targetDate: "" });
+
+  const load = () => {
+    const token = localStorage.getItem("finsight_token");
+    if (!token) return;
+    fetch("/api/goals", { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => setGoals(d.items || []))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("finsight_token");
+    try {
+      await fetch("/api/goals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          goal_name: form.goalName,
+          target_amount: Number(form.targetAmount),
+          monthly_contribution: Number(form.monthlyContribution || 0),
+          target_date: form.targetDate || undefined,
+          expected_return_rate: 0.04,
+        }),
+      });
+      setForm({ goalName: "", targetAmount: "", monthlyContribution: "", targetDate: "" });
+      setIsFormOpen(false);
+      load();
+    } catch {}
+  };
+
+  const handleDelete = async (id: string) => {
+    const token = localStorage.getItem("finsight_token");
+    try {
+      await fetch(`/api/goals/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+      load();
+    } catch {}
+  };
+
+  if (loading) return (
+    <div className="px-6 lg:px-12 py-20 max-w-[1200px] mx-auto">
+      <div className="skeleton h-16 w-64 mb-8" />
+      <div className="grid md:grid-cols-2 gap-6"><div className="skeleton h-48" /><div className="skeleton h-48" /></div>
+    </div>
+  );
 
   return (
     <div className="flex flex-col min-h-full px-6 lg:px-12 pb-12 max-w-[1200px] mx-auto w-full">
       <div className="py-12 md:py-20 border-b border-carbon/10 mb-12 flex justify-between items-end">
         <div>
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-3 mb-4"
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-4">
             <div className="w-1.5 h-1.5 rounded-full bg-saffron" />
             <span className="text-[10px] font-bold tracking-[0.2em] text-stone uppercase">Simulations & Planning</span>
           </motion.div>
           <h1 className="text-4xl md:text-6xl font-light tracking-tight text-carbon">Goal Simulations</h1>
         </div>
-        
-        <button 
-          onClick={() => setIsFormOpen(!isFormOpen)}
-          className="flex items-center gap-2 px-6 py-3 bg-carbon text-white text-[10px] font-bold tracking-widest uppercase hover:bg-carbon/90 transition-colors shadow-xl"
-        >
-          <Plus className="w-4 h-4" />
-          {isFormOpen ? 'Cancel' : 'New Goal'}
+        <button onClick={() => setIsFormOpen(!isFormOpen)} className="hidden md:flex items-center gap-2 px-5 py-2.5 bg-carbon text-white text-xs font-bold uppercase tracking-wider hover:bg-carbon/90 transition-colors">
+          {isFormOpen ? "Cancel" : "New Goal"} <Plus className="w-3 h-3" />
         </button>
       </div>
 
       <AnimatePresence>
         {isFormOpen && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden mb-12"
-          >
-            <div className="bg-[#1a1a1a] p-8 md:p-10 flex flex-col md:flex-row gap-8 items-end shadow-2xl relative">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-saffron/10 rounded-full blur-2xl" />
-              <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full relative z-10">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-bold tracking-widest text-stone uppercase">Goal Objective</label>
-                  <input type="text" placeholder="e.g. Vacation" className="bg-transparent border-b border-white/20 text-white placeholder-stone outline-none pb-2 font-serif text-xl" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-bold tracking-widest text-stone uppercase">Target Amount</label>
-                  <input type="number" placeholder="₹" className="bg-transparent border-b border-white/20 text-white placeholder-stone outline-none pb-2 font-mono text-xl" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-bold tracking-widest text-stone uppercase">Monthly SIP</label>
-                  <input type="number" placeholder="₹" className="bg-transparent border-b border-white/20 text-white placeholder-stone outline-none pb-2 font-mono text-xl" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-bold tracking-widest text-stone uppercase">Target Date</label>
-                  <input type="date" className="bg-transparent border-b border-white/20 text-stone outline-none pb-2 font-mono text-lg" />
-                </div>
+          <motion.form onSubmit={handleCreate} initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="overflow-hidden mb-12">
+            <div className="p-8 bg-[#FAFAFA] border border-carbon/10 space-y-4">
+              <h3 className="text-[10px] font-bold tracking-[0.15em] text-carbon uppercase">Create New Goal</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <input type="text" value={form.goalName} onChange={e => setForm({ ...form, goalName: e.target.value })} placeholder="Goal Name (e.g. House Down Payment)" required className="px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 text-sm" />
+                <input type="number" value={form.targetAmount} onChange={e => setForm({ ...form, targetAmount: e.target.value })} placeholder="Target Amount (₹)" required className="px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 text-sm" />
+                <input type="number" value={form.monthlyContribution} onChange={e => setForm({ ...form, monthlyContribution: e.target.value })} placeholder="Monthly SIP (₹)" className="px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 text-sm" />
+                <input type="date" value={form.targetDate} onChange={e => setForm({ ...form, targetDate: e.target.value })} className="px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 text-sm" />
               </div>
-              <button 
-                onClick={() => setIsFormOpen(false)}
-                className="px-8 py-4 bg-saffron text-carbon text-[10px] font-bold tracking-widest uppercase shrink-0 transition-transform hover:scale-105 active:scale-95 z-10"
-              >
-                Initialize
-              </button>
+              <button type="submit" className="px-6 py-2.5 bg-carbon text-white text-xs font-bold uppercase tracking-wider">Initialize Goal</button>
             </div>
-          </motion.div>
+          </motion.form>
         )}
       </AnimatePresence>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {goals.map((goal, i) => {
-          const progress = (goal.saved / goal.target) * 100;
-          return (
-            <motion.div 
-              key={goal.id} 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="bg-canvas border border-carbon/10 p-8 md:p-10 flex flex-col justify-between group relative overflow-hidden"
-            >
-              <button 
-                onClick={() => setGoals(g => g.filter(x => x.id !== goal.id))}
-                className="absolute top-8 right-8 text-stone hover:text-red-500 transition-colors z-10"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-              
-              <div className="mb-12">
-                <h3 className="text-[10px] font-bold tracking-[0.2em] text-stone uppercase mb-4">{goal.name}</h3>
-                
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-xl font-serif text-carbon">₹</span>
-                  <KineticNumber value={goal.saved} className="text-4xl md:text-5xl font-serif text-carbon tracking-tight" />
-                </div>
-                <p className="text-xs font-mono text-stone-dark">
-                  Target: ₹{goal.target.toLocaleString('en-IN')}
-                </p>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-end mb-4">
-                  <span className="text-[10px] font-bold tracking-widest text-carbon uppercase">Progress Status</span>
-                  <span className="font-mono text-saffron text-sm">{Math.round(progress)}%</span>
-                </div>
-                <div className="h-1 bg-carbon/5 w-full relative mb-8">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progress}%` }}
-                    transition={{ duration: 1.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute top-0 left-0 h-full bg-carbon"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between border-t border-carbon/10 pt-6">
-                  <div className="flex items-center gap-2 text-emerald-600 text-[10px] font-bold tracking-widest uppercase">
-                    <TrendingUp className="w-3 h-3" />
-                    <span>On Track</span>
+      {goals.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <Target className="w-12 h-12 text-stone-light mb-6" />
+          <h2 className="text-xl font-medium text-carbon mb-2">No Goals Yet</h2>
+          <p className="text-sm text-stone max-w-md mb-8">Create your first financial goal to start planning for the future.</p>
+          <button onClick={() => setIsFormOpen(true)} className="px-6 py-3 bg-carbon text-white text-xs font-bold uppercase tracking-wider hover:bg-carbon/90 transition-colors">Create Goal</button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {goals.map((g, i) => {
+            const pct = g.targetAmount > 0 ? Math.min(100, (g.currentAmount / g.targetAmount) * 100) : 0;
+            return (
+              <motion.div key={g.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="p-8 border border-carbon/10 bg-[#FAFAFA]">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-carbon/5 flex items-center justify-center"><Target className="w-5 h-5 text-carbon" /></div>
+                    <div><h4 className="text-sm font-medium text-carbon">{g.goalName}</h4><p className="text-xs text-stone">Target: ₹{g.targetAmount.toLocaleString("en-IN")}</p></div>
                   </div>
-                  <div className="text-[10px] font-mono text-stone uppercase text-right">
-                    ETA: {new Date(goal.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                  </div>
+                  <button onClick={() => handleDelete(g.id)} className="p-2 text-stone hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
-              </div>
-            </motion.div>
-          );
-        })}
-      </div>
+                <div className="flex items-baseline gap-2 mb-4">
+                  <span className="text-3xl font-light text-carbon"><KineticNumber value={pct} format={(v) => v.toFixed(0)} /></span>
+                  <span className="text-sm text-stone">% complete</span>
+                </div>
+                <div className="relative h-1.5 bg-carbon/10 rounded-full overflow-hidden mb-4">
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1, delay: i * 0.1 }} className="absolute top-0 left-0 h-full bg-saffron" />
+                </div>
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t border-carbon/5">
+                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Saved</span><span className="font-mono text-sm text-carbon">₹{g.currentAmount.toLocaleString("en-IN")}</span></div>
+                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Monthly</span><span className="font-mono text-sm text-carbon">₹{g.monthlyContribution.toLocaleString("en-IN")}</span></div>
+                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">ETA</span><span className="font-mono text-sm text-carbon">{g.projection?.projected_completion_date ? new Date(g.projection.projected_completion_date).toLocaleDateString("en-IN", { year: "numeric", month: "short" }) : "—"}</span></div>
+                </div>
+                {g.projection?.shortfall && g.projection.shortfall > 0 && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-red-500" />
+                    <span className="text-xs text-red-700">Shortfall: ₹{g.projection.shortfall.toLocaleString("en-IN")}</span>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

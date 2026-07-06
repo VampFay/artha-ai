@@ -37,6 +37,32 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const { page, navigate } = useNav();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [tickerItems, setTickerItems] = useState([
+    { label: "HEALTH SCORE", value: "—", up: true },
+    { label: "INCOME", value: "—", up: true },
+    { label: "SAVINGS RATE", value: "—", up: false },
+    { label: "TAX SAVED", value: "—", up: true },
+    { label: "TAX SCORE", value: "—", up: true },
+  ]);
+
+  // Fetch live ticker data
+  useEffect(() => {
+    if (!user) return;
+    const token = localStorage.getItem("finsight_token");
+    if (!token) return;
+    Promise.all([
+      fetch("/api/tax/summary", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+      fetch("/api/finance/summary?emergency_fund=300000", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
+    ]).then(([tax, fin]) => {
+      const items: { label: string; value: string; up: boolean }[] = [];
+      if (fin?.score != null) items.push({ label: "HEALTH SCORE", value: `${fin.score}/100`, up: true });
+      if (fin?.monthly_income != null) items.push({ label: "INCOME", value: `₹${fin.monthly_income.toLocaleString("en-IN")}`, up: fin.monthly_income > 0 });
+      if (fin?.metrics?.savings_rate_pct != null) items.push({ label: "SAVINGS RATE", value: `${fin.metrics.savings_rate_pct.toFixed(1)}%`, up: fin.metrics.savings_rate_pct > 0 });
+      if (tax?.regime_comparison?.savings_amount != null) items.push({ label: "TAX SAVED", value: `₹${tax.regime_comparison.savings_amount.toLocaleString("en-IN")}`, up: tax.regime_comparison.savings_amount > 0 });
+      if (tax?.score?.score != null) items.push({ label: "TAX SCORE", value: `${tax.score.score}/100`, up: true });
+      if (items.length > 0) setTickerItems(items);
+    });
+  }, [user, page]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -82,16 +108,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
     }
   };
 
-  const TICKER_ITEMS = [
-    { label: "HEALTH SCORE", value: "70/100", up: true },
-    { label: "INCOME", value: "₹0", up: true },
-    { label: "SAVINGS RATE", value: "0.0%", up: false },
-    { label: "TAX SAVED", value: "₹90,740", up: true },
-    { label: "TAX SCORE", value: "90/100", up: true },
-  ];
+  const TICKER_ITEMS = tickerItems;
 
   return (
-    <div className="min-h-screen bg-canvas text-carbon font-sans flex w-full overflow-hidden relative pb-32 lg:pb-28">
+    <div className="min-h-screen bg-canvas text-carbon font-sans flex w-full overflow-hidden relative">
       <CommandPaletteNew isOpen={cmdOpen} onClose={() => setCmdOpen(false)} onNavigate={handleNav} />
       <OnboardingFlowNew user={user as any} onComplete={() => {}} />
 
@@ -213,8 +233,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Main Content */}
-      <main className="flex-1 relative lg:h-screen lg:overflow-y-auto pt-16 lg:pt-0 bg-canvas flex flex-col">
+      {/* Main Content — extra bottom padding to clear the fixed footer ticker bar */}
+      <main className="flex-1 relative lg:h-screen lg:overflow-y-auto pt-16 lg:pt-0 pb-40 lg:pb-44 bg-canvas flex flex-col">
         {/* Desktop Header */}
         <div className="hidden lg:flex shrink-0 top-0 z-10 h-20 items-center justify-between px-12 max-w-[1200px] mx-auto w-full">
           <div className="text-[10px] font-bold text-carbon uppercase tracking-[0.2em]">Assessment Period: FY 2024-25</div>
