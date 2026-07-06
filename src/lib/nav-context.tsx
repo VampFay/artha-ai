@@ -1,7 +1,21 @@
 "use client";
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type PageName = "dashboard" | "documents" | "tax" | "finance" | "goals" | "assistant" | "reports" | "settings" | "document-verify";
+type PageName =
+  | "dashboard"
+  | "portfolio"
+  | "cashflow"
+  | "liabilities"
+  | "retirement"
+  | "documents"
+  | "estate"
+  | "tax"
+  | "finance"
+  | "goals"
+  | "assistant"
+  | "reports"
+  | "settings"
+  | "document-verify";
 
 interface NavState {
   page: PageName;
@@ -18,7 +32,6 @@ export function NavProvider({ children }: { children: ReactNode }) {
   const navigate = (newPage: PageName, newParams?: Record<string, string>) => {
     setPage(newPage);
     setParams(newParams || {});
-    // Scroll to top on page change
     if (typeof window !== "undefined") window.scrollTo(0, 0);
   };
 

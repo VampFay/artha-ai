@@ -24,6 +24,12 @@ model User {
   healthScores         FinancialHealthScore[]
   goals                Goal[]
   auditLogs            AuditLog[]
+  assetHoldings        AssetHolding[]
+  allocationTargets    AllocationTarget[]
+  subscriptions        Subscription[]
+  liabilities          Liability[]
+  nominees             Nominee[]
+  estateDocuments      EstateDocument[]
 }
 
 model UserConsent {
@@ -199,4 +205,92 @@ model RevokedToken {
   revokedAt DateTime @default(now())
 
   @@index([token])
+}
+
+// ============================================================
+// NEW MODELS — Artha AI Wealth Intelligence
+// ============================================================
+
+model AssetHolding {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String   // e.g. "Equities (Domestic)"
+  assetClass  String   // "equity_domestic" | "equity_global" | "fixed_income" | "real_estate" | "cash"
+  value       Float
+  color       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AllocationTarget {
+  id          String   @id @default(cuid())
+  userId      String
+  assetClass  String
+  targetPct   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, assetClass])
+  @@index([userId])
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  amount      Float
+  frequency   String   // "Monthly" | "Yearly"
+  status      String   @default("Active") // "Active" | "Cancelled"
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Liability {
+  id                 String   @id @default(cuid())
+  userId             String
+  name               String
+  loanType           String   // "home" | "car" | "personal" | "education" | "credit_card"
+  principal          Float
+  remaining          Float
+  rate               Float    // annual interest rate %
+  emi                Float
+  tenureLeftMonths   Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Nominee {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  relation    String   // "Spouse" | "Child" | "Parent" | "Sibling" | "Other"
+  allocation  Float    // percentage
+  status      String   @default("Pending Verification") // "Verified" | "Pending Verification"
+  assets      String   // JSON array of asset names
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EstateDocument {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  docType     String   // "will" | "trust" | "power_of_attorney" | "other"
+  filePath    String
+  uploadedAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
