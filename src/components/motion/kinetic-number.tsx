@@ -2,22 +2,22 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * KineticNumber — huge number that tweens with easing + a subtle variable-weight breathing.
+ * KineticNumber — tweens from previous value to next.
+ * OPTIMIZED: Single rAF loop with easeOutQuart, but only runs when value changes.
+ * No continuous animation (was breathing before — now removed).
  */
 export function KineticNumber({
   value,
-  duration = 1500,
+  duration = 1200,
   format = (n: number) => Math.round(n).toString(),
   className,
   style,
-  breathe = true,
 }: {
   value: number;
   duration?: number;
   format?: (n: number) => string;
   className?: string;
   style?: React.CSSProperties;
-  breathe?: boolean;
 }) {
   const [display, setDisplay] = useState(0);
   const fromRef = useRef(0);
@@ -31,14 +31,13 @@ export function KineticNumber({
     const to = value;
     if (from === to) { setDisplay(to); return; }
 
-    const ease = (t: number) => 1 - Math.pow(1 - t, 4); // easeOutQuart
+    const ease = (t: number) => 1 - Math.pow(1 - t, 3); // easeOutCubic (cheaper than quart)
 
     const tick = (ts: number) => {
       if (startRef.current === null) startRef.current = ts;
       const elapsed = ts - startRef.current;
       const t = Math.min(1, elapsed / duration);
-      const next = from + (to - from) * ease(t);
-      setDisplay(next);
+      setDisplay(from + (to - from) * ease(t));
       if (t < 1) rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -46,12 +45,5 @@ export function KineticNumber({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, duration]);
 
-  return (
-    <span
-      className={`${breathe ? "kinetic" : ""} ${className || ""}`}
-      style={style}
-    >
-      {format(display)}
-    </span>
-  );
+  return <span className={className} style={style}>{format(display)}</span>;
 }

@@ -5,7 +5,6 @@ import { useAuth } from "@/lib/auth-context";
 import { useNav } from "@/lib/nav-context";
 import { GradientMesh } from "@/components/motion/gradient-mesh";
 import { PageTransition } from "@/components/motion/page-transition";
-import { CursorSpotlight } from "@/components/motion/cursor-spotlight";
 import { CommandPalette } from "@/components/command-palette";
 import { OnboardingFlow } from "@/components/onboarding-flow";
 import { LayoutDashboard, FileText, Calculator, TrendingUp, Target, MessageSquare, Download, Settings, LogOut, Loader2 } from "lucide-react";
@@ -66,15 +65,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <div className="relative z-10 min-h-screen flex">
         {/* Sidebar — desktop */}
         <aside className="hidden md:flex w-56 fixed inset-y-0 left-0 z-40 flex-col p-4">
-          <CursorSpotlight className="flex-1 rounded-3xl flex flex-col h-full" radius={220} color="rgba(212,160,23,0.08)">
           <div
             className="flex-1 rounded-3xl flex flex-col h-full"
             style={{
-              background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(253,252,250,0.75) 100%)",
-              backdropFilter: "blur(24px) saturate(140%)",
-              WebkitBackdropFilter: "blur(24px) saturate(140%)",
-              border: "1px solid rgba(232,226,214,0.7)",
-              boxShadow: "0 24px 56px -20px rgba(13,59,46,0.18), 0 2px 4px -1px rgba(13,59,46,0.04)",
+              background: "#ffffff",
+              border: "1px solid rgba(232,226,214,0.9)",
+              boxShadow: "0 8px 24px -12px rgba(13,59,46,0.12)",
             }}
           >
             {/* Logo */}
@@ -163,11 +159,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
               </motion.button>
             </div>
           </div>
-          </CursorSpotlight>
         </aside>
 
         {/* Mobile top bar */}
-        <div className="md:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between" style={{ background: "rgba(250,247,242,0.92)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderBottom: "1px solid var(--color-line)" }}>
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 px-4 py-3 flex items-center justify-between" style={{ background: "#faf7f2", borderBottom: "1px solid var(--color-line)" }}>
           <button onClick={() => navigate("dashboard")} className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
               <span className="text-sm font-bold" style={{ color: "var(--color-gold-light)" }}>F</span>
@@ -191,7 +186,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="md:hidden fixed inset-0 z-40 pt-16"
-              style={{ background: "rgba(250,247,242,0.96)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)" }}
+              style={{ background: "#faf7f2" }}
               onClick={() => setMobileOpen(false)}
             >
               <motion.nav
