@@ -27,10 +27,10 @@ export default function Home() {
       <GradientMesh />
       <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="relative z-10 flex flex-col items-center gap-4">
         <div className="relative">
-          <div className="h-14 w-14 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)" }}>
+          <div className="h-14 w-14 rounded-2xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)" }}>
             <span className="text-2xl font-bold" style={{ color: "var(--color-gold-light)" }}>F</span>
           </div>
-          <motion.div className="absolute -inset-1 rounded-2xl" style={{ background: "radial-gradient(circle, rgba(212,160,23,0.4) 0%, transparent 70%)" }} animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0.2, 0.5] }} transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }} />
+          <motion.div className="absolute -inset-1 rounded-2xl" style={{ background: "radial-gradient(circle, rgba(217,119,6,0.4) 0%, transparent 70%)" }} animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0.2, 0.5] }} transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }} />
         </div>
         <Loader2 className="h-4 w-4 animate-spin" style={{ color: "var(--color-forest)" }} />
       </motion.div>
@@ -62,7 +62,7 @@ function ConsentGate({ children }: { children: React.ReactNode }) {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-lg mx-auto pt-8">
       <TiltCard className="bento bento-light p-8" maxTilt={4}>
         <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.1 }} className="flex items-center gap-3 mb-5">
-          <div className="h-11 w-11 rounded-xl flex items-center justify-center relative" style={{ background: "rgba(13,59,46,0.08)" }}>
+          <div className="h-11 w-11 rounded-xl flex items-center justify-center relative" style={{ background: "rgba(26,26,26,0.08)" }}>
             <ShieldCheck className="h-5 w-5" style={{ color: "var(--color-forest)" }} />
           </div>
           <div>
@@ -73,7 +73,7 @@ function ConsentGate({ children }: { children: React.ReactNode }) {
         <div className="rounded-xl p-4 mb-5" style={{ background: "var(--color-cream-dark)" }}>
           <p className="text-sm leading-relaxed" style={{ color: "var(--color-ink-soft)" }}>{text}</p>
         </div>
-        <MagneticButton onClick={accept} disabled={accepting || !text} className="px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 shine-sweep" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }}>
+        <MagneticButton onClick={accept} disabled={accepting || !text} className="px-5 py-3 rounded-xl text-sm font-semibold flex items-center gap-2 shine-sweep" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }}>
           {accepting ? <Loader2 className="h-4 w-4 animate-spin" /> : <><ShieldCheck className="h-4 w-4" />Accept and Continue<ArrowRight className="h-4 w-4" /></>}
         </MagneticButton>
       </TiltCard>
@@ -120,23 +120,23 @@ function LoginScreen() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="absolute inset-0"
-            style={{ background: "linear-gradient(155deg, #0d3b2e 0%, #062418 60%, #031711 100%)" }}
+            style={{ background: "linear-gradient(155deg, #1a1a1a 0%, #0a0a0a 60%, #050505 100%)" }}
           />
           {/* Liquid morphing blobs */}
           {/* OPTIMIZED: Static radial gradients instead of 3 animated blur blobs */}
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(at 80% 20%, rgba(212,160,23,0.20) 0%, transparent 50%), radial-gradient(at 20% 80%, rgba(74,124,89,0.25) 0%, transparent 50%), radial-gradient(at 50% 50%, rgba(232,193,74,0.10) 0%, transparent 40%)" }} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(at 80% 20%, rgba(217,119,6,0.20) 0%, transparent 50%), radial-gradient(at 20% 80%, rgba(107,98,88,0.25) 0%, transparent 50%), radial-gradient(at 50% 50%, rgba(245,158,11,0.10) 0%, transparent 40%)" }} />
 
           {/* Dot grid overlay for tech feel */}
           <div className="absolute inset-0 dot-grid opacity-20" />
 
           <div className="relative z-10">
             <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="flex items-center gap-3 mb-20">
-              <div className="h-11 w-11 rounded-xl flex items-center justify-center relative" style={{ background: "rgba(250,247,242,0.08)", border: "1px solid rgba(212,160,23,0.3)" }}>
+              <div className="h-11 w-11 rounded-xl flex items-center justify-center relative" style={{ background: "rgba(250,247,242,0.08)", border: "1px solid rgba(217,119,6,0.3)" }}>
                 <span className="text-lg font-bold" style={{ color: "var(--color-gold-light)" }}>F</span>
-                <motion.div className="absolute -inset-0.5 rounded-xl" style={{ background: "radial-gradient(circle, rgba(212,160,23,0.4), transparent 70%)" }} animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity }} />
+                <motion.div className="absolute -inset-0.5 rounded-xl" style={{ background: "radial-gradient(circle, rgba(217,119,6,0.4), transparent 70%)" }} animate={{ opacity: [0.3, 0.7, 0.3], scale: [1, 1.15, 1] }} transition={{ duration: 3, repeat: Infinity }} />
               </div>
               <span className="text-lg font-semibold tracking-tight" style={{ color: "var(--color-cream)" }}>FinSight AI</span>
-              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold ml-1 live-dot-pulse" style={{ background: "rgba(212,160,23,0.18)", color: "var(--color-gold-light)", border: "1px solid rgba(212,160,23,0.3)" }}>Beta</span>
+              <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full font-semibold ml-1 live-dot-pulse" style={{ background: "rgba(217,119,6,0.18)", color: "var(--color-gold-light)", border: "1px solid rgba(217,119,6,0.3)" }}>Beta</span>
             </motion.div>
 
             {/* Kinetic hero text */}
@@ -174,7 +174,7 @@ function LoginScreen() {
                     whileHover={{ x: 6 }}
                     className="flex items-center gap-3 group cursor-default"
                   >
-                    <div className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors" style={{ background: "rgba(212,160,23,0.1)", border: "1px solid rgba(212,160,23,0.2)" }}>
+                    <div className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors" style={{ background: "rgba(217,119,6,0.1)", border: "1px solid rgba(217,119,6,0.2)" }}>
                       <Icon className="h-4 w-4" style={{ color: "var(--color-gold-light)" }} />
                     </div>
                     <div>
@@ -193,7 +193,7 @@ function LoginScreen() {
             animate={{ opacity: 1 }}
             transition={{ delay: 1, duration: 0.6 }}
             className="relative z-10 -mx-12 -mb-12 px-12 py-4"
-            style={{ background: "rgba(0,0,0,0.25)", borderTop: "1px solid rgba(212,160,23,0.15)" }}
+            style={{ background: "rgba(0,0,0,0.25)", borderTop: "1px solid rgba(217,119,6,0.15)" }}
           >
             <div className="marquee">
               <div className="ticker" style={{ animationDuration: "32s" }}>
@@ -228,7 +228,7 @@ function LoginScreen() {
             >
               {/* Mobile logo */}
               <div className="lg:hidden flex items-center gap-2.5 mb-10 justify-center">
-                <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }}>
+                <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }}>
                   <span className="text-lg font-bold" style={{ color: "var(--color-gold-light)" }}>F</span>
                 </div>
                 <span className="text-lg font-semibold tracking-tight" style={{ color: "var(--color-forest)" }}>FinSight AI</span>
@@ -269,7 +269,7 @@ function LoginScreen() {
                     </FormField>
 
                     {error && (
-                      <motion.div initial={{ opacity: 0, y: -8, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} className="rounded-xl p-3 text-sm flex items-start gap-2" style={{ background: "rgba(198,93,58,0.08)", color: "var(--color-clay)", border: "1px solid rgba(198,93,58,0.2)" }}>
+                      <motion.div initial={{ opacity: 0, y: -8, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} className="rounded-xl p-3 text-sm flex items-start gap-2" style={{ background: "rgba(185,28,28,0.08)", color: "var(--color-clay)", border: "1px solid rgba(185,28,28,0.2)" }}>
                         <span>⚠</span>{error}
                       </motion.div>
                     )}
@@ -278,7 +278,7 @@ function LoginScreen() {
                       onClick={doLogin}
                       disabled={loading}
                       className="w-full h-12 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 relative overflow-hidden shine-sweep"
-                      style={{ background: "linear-gradient(135deg, #0d3b2e 0%, #062418 100%)", color: "var(--color-cream)", boxShadow: "0 6px 20px -6px rgba(13,59,46,0.5), 0 1px 0 0 rgba(255,255,255,0.1) inset" }}
+                      style={{ background: "linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%)", color: "var(--color-cream)", boxShadow: "0 6px 20px -6px rgba(26,26,26,0.5), 0 1px 0 0 rgba(255,255,255,0.1) inset" }}
                     >
                       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>{mode === "login" ? "Sign In" : "Create Account"} <ArrowRight className="h-4 w-4" /></>}
                     </MagneticButton>
@@ -293,13 +293,13 @@ function LoginScreen() {
                   <MagneticButton
                     onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }}
                     className="w-full mt-4 text-sm font-medium py-3 rounded-xl transition-all"
-                    style={{ color: "var(--color-forest)", background: "rgba(13,59,46,0.04)", border: "1px solid rgba(13,59,46,0.1)" }}
+                    style={{ color: "var(--color-forest)", background: "rgba(26,26,26,0.04)", border: "1px solid rgba(26,26,26,0.1)" }}
                   >
                     {mode === "login" ? "Don't have an account? " : "Already have an account? "}
                     <span className="font-bold underline underline-offset-4">{mode === "login" ? "Register" : "Sign in"}</span>
                   </MagneticButton>
 
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 p-4 rounded-xl text-xs space-y-1.5" style={{ background: "rgba(212,160,23,0.06)", border: "1px solid rgba(212,160,23,0.18)" }}>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="mt-6 p-4 rounded-xl text-xs space-y-1.5" style={{ background: "rgba(217,119,6,0.06)", border: "1px solid rgba(217,119,6,0.18)" }}>
                     <p className="font-bold uppercase tracking-wider text-[10px]" style={{ color: "var(--color-gold)" }}>Demo Accounts</p>
                     <div className="flex justify-between" style={{ color: "var(--color-ink-soft)" }}><span>Test:</span><span className="font-mono">test@finsight.ai / test1234</span></div>
                     <div className="flex justify-between" style={{ color: "var(--color-ink-soft)" }}><span>Admin:</span><span className="font-mono">admin@finsight.ai / admin1234</span></div>

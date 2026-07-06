@@ -75,7 +75,7 @@ export default function DocumentVerifyContent() {
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("documents")}
             className="p-2 rounded-lg"
-            style={{ background: "rgba(13,59,46,0.04)", color: "var(--color-ink-soft)" }}
+            style={{ background: "rgba(26,26,26,0.04)", color: "var(--color-ink-soft)" }}
           >
             <ArrowLeft className="h-4 w-4" />
           </motion.button>
@@ -99,7 +99,7 @@ export default function DocumentVerifyContent() {
               animate={{ y: [0, -6, 0] }}
               transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
               className="h-16 w-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
-              style={{ background: "rgba(13,59,46,0.06)" }}
+              style={{ background: "rgba(26,26,26,0.06)" }}
             >
               <Sparkles className="h-7 w-7" style={{ color: "var(--color-ink-muted)" }} />
             </motion.div>
@@ -117,7 +117,7 @@ export default function DocumentVerifyContent() {
             >
               <motion.div
                 className="absolute -top-20 -right-20 w-64 h-64 rounded-full"
-                style={{ background: "radial-gradient(circle, rgba(212,160,23,0.25) 0%, transparent 60%)" }}
+                style={{ background: "radial-gradient(circle, rgba(217,119,6,0.25) 0%, transparent 60%)" }}
                 animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
               />
@@ -143,7 +143,7 @@ export default function DocumentVerifyContent() {
                   whileTap={{ scale: 0.96 }}
                   onClick={verifyAll}
                   className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-1.5"
-                  style={{ background: "linear-gradient(135deg, #d4a017, #b88810)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(212,160,23,0.4)" }}
+                  style={{ background: "linear-gradient(135deg, #d97706, #b45309)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(217,119,6,0.4)" }}
                 >
                   <CheckCheck className="h-4 w-4" />Verify All
                 </motion.button>
@@ -160,7 +160,7 @@ export default function DocumentVerifyContent() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
-                  className="flex items-start gap-4 p-5 transition-colors hover:bg-[rgba(13,59,46,0.02)]"
+                  className="flex items-start gap-4 p-5 transition-colors hover:bg-[rgba(26,26,26,0.02)]"
                   style={i !== fields.length - 1 ? { borderBottom: "1px solid var(--color-line-soft)" } : {}}
                 >
                   <div className="w-40 flex-shrink-0">
@@ -172,7 +172,7 @@ export default function DocumentVerifyContent() {
                       animate={{ scale: 1 }}
                       className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded mt-1.5"
                       style={{
-                        background: f.confidence_score >= 0.9 ? "rgba(74,124,89,0.1)" : f.confidence_score >= 0.7 ? "rgba(212,160,23,0.1)" : "rgba(198,93,58,0.1)",
+                        background: f.confidence_score >= 0.9 ? "rgba(107,98,88,0.1)" : f.confidence_score >= 0.7 ? "rgba(217,119,6,0.1)" : "rgba(185,28,28,0.1)",
                         color: f.confidence_score >= 0.9 ? "var(--color-moss)" : f.confidence_score >= 0.7 ? "var(--color-gold)" : "var(--color-clay)",
                       }}
                     >
@@ -202,7 +202,7 @@ export default function DocumentVerifyContent() {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => edit(f.id)}
                             className="h-9 px-3 rounded-lg text-xs font-semibold"
-                            style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)" }}
+                            style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)" }}
                           >
                             Save
                           </motion.button>
@@ -242,7 +242,7 @@ export default function DocumentVerifyContent() {
                         animate={{ scale: 1 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20 }}
                         className="text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 px-2.5 py-1 rounded-full"
-                        style={{ background: "rgba(74,124,89,0.1)", color: "var(--color-moss)" }}
+                        style={{ background: "rgba(107,98,88,0.1)", color: "var(--color-moss)" }}
                       >
                         <ShieldCheck className="h-3 w-3" />Verified
                       </motion.span>
@@ -253,7 +253,7 @@ export default function DocumentVerifyContent() {
                           whileTap={{ scale: 0.9 }}
                           onClick={() => { setEditingId(f.id); setEditValue(f.field_value); }}
                           className="p-2 rounded-lg transition-colors"
-                          style={{ color: "var(--color-ink-muted)", background: "rgba(13,59,46,0.04)" }}
+                          style={{ color: "var(--color-ink-muted)", background: "rgba(26,26,26,0.04)" }}
                         >
                           <Edit3 className="h-3.5 w-3.5" />
                         </motion.button>

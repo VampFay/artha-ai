@@ -124,7 +124,7 @@ export function CommandPalette() {
           transition={{ duration: 0.2 }}
           className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4"
           onClick={() => setOpen(false)}
-          style={{ background: "rgba(6,36,24,0.55)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+          style={{ background: "rgba(10,10,10,0.55)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.96, y: -10 }}
@@ -138,7 +138,7 @@ export function CommandPalette() {
               backdropFilter: "blur(24px) saturate(160%)",
               WebkitBackdropFilter: "blur(24px) saturate(160%)",
               border: "1px solid rgba(232,226,214,0.8)",
-              boxShadow: "0 32px 80px -20px rgba(6,36,24,0.5), 0 4px 12px -2px rgba(13,59,46,0.1)",
+              boxShadow: "0 32px 80px -20px rgba(10,10,10,0.5), 0 4px 12px -2px rgba(26,26,26,0.1)",
             }}
           >
             {/* Search input */}
@@ -180,7 +180,7 @@ export function CommandPalette() {
                           onMouseEnter={() => setActiveIndex(idx)}
                           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors relative"
                           style={{
-                            background: active ? "linear-gradient(135deg, #0d3b2e, #062418)" : "transparent",
+                            background: active ? "linear-gradient(135deg, #1a1a1a, #0a0a0a)" : "transparent",
                             color: active ? "var(--color-cream)" : "var(--color-ink-soft)",
                           }}
                         >

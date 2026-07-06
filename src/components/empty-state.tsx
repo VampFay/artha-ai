@@ -40,7 +40,7 @@ export function EmptyState({
         {/* Glow */}
         <motion.div
           className="absolute inset-0 -z-10 rounded-full"
-          style={{ background: "radial-gradient(circle, rgba(212,160,23,0.15) 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(circle, rgba(217,119,6,0.15) 0%, transparent 70%)" }}
           animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -90,7 +90,7 @@ export function EmptyState({
             whileTap={{ scale: 0.97 }}
             onClick={action.onClick}
             className="h-11 px-5 rounded-xl text-sm font-semibold flex items-center gap-2 shine-sweep"
-            style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }}
+            style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }}
           >
             {action.icon}
             {action.label}
@@ -99,7 +99,7 @@ export function EmptyState({
             <button
               onClick={secondary.onClick}
               className="h-11 px-5 rounded-xl text-sm font-medium"
-              style={{ color: "var(--color-forest)", background: "rgba(13,59,46,0.04)", border: "1px solid rgba(13,59,46,0.1)" }}
+              style={{ color: "var(--color-forest)", background: "rgba(26,26,26,0.04)", border: "1px solid rgba(26,26,26,0.1)" }}
             >
               {secondary.label}
             </button>
@@ -117,12 +117,12 @@ export function IllusDocuments() {
     <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
       <defs>
         <linearGradient id="docGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0d3b2e" />
-          <stop offset="100%" stopColor="#1a5c47" />
+          <stop offset="0%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#2e2e2e" />
         </linearGradient>
         <linearGradient id="docGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d4a017" />
-          <stop offset="100%" stopColor="#e8c14a" />
+          <stop offset="0%" stopColor="#d97706" />
+          <stop offset="100%" stopColor="#f59e0b" />
         </linearGradient>
       </defs>
       {/* Back page */}
@@ -130,7 +130,7 @@ export function IllusDocuments() {
       {/* Front page */}
       <rect x="35" y="25" width="50" height="64" rx="6" fill="url(#docGrad1)" transform="rotate(3 60 57)" />
       {/* Lines on page */}
-      <rect x="42" y="35" width="32" height="2.5" rx="1.25" fill="#d4a017" opacity="0.6" transform="rotate(3 60 57)" />
+      <rect x="42" y="35" width="32" height="2.5" rx="1.25" fill="#d97706" opacity="0.6" transform="rotate(3 60 57)" />
       <rect x="42" y="44" width="36" height="2" rx="1" fill="#faf7f2" opacity="0.3" transform="rotate(3 60 57)" />
       <rect x="42" y="52" width="28" height="2" rx="1" fill="#faf7f2" opacity="0.3" transform="rotate(3 60 57)" />
       <rect x="42" y="60" width="32" height="2" rx="1" fill="#faf7f2" opacity="0.3" transform="rotate(3 60 57)" />
@@ -140,7 +140,7 @@ export function IllusDocuments() {
         animate={{ scale: [1, 1.1, 1] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       />
-      <path d="M85 35 L85 45 M80 40 L85 35 L90 40" stroke="#0d3b2e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M85 35 L85 45 M80 40 L85 35 L90 40" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -150,26 +150,26 @@ export function IllusGoals() {
     <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
       <defs>
         <linearGradient id="goalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#d4a017" />
-          <stop offset="100%" stopColor="#e8c14a" />
+          <stop offset="0%" stopColor="#d97706" />
+          <stop offset="100%" stopColor="#f59e0b" />
         </linearGradient>
       </defs>
       {/* Outer rings */}
-      <circle cx="60" cy="60" r="42" stroke="#0d3b2e" strokeWidth="2" strokeDasharray="4 6" opacity="0.2" />
-      <circle cx="60" cy="60" r="32" stroke="#4a7c59" strokeWidth="2" strokeDasharray="2 4" opacity="0.3" />
+      <circle cx="60" cy="60" r="42" stroke="#1a1a1a" strokeWidth="2" strokeDasharray="4 6" opacity="0.2" />
+      <circle cx="60" cy="60" r="32" stroke="#6b6258" strokeWidth="2" strokeDasharray="2 4" opacity="0.3" />
       {/* Target center */}
       <circle cx="60" cy="60" r="22" fill="url(#goalGrad)" opacity="0.2" />
       <circle cx="60" cy="60" r="16" fill="url(#goalGrad)" opacity="0.4" />
       <circle cx="60" cy="60" r="10" fill="url(#goalGrad)" />
-      <circle cx="60" cy="60" r="4" fill="#0d3b2e" />
+      <circle cx="60" cy="60" r="4" fill="#1a1a1a" />
       {/* Arrow */}
       <motion.g
         initial={{ rotate: -45, originX: "60px", originY: "60px" }}
         animate={{ rotate: [-45, -40, -45] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
       >
-        <line x1="60" y1="60" x2="95" y2="25" stroke="#0d3b2e" strokeWidth="3" strokeLinecap="round" />
-        <polygon points="95,25 88,28 92,32" fill="#0d3b2e" />
+        <line x1="60" y1="60" x2="95" y2="25" stroke="#1a1a1a" strokeWidth="3" strokeLinecap="round" />
+        <polygon points="95,25 88,28 92,32" fill="#1a1a1a" />
       </motion.g>
     </svg>
   );
@@ -180,8 +180,8 @@ export function IllusChat() {
     <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
       <defs>
         <linearGradient id="chatGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0d3b2e" />
-          <stop offset="100%" stopColor="#1a5c47" />
+          <stop offset="0%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#2e2e2e" />
         </linearGradient>
       </defs>
       {/* Speech bubble */}
@@ -195,17 +195,17 @@ export function IllusChat() {
         transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
         style={{ transformOrigin: "60px 50px" }}
       >
-        <path d="M60 42 L62 48 L68 50 L62 52 L60 58 L58 52 L52 50 L58 48 Z" fill="#e8c14a" />
+        <path d="M60 42 L62 48 L68 50 L62 52 L60 58 L58 52 L52 50 L58 48 Z" fill="#f59e0b" />
       </motion.g>
       {/* Dots */}
       <circle cx="42" cy="50" r="2.5" fill="#faf7f2" opacity="0.5" />
       <circle cx="50" cy="50" r="2.5" fill="#faf7f2" opacity="0.7" />
       {/* Floating sparkles */}
-      <motion.circle cx="100" cy="30" r="3" fill="#d4a017"
+      <motion.circle cx="100" cy="30" r="3" fill="#d97706"
         animate={{ y: [0, -8, 0], opacity: [0.4, 1, 0.4] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       />
-      <motion.circle cx="105" cy="60" r="2" fill="#e8c14a"
+      <motion.circle cx="105" cy="60" r="2" fill="#f59e0b"
         animate={{ y: [0, -6, 0], opacity: [0.3, 0.8, 0.3] }}
         transition={{ duration: 2.5, repeat: Infinity, delay: 0.5, ease: "easeInOut" }}
       />
@@ -218,23 +218,23 @@ export function IllusReports() {
     <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
       <defs>
         <linearGradient id="repGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0d3b2e" />
-          <stop offset="100%" stopColor="#1a5c47" />
+          <stop offset="0%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#2e2e2e" />
         </linearGradient>
       </defs>
       {/* Clipboard */}
       <rect x="30" y="25" width="60" height="75" rx="6" fill="url(#repGrad)" />
-      <rect x="45" y="20" width="30" height="10" rx="3" fill="#d4a017" />
+      <rect x="45" y="20" width="30" height="10" rx="3" fill="#d97706" />
       {/* Bars */}
-      <motion.rect x="40" y="65" width="10" height="20" rx="2" fill="#d4a017"
+      <motion.rect x="40" y="65" width="10" height="20" rx="2" fill="#d97706"
         animate={{ height: [20, 28, 20] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       />
-      <motion.rect x="55" y="55" width="10" height="30" rx="2" fill="#e8c14a"
+      <motion.rect x="55" y="55" width="10" height="30" rx="2" fill="#f59e0b"
         animate={{ height: [30, 38, 30] }}
         transition={{ duration: 2, repeat: Infinity, delay: 0.2, ease: "easeInOut" }}
       />
-      <motion.rect x="70" y="50" width="10" height="35" rx="2" fill="#4a7c59"
+      <motion.rect x="70" y="50" width="10" height="35" rx="2" fill="#6b6258"
         animate={{ height: [35, 42, 35] }}
         transition={{ duration: 2, repeat: Infinity, delay: 0.4, ease: "easeInOut" }}
       />
@@ -249,22 +249,22 @@ export function IllusTransactions() {
     <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
       <defs>
         <linearGradient id="walletGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#0d3b2e" />
-          <stop offset="100%" stopColor="#1a5c47" />
+          <stop offset="0%" stopColor="#1a1a1a" />
+          <stop offset="100%" stopColor="#2e2e2e" />
         </linearGradient>
       </defs>
       {/* Wallet */}
       <rect x="25" y="35" width="70" height="50" rx="8" fill="url(#walletGrad)" />
-      <rect x="25" y="35" width="70" height="14" rx="8" fill="#d4a017" opacity="0.3" />
+      <rect x="25" y="35" width="70" height="14" rx="8" fill="#d97706" opacity="0.3" />
       {/* Card slot */}
-      <rect x="65" y="50" width="30" height="20" rx="3" fill="#d4a017" />
-      <circle cx="75" cy="60" r="3" fill="#0d3b2e" />
+      <rect x="65" y="50" width="30" height="20" rx="3" fill="#d97706" />
+      <circle cx="75" cy="60" r="3" fill="#1a1a1a" />
       {/* Coins */}
-      <motion.circle cx="40" cy="55" r="6" fill="#e8c14a"
+      <motion.circle cx="40" cy="55" r="6" fill="#f59e0b"
         animate={{ y: [0, -4, 0] }}
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
       />
-      <motion.circle cx="50" cy="68" r="4" fill="#d4a017"
+      <motion.circle cx="50" cy="68" r="4" fill="#d97706"
         animate={{ y: [0, -3, 0] }}
         transition={{ duration: 2, repeat: Infinity, delay: 0.3, ease: "easeInOut" }}
       />

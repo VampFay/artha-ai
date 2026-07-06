@@ -63,7 +63,7 @@ export default function DashboardContent() {
           {/* OPTIMIZED: Single static radial gradient instead of 2 animated blur blobs */}
           <div
             className="absolute inset-0 pointer-events-none"
-            style={{ background: "radial-gradient(at 80% 20%, rgba(212,160,23,0.18) 0%, transparent 50%), radial-gradient(at 20% 80%, rgba(74,124,89,0.15) 0%, transparent 50%)" }}
+            style={{ background: "radial-gradient(at 80% 20%, rgba(217,119,6,0.18) 0%, transparent 50%), radial-gradient(at 20% 80%, rgba(107,98,88,0.15) 0%, transparent 50%)" }}
           />
 
           <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
@@ -90,7 +90,7 @@ export default function DashboardContent() {
                   className="font-mono font-bold leading-none"
                   style={{
                     fontSize: "clamp(5rem, 12vw, 9rem)",
-                    background: "linear-gradient(135deg, #e8c14a 0%, #d4a017 50%, #b88810 100%)",
+                    background: "linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%)",
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     WebkitTextFillColor: "transparent",
@@ -118,12 +118,12 @@ export default function DashboardContent() {
                 transition={{ delay: 0.6 }}
                 className="flex flex-wrap items-center gap-3"
               >
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(212,160,23,0.15)", border: "1px solid rgba(212,160,23,0.3)" }}>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(217,119,6,0.15)", border: "1px solid rgba(217,119,6,0.3)" }}>
                   <Sparkles className="h-3 w-3" style={{ color: "var(--color-gold-light)" }} />
                   <span className="text-xs font-semibold" style={{ color: "var(--color-gold-light)" }}>{recommended} regime · save {formatINR(savingsAmt)}</span>
                 </div>
                 {missing > 0 && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(198,93,58,0.15)", border: "1px solid rgba(198,93,58,0.3)" }}>
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full" style={{ background: "rgba(185,28,28,0.15)", border: "1px solid rgba(185,28,28,0.3)" }}>
                     <FileWarning className="h-3 w-3" style={{ color: "var(--color-clay-soft)" }} />
                     <span className="text-xs font-semibold" style={{ color: "var(--color-clay-soft)" }}>{missing} doc{missing > 1 ? "s" : ""} missing</span>
                   </div>
@@ -178,18 +178,18 @@ export default function DashboardContent() {
                     <KineticNumber value={income} format={(n) => formatINR(n)} />
                   </p>
                 </div>
-                <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: "rgba(13,59,46,0.06)" }}>
+                <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: "rgba(26,26,26,0.06)" }}>
                   <TrendingUp className="h-5 w-5" style={{ color: "var(--color-forest)" }} />
                 </div>
               </div>
               <div className="flex items-center gap-2 text-xs">
-                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "rgba(74,124,89,0.1)", color: "var(--color-moss)" }}>
+                <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "rgba(107,98,88,0.1)", color: "var(--color-moss)" }}>
                   <TrendingUp className="h-3 w-3" />8.2%
                 </span>
                 <span style={{ color: "var(--color-ink-muted)" }}>vs last month</span>
               </div>
               <div className="mt-3">
-                <Sparkline data={[80, 85, 82, 90, 95, 100]} width={240} height={36} color="#0d3b2e" />
+                <Sparkline data={[80, 85, 82, 90, 95, 100]} width={240} height={36} color="#1a1a1a" />
               </div>
           </motion.div>
         </Reveal>
@@ -203,12 +203,12 @@ export default function DashboardContent() {
                   <KineticNumber value={expenses} format={(n) => formatINR(n)} />
                 </p>
               </div>
-              <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: "rgba(198,93,58,0.08)" }}>
+              <div className="h-11 w-11 rounded-xl flex items-center justify-center" style={{ background: "rgba(185,28,28,0.08)" }}>
                 <TrendingDown className="h-5 w-5" style={{ color: "var(--color-clay)" }} />
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs">
-              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "rgba(198,93,58,0.1)", color: "var(--color-clay)" }}>
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full" style={{ background: "rgba(185,28,28,0.1)", color: "var(--color-clay)" }}>
                 <TrendingDown className="h-3 w-3" />3.1%
               </span>
               <span style={{ color: "var(--color-ink-muted)" }}>vs last month</span>
@@ -237,7 +237,7 @@ export default function DashboardContent() {
                   <p className="text-label">Top Spending Categories</p>
                   <p className="text-xs mt-1" style={{ color: "var(--color-ink-muted)" }}>{financeData?.top_categories.length || 0} active · live breakdown</p>
                 </div>
-                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(13,59,46,0.06)" }}>
+                <div className="h-9 w-9 rounded-lg flex items-center justify-center" style={{ background: "rgba(26,26,26,0.06)" }}>
                   <Zap className="h-4 w-4" style={{ color: "var(--color-forest)" }} />
                 </div>
               </div>
@@ -304,7 +304,7 @@ export default function DashboardContent() {
             <MagneticButton
               onClick={() => navigate("assistant")}
               className="text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5"
-              style={{ background: "rgba(13,59,46,0.06)", color: "var(--color-forest)" }}
+              style={{ background: "rgba(26,26,26,0.06)", color: "var(--color-forest)" }}
             >
               Ask follow-up <ArrowRight className="h-3 w-3" />
             </MagneticButton>
@@ -328,10 +328,10 @@ export default function DashboardContent() {
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: "Documents", val: taxData?.score.breakdown.document_completeness || 0, max: 40, color: "#0d3b2e" },
-                  { label: "Verification", val: taxData?.score.breakdown.data_verification || 0, max: 25, color: "#4a7c59" },
-                  { label: "Consistency", val: taxData?.score.breakdown.income_consistency || 0, max: 20, color: "#d4a017" },
-                  { label: "Deductions", val: taxData?.score.breakdown.deduction_proof || 0, max: 15, color: "#c65d3a" },
+                  { label: "Documents", val: taxData?.score.breakdown.document_completeness || 0, max: 40, color: "#1a1a1a" },
+                  { label: "Verification", val: taxData?.score.breakdown.data_verification || 0, max: 25, color: "#6b6258" },
+                  { label: "Consistency", val: taxData?.score.breakdown.income_consistency || 0, max: 20, color: "#d97706" },
+                  { label: "Deductions", val: taxData?.score.breakdown.deduction_proof || 0, max: 15, color: "#b91c1c" },
                 ].map((b, i) => (
                   <motion.div
                     key={i}
@@ -350,7 +350,7 @@ export default function DashboardContent() {
                       max={b.max}
                       height={6}
                       color={`linear-gradient(90deg, ${b.color}, ${b.color}cc)`}
-                      trackColor="rgba(13,59,46,0.06)"
+                      trackColor="rgba(26,26,26,0.06)"
                       showShimmer={false}
                     />
                   </motion.div>

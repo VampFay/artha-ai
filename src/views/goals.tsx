@@ -74,7 +74,7 @@ export default function GoalsContent() {
             whileTap={{ scale: 0.97 }}
             onClick={() => setShowForm(!showForm)}
             className="h-10 px-4 rounded-xl text-sm font-semibold flex items-center gap-1.5"
-            style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(13,59,46,0.4)" }}
+            style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)", boxShadow: "0 4px 12px -3px rgba(26,26,26,0.4)" }}
           >
             {showForm ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             {showForm ? "Cancel" : "New Goal"}
@@ -124,7 +124,7 @@ export default function GoalsContent() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="h-11 px-5 rounded-xl text-sm font-semibold flex items-center gap-2"
-                style={{ background: "linear-gradient(135deg, #0d3b2e, #062418)", color: "var(--color-cream)" }}
+                style={{ background: "linear-gradient(135deg, #1a1a1a, #0a0a0a)", color: "var(--color-cream)" }}
               >
                 <Plus className="h-4 w-4" />Create Goal
               </motion.button>
@@ -171,7 +171,7 @@ export default function GoalsContent() {
                       <motion.div
                         whileHover={{ rotate: 5, scale: 1.05 }}
                         className="h-11 w-11 rounded-xl flex items-center justify-center"
-                        style={{ background: "linear-gradient(135deg, rgba(13,59,46,0.08), rgba(212,160,23,0.08))" }}
+                        style={{ background: "linear-gradient(135deg, rgba(26,26,26,0.08), rgba(217,119,6,0.08))" }}
                       >
                         <Target className="h-5 w-5" style={{ color: "var(--color-forest)" }} />
                       </motion.div>
@@ -201,8 +201,8 @@ export default function GoalsContent() {
                   <LiquidProgress
                     value={pct}
                     height={10}
-                    color="linear-gradient(90deg, #0d3b2e 0%, #4a7c59 60%, #d4a017 100%)"
-                    trackColor="rgba(13,59,46,0.06)"
+                    color="linear-gradient(90deg, #1a1a1a 0%, #6b6258 60%, #d97706 100%)"
+                    trackColor="rgba(26,26,26,0.06)"
                     duration={1400}
                   />
 
@@ -218,7 +218,7 @@ export default function GoalsContent() {
                   {/* Projection sparkline */}
                   <div className="mt-4 pt-4" style={{ borderTop: "1px solid var(--color-line-soft)" }}>
                     <p className="text-[10px] uppercase tracking-wider mb-2" style={{ color: "var(--color-ink-muted)" }}>12-month projection</p>
-                    <Sparkline data={proj} width={300} height={40} color="#0d3b2e" />
+                    <Sparkline data={proj} width={300} height={40} color="#1a1a1a" />
                   </div>
 
                   {g.projection?.shortfall > 0 && (
@@ -227,7 +227,7 @@ export default function GoalsContent() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
                       className="mt-3 text-xs flex items-center gap-1.5 p-2 rounded-lg"
-                      style={{ color: "var(--color-clay)", background: "rgba(198,93,58,0.06)" }}
+                      style={{ color: "var(--color-clay)", background: "rgba(185,28,28,0.06)" }}
                     >
                       <TrendingUp className="h-3 w-3" />Shortfall: <span className="font-mono font-semibold">{formatINR(g.projection.shortfall)}</span>
                     </motion.div>
