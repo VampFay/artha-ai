@@ -6,6 +6,8 @@ import { useNav } from "@/lib/nav-context";
 import { GradientMesh } from "@/components/motion/gradient-mesh";
 import { PageTransition } from "@/components/motion/page-transition";
 import { CursorSpotlight } from "@/components/motion/cursor-spotlight";
+import { CommandPalette } from "@/components/command-palette";
+import { OnboardingFlow } from "@/components/onboarding-flow";
 import { LayoutDashboard, FileText, Calculator, TrendingUp, Target, MessageSquare, Download, Settings, LogOut, Loader2 } from "lucide-react";
 
 const navItems = [
@@ -240,6 +242,12 @@ export default function AppShell({ children }: { children: ReactNode }) {
           </div>
         </main>
       </div>
+
+      {/* Command Palette — Cmd+K */}
+      <CommandPalette />
+
+      {/* First-run Onboarding */}
+      <OnboardingFlow />
     </div>
   );
 }
