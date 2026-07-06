@@ -33,4 +33,4 @@ export async function GET(req: NextRequest) {
   } catch { return NextResponse.json({ detail: "Failed to export data" }, { status: 500 }); }
 }
 
-function safeParse(s: string): any { try { return JSON.parse(s); } catch { return s; } }
+function safeParse(s: string): any { if (s.length > 4096) return s; try { return JSON.parse(s); } catch { return s; } }
