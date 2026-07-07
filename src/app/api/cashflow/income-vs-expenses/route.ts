@@ -9,9 +9,13 @@ export async function GET(req: NextRequest) {
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
 
-    const months = Number(new URL(req.url).searchParams.get("months") || "6");
-    const expenses = await db.expense.findMany({ where: { userId: payload.sub } });
-    const incomes = await db.income.findMany({ where: { userId: payload.sub } });
+    const monthsParam = parseInt(new URL(req.url).searchParams.get("months") || "6", 10);
+    const months = Math.min(24, Math.max(1, isNaN(monthsParam) ? 6 : monthsParam));
+
+    const [expenses, incomes] = await Promise.all([
+      db.expense.findMany({ where: { userId: payload.sub } }),
+      db.income.findMany({ where: { userId: payload.sub } }),
+    ]);
 
     const now = new Date();
     const data: { month: string; income: number; expense: number }[] = [];
@@ -20,13 +24,17 @@ export async function GET(req: NextRequest) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
       const monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+      const monthNum = d.getMonth() + 1;
 
+      // Income: filter by month Int + financialYear
+      const fy = d.getMonth() >= 3 ? `${d.getFullYear()}-${String(d.getFullYear() + 1).slice(2)}` : `${d.getFullYear() - 1}-${String(d.getFullYear()).slice(2)}`;
       const monthIncome = incomes
-        .filter(inc => { const id = new Date(inc.month || inc.createdAt); return id >= monthStart && id < monthEnd; })
+        .filter(inc => inc.month === monthNum && inc.financialYear === fy)
         .reduce((s, inc) => s + inc.amount, 0);
 
+      // Expense: filter by transactionDate
       const monthExpense = expenses
-        .filter(e => { const ed = new Date(e.month || e.createdAt); return ed >= monthStart && ed < monthEnd; })
+        .filter(e => { const ed = new Date(e.transactionDate); return ed >= monthStart && ed < monthEnd; })
         .reduce((s, e) => s + e.amount, 0);
 
       data.push({

@@ -45,8 +45,8 @@ export async function GET(req: NextRequest) {
       text: insights[0],
       allInsights: insights,
     });
-  } catch (e: any) {
-    console.error("Oracle insight error:", e?.message || e);
-    return NextResponse.json({ detail: "Failed to fetch insight", error: e?.message }, { status: 500 });
+  } catch (e) {
+    console.error("Oracle insight error:", e);
+    return NextResponse.json({ detail: "Failed to fetch insight" }, { status: 500 });
   }
 }

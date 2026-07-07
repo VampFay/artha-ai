@@ -5,7 +5,7 @@ export default function Error({ error, reset }: { error: Error; reset: () => voi
   // Log the actual error server-side (for debugging) but show generic message to user
   if (typeof console !== "undefined") console.error("App error:", error.message);
   return (
-    <div className="min-h-screen flex items-center justify-center bg-mesh p-4">
+    <div className="min-h-screen flex items-center justify-center bg-canvas p-4">
       <div className="text-center max-w-md">
         <div className="h-12 w-12 rounded-xl bg-red-50 flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">⚠️</span>

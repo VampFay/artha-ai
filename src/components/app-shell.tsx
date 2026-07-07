@@ -14,6 +14,7 @@ import CashflowView from "@/views/CashflowView";
 import LiabilitiesView from "@/views/LiabilitiesView";
 import RetirementView from "@/views/RetirementView";
 import DocumentsView from "@/views/DocumentsView";
+import DocumentVerifyView from "@/views/DocumentVerifyView";
 import EstateView from "@/views/EstateView";
 import TaxView from "@/views/TaxView";
 import FinanceView from "@/views/FinanceView";
@@ -97,6 +98,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       case "liabilities": return <LiabilitiesView />;
       case "retirement": return <RetirementView />;
       case "documents": return <DocumentsView onNavigate={navigate as any} />;
+      case "document-verify": return <DocumentVerifyView />;
       case "estate": return <EstateView />;
       case "tax": return <TaxView />;
       case "finance": return <FinanceView />;
@@ -168,7 +170,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <div className="flex items-center gap-2" onClick={() => handleNav("dashboard")}>
           <span className="font-serif italic text-xl tracking-tight text-saffron">Artha AI</span>
         </div>
-        <button onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 rounded-lg text-carbon hover:bg-carbon/5 transition-colors">
+        <button aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 rounded-lg text-carbon hover:bg-carbon/5 transition-colors">
           <Menu className="w-6 h-6" />
         </button>
       </div>
@@ -189,7 +191,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             >
               <div className="flex justify-between items-center mb-10">
                 <span className="font-serif italic text-2xl tracking-tight text-saffron">Artha AI</span>
-                <button onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 rounded-lg text-stone hover:text-white transition-colors">
+                <button aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 rounded-lg text-stone hover:text-white transition-colors">
                   <X className="w-6 h-6" />
                 </button>
               </div>

@@ -109,7 +109,7 @@ export default function GoalsView() {
                     <div className="w-10 h-10 rounded-full bg-carbon/5 flex items-center justify-center"><Target className="w-5 h-5 text-carbon" /></div>
                     <div><h4 className="text-sm font-medium text-carbon">{g.goalName}</h4><p className="text-xs text-stone">Target: ₹{g.targetAmount.toLocaleString("en-IN")}</p></div>
                   </div>
-                  <button onClick={() => handleDelete(g.id)} className="p-2 text-stone hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
+                  <button aria-label="Delete goal" onClick={() => handleDelete(g.id)} className="p-2 text-stone hover:text-red-500 transition-colors"><Trash2 className="w-4 h-4" /></button>
                 </div>
                 <div className="flex items-baseline gap-2 mb-4">
                   <span className="text-3xl font-light text-carbon"><KineticNumber value={pct} format={(v) => v.toFixed(0)} /></span>
