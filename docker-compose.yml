@@ -1,6 +1,32 @@
 version: '3.8'
 
 services:
+  # Web Application
+  web:
+    build: .
+    container_name: artha-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://artha:artha_password@postgres:5432/artha
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
   # PostgreSQL Database
   postgres:
     image: postgres:16-alpine
@@ -20,7 +46,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Redis (for rate limiting + job queue)
+  # Redis (rate limiting + job queue)
   redis:
     image: redis:7-alpine
     container_name: artha-redis
@@ -38,3 +64,4 @@ services:
 volumes:
   pgdata:
   redisdata:
+  uploads:
