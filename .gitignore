@@ -55,3 +55,7 @@ server.log
 *.db
 *.db-journal
 uploads/
+.env
+JWT_SECRET
+.env.local
+.env.production
