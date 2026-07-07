@@ -59,3 +59,10 @@ uploads/
 JWT_SECRET
 .env.local
 .env.production
+skills/
+upload/
+download/
+uploaded-ui/
+uploaded-ui-v2/
+.z-ai-config/
+scripts/seed-*.ts
