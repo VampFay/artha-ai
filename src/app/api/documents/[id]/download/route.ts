@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
-import { readFile } from "fs/promises";
-import path from "path";
+import { getFileStore } from "@/lib/storage/file-store";
 
 // Authenticated file download — only the owner can download their documents
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -16,10 +15,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (!doc) return NextResponse.json({ detail: "Not found" }, { status: 404 });
     if (doc.userId !== payload.sub) return NextResponse.json({ detail: "Not your document" }, { status: 403 });
 
-    const fullPath = path.join(process.cwd(), doc.filePath);
-    const fileBuffer = await readFile(fullPath);
+    // Read file using storage abstraction (local or S3)
+    const fileStore = getFileStore();
+    const fileBuffer = await fileStore.read(doc.filePath);
 
-    // Always send as application/octet-stream with nosniff to prevent XSS via uploaded content
     return new NextResponse(fileBuffer, {
       headers: {
         "Content-Type": "application/octet-stream",
