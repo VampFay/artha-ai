@@ -66,3 +66,9 @@ uploaded-ui/
 uploaded-ui-v2/
 .z-ai-config/
 scripts/seed-*.ts
+.zscripts/
+examples/
+mini-services/
+tool-results/
+dashboard.png
+Caddyfile
