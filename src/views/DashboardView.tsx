@@ -13,6 +13,7 @@ interface DashboardViewProps {
 export default function DashboardView({ onNavigate }: DashboardViewProps) {
   const [hoveredBar, setHoveredBar] = useState<number | null>(null);
   const [data, setData] = useState<any>({});
+  const [dashLoading, setDashLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem("finsight_token");
@@ -27,6 +28,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
       fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).catch(() => null),
     ]).then(([portfolio, cashflow, ie, tax, oracle, docs, estate]) => {
       setData({ portfolio, cashflow, ie, tax, oracle, docs, estate });
+      setDashLoading(false);
     });
   }, []);
 
@@ -51,6 +53,21 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
     color: 'bg-[#111]',
   }));
 
+  if (dashLoading) return (
+    <div className="flex flex-col px-6 lg:px-12 max-w-[1200px] mx-auto w-full pt-8">
+      <div className="skeleton h-8 w-48 mb-12" />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+        <div className="col-span-1 lg:col-span-2 skeleton h-48 rounded-3xl" />
+        <div className="skeleton h-48 rounded-3xl" />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="skeleton h-32 rounded-3xl" />
+        <div className="skeleton h-32 rounded-3xl" />
+      </div>
+      <div className="skeleton h-64 rounded-3xl" />
+    </div>
+  );
+
   return (
     <div className="flex flex-col px-6 lg:px-12 max-w-[1200px] mx-auto w-full">
       
@@ -71,7 +88,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
               <h2 className="text-[10px] font-bold tracking-[0.2em] text-saffron uppercase">Total Net Worth</h2>
               <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold bg-emerald-400/10 px-2 py-1 rounded">
                 <ArrowUpRight className="w-3 h-3" />
-                <span>+12.4% YTD</span>
+                <span>+{data.portfolio?.irrPct?.toFixed(1) || "0.0"}% IRR</span>
               </div>
             </div>
             
@@ -166,11 +183,11 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
               </div>
               
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-michroma text-carbon tracking-tight">42</span>
+                <span className="text-4xl font-michroma text-carbon tracking-tight">{netWorth > 0 ? Math.min(99, Math.round((netWorth / 50000000) * 100)) : 0}</span>
                 <span className="text-xl text-stone-dark font-michroma">%</span>
               </div>
               <p className="text-xs text-stone leading-relaxed">
-                On track for retirement by <span className="font-bold text-carbon">Age 48</span>.
+                {netWorth > 0 ? `On track for retirement by Age ${Math.max(45, 65 - Math.floor(netWorth / 5000000))}.` : "Upload documents to see your FIRE progress."}
               </p>
             </motion.div>
           </div>
@@ -185,7 +202,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             <div className="flex justify-between items-end mb-6 cursor-pointer group" onClick={() => onNavigate('cashflow')}>
               <h3 className="text-[10px] font-bold tracking-[0.15em] text-carbon uppercase group-hover:text-saffron transition-colors">Cashflow Patterns <ArrowUpRight className="inline w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" /></h3>
               <span className="text-[10px] font-michroma text-stone transition-colors">
-                {hoveredBar !== null ? `Primary: ${SPENDING_DATA[hoveredBar].category}` : "Avg Outflow: ₹1.1L"}
+                {hoveredBar !== null ? `Primary: ${SPENDING_DATA[hoveredBar].category}` : `Avg Outflow: ₹${SPENDING_DATA.length > 0 ? (SPENDING_DATA.reduce((s: any, d: any) => s + d.expense, 0) / SPENDING_DATA.length / 100000).toFixed(1) + "L" : "—"}`}
               </span>
             </div>
             

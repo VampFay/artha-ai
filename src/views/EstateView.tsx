@@ -130,7 +130,7 @@ export default function EstateView() {
               <div className="p-6 border border-saffron/20 bg-saffron/5">
                 <ShieldAlert className="w-5 h-5 text-saffron mb-3" />
                 <p className="text-xs text-carbon-light leading-relaxed mb-3">Resolve unassigned assets to ensure your estate is fully protected.</p>
-                <button className="text-xs text-saffron font-bold uppercase tracking-wider hover:text-carbon transition-colors flex items-center gap-1">Review Assets <ArrowRight className="w-3 h-3" /></button>
+                <button onClick={() => window.location.hash = "portfolio"} className="text-xs text-saffron font-bold uppercase tracking-wider hover:text-carbon transition-colors flex items-center gap-1">Review Assets <ArrowRight className="w-3 h-3" /></button>
               </div>
             )}
           </div>

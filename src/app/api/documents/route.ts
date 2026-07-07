@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     // Save file using storage abstraction (local or S3)
     const docId = `doc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     const storageKey = `${payload.sub}/${docId}${ext}`;
-    const fileStore = getFileStore();
+    const fileStore = await getFileStore();
     const storedPath = await fileStore.save(storageKey, buffer, file.type || "application/octet-stream");
 
     // Create DB record

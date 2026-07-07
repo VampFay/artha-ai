@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, Check, CheckCheck, Edit3, ShieldCheck } from "lucide-react";
+import { useNav } from "@/lib/nav-context";
 
 interface Field {
   id: string;
@@ -13,6 +14,8 @@ interface Field {
 }
 
 export default function DocumentVerifyView() {
+  const { params, navigate } = useNav();
+  const docId = params.id as string;
   const [fields, setFields] = useState<Field[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -20,20 +23,24 @@ export default function DocumentVerifyView() {
 
   useEffect(() => {
     const token = localStorage.getItem("finsight_token");
-    if (!token) return;
-    // Fetch fields for the most recent document
-    fetch("/api/documents", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => {
-        const docs = d.items || [];
+    if (!token) { setLoading(false); return; }
+    // Use the document ID from navigation params, or fall back to latest
+    const fetchFields = async () => {
+      let id = docId;
+      if (!id) {
+        const docsRes = await fetch("/api/documents", { headers: { Authorization: `Bearer ${token}` } });
+        const docsData = await docsRes.json();
+        const docs = docsData.items || [];
         if (docs.length === 0) { setLoading(false); return; }
-        const latestDoc = docs[0];
-        return fetch(`/api/extraction/${latestDoc.id}/fields`, { headers: { Authorization: `Bearer ${token}` } });
-      })
-      .then(r => r ? r.json() : { items: [] })
-      .then(d => setFields(d.items || []))
-      .finally(() => setLoading(false));
-  }, []);
+        id = docs[0].id;
+      }
+      const res = await fetch(`/api/extraction/${id}/fields`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await res.json();
+      setFields(data.items || []);
+      setLoading(false);
+    };
+    fetchFields();
+  }, [docId]);
 
   const verify = async (id: string) => {
     const token = localStorage.getItem("finsight_token");

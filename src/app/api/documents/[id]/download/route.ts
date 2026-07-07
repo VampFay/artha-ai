@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     if (doc.userId !== payload.sub) return NextResponse.json({ detail: "Not your document" }, { status: 403 });
 
     // Read file using storage abstraction (local or S3)
-    const fileStore = getFileStore();
+    const fileStore = await getFileStore();
     const fileBuffer = await fileStore.read(doc.filePath);
 
     return new NextResponse(fileBuffer, {

@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import type { ViewState } from "@/lib/types";
 import CommandPaletteNew from "@/components/CommandPaletteNew";
 import OnboardingFlowNew from "@/components/OnboardingFlowNew";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import DashboardView from "@/views/DashboardView";
 import PortfolioView from "@/views/PortfolioView";
 import CashflowView from "@/views/CashflowView";
@@ -46,7 +47,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
     { label: "TAX SCORE", value: "—", up: true },
   ]);
 
-  // Fetch live ticker data
+  // Fetch ticker data ONCE per session (not per page)
   useEffect(() => {
     if (!user) return;
     const token = localStorage.getItem("finsight_token");
@@ -63,7 +64,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       if (tax?.score?.score != null) items.push({ label: "TAX SCORE", value: `${tax.score.score}/100`, up: true });
       if (items.length > 0) setTickerItems(items);
     });
-  }, [user, page]);
+  }, [user]); // Removed `page` from deps — fetch once per session
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -255,17 +256,19 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </div>
 
         <div className="flex-1 relative">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={page}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-              {renderView()}
-            </motion.div>
-          </AnimatePresence>
+          <ErrorBoundary key={page}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={page}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+              >
+                {renderView()}
+              </motion.div>
+            </AnimatePresence>
+          </ErrorBoundary>
         </div>
       </main>
 

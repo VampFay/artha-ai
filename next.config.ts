@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ["pdfkit", "pdf-parse"],
+  serverExternalPackages: ["pdfkit", "pdf-parse", "@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
   async headers() {
     return [{
       source: "/(.*)",
