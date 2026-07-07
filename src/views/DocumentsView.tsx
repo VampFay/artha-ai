@@ -119,7 +119,7 @@ export default function DocumentsView({ onNavigate }: DocumentsViewProps) {
             </div>
             <h3 className="text-lg font-medium text-carbon mb-1">{uploading ? "Processing..." : isDragging ? "Drop to upload" : "Drop file or click to browse"}</h3>
             <p className="text-sm text-stone max-w-sm">Supports PDF, CSV, XLSX, JPG, PNG up to 10MB. Data is encrypted and extracted locally.</p>
-            {uploading && <p className="text-xs text-saffron font-mono mt-2">{uploadProgress}%</p>}
+            {uploading && <p className="text-xs text-saffron font-pixel mt-2">{uploadProgress}%</p>}
           </div>
         </section>
 

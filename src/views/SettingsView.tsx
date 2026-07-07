@@ -106,7 +106,7 @@ export default function SettingsView({ user, onLogout }: SettingsViewProps) {
                         <span className="text-sm text-carbon">{c.consent_type.replace(/_/g, " ")}</span>
                         {c.revoked_at && <span className="ml-2 text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-stone/20 text-stone">Revoked</span>}
                       </div>
-                      <span className="text-xs text-stone font-mono">{new Date(c.accepted_at).toLocaleDateString("en-IN")}</span>
+                      <span className="text-xs text-stone font-pixel">{new Date(c.accepted_at).toLocaleDateString("en-IN")}</span>
                     </div>
                   ))}
                 </div>
@@ -127,7 +127,7 @@ export default function SettingsView({ user, onLogout }: SettingsViewProps) {
                 <div className="space-y-1.5 max-h-64 overflow-y-auto">
                   {logs.slice(0, 15).map(l => (
                     <div key={l.id} className="flex justify-between items-center text-xs py-1.5 px-2 hover:bg-carbon/5 rounded">
-                      <span className="font-mono text-carbon">{l.action.replace(/_/g, " ")}</span>
+                      <span className="font-pixel text-carbon">{l.action.replace(/_/g, " ")}</span>
                       <span className="text-stone">{new Date(l.timestamp).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>
                     </div>
                   ))}

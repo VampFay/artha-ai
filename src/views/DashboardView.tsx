@@ -76,10 +76,10 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             </div>
             
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl lg:text-5xl font-serif text-white/50">₹</span>
+              <span className="text-4xl lg:text-5xl font-display text-white/50">₹</span>
               <KineticNumber
                 value={netWorth}
-                className="text-[4rem] lg:text-[5.5rem] font-serif tracking-tighter leading-none text-white"
+                className="text-[4rem] lg:text-[5.5rem] font-display tracking-tighter leading-none text-white"
               />
             </div>
           </div>
@@ -98,7 +98,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             <div>
               <div className="flex justify-between text-xs mb-2">
                 <span className="font-bold text-stone uppercase tracking-wider">Liquid Assets</span>
-                <span className="font-mono text-carbon">₹{(liquidAmount / 100000).toFixed(1)}L</span>
+                <span className="font-pixel text-carbon">₹{(liquidAmount / 100000).toFixed(1)}L</span>
               </div>
               <div className="w-full h-1.5 bg-carbon/5 rounded-full overflow-hidden">
                 <div className="h-full bg-saffron" style={{ width: `${liquidPct}%` }} />
@@ -108,7 +108,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             <div>
               <div className="flex justify-between text-xs mb-2">
                 <span className="font-bold text-stone uppercase tracking-wider">Locked (PF/RE)</span>
-                <span className="font-mono text-carbon">₹{(lockedAmount / 10000000).toFixed(2)}Cr</span>
+                <span className="font-pixel text-carbon">₹{(lockedAmount / 10000000).toFixed(2)}Cr</span>
               </div>
               <div className="w-full h-1.5 bg-carbon/5 rounded-full overflow-hidden">
                 <div className="h-full bg-carbon" style={{ width: `${lockedPct}%` }} />
@@ -118,7 +118,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
 
           <div className="mt-8 pt-6 border-t border-carbon/10 flex items-center justify-between">
             <span className="text-[10px] font-bold tracking-widest text-stone uppercase">Runway</span>
-            <span className="font-serif italic text-carbon">{runwayMonths.toFixed(0)} Months</span>
+            <span className="font-display text-carbon">{runwayMonths.toFixed(0)} Months</span>
           </div>
         </motion.div>
       </div>
@@ -144,8 +144,8 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
               </div>
               
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-serif text-carbon tracking-tight"><KineticNumber value={taxScore} /></span>
-                <span className="text-xl text-stone-dark font-serif italic">/100</span>
+                <span className="text-4xl font-display text-carbon tracking-tight"><KineticNumber value={taxScore} /></span>
+                <span className="text-xl text-stone-dark font-display">/100</span>
               </div>
               <p className="text-xs text-stone leading-relaxed">
                 Potential savings of <span className="font-bold text-carbon">₹{taxSavings.toLocaleString("en-IN")}</span> found.
@@ -166,8 +166,8 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
               </div>
               
               <div className="flex items-baseline gap-1 mb-2">
-                <span className="text-4xl font-serif text-carbon tracking-tight">42</span>
-                <span className="text-xl text-stone-dark font-serif italic">%</span>
+                <span className="text-4xl font-display text-carbon tracking-tight">42</span>
+                <span className="text-xl text-stone-dark font-display">%</span>
               </div>
               <p className="text-xs text-stone leading-relaxed">
                 On track for retirement by <span className="font-bold text-carbon">Age 48</span>.
@@ -184,7 +184,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
           >
             <div className="flex justify-between items-end mb-6 cursor-pointer group" onClick={() => onNavigate('cashflow')}>
               <h3 className="text-[10px] font-bold tracking-[0.15em] text-carbon uppercase group-hover:text-saffron transition-colors">Cashflow Patterns <ArrowUpRight className="inline w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" /></h3>
-              <span className="text-[10px] font-serif italic text-stone transition-colors">
+              <span className="text-[10px] font-display text-stone transition-colors">
                 {hoveredBar !== null ? `Primary: ${SPENDING_DATA[hoveredBar].category}` : "Avg Outflow: ₹1.1L"}
               </span>
             </div>
@@ -255,7 +255,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
                   <h3 className="text-[10px] font-bold tracking-[0.2em] text-stone-light uppercase">Artha Oracle Insight</h3>
                 </div>
                 
-                <p className="font-serif italic text-[22px] leading-[1.4] text-white mb-10">
+                <p className="font-display text-[22px] leading-[1.4] text-white mb-10">
                   "{oracleText}"
                 </p>
               </div>
