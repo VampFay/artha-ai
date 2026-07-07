@@ -10,7 +10,12 @@
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "db:push:postgres": "prisma db push --schema prisma/schema.postgres.prisma",
+    "db:generate:postgres": "prisma generate --schema prisma/schema.postgres.prisma",
+    "migrate:to-postgres": "bun run scripts/migrate-sqlite-to-postgres.ts",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",

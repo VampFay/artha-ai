@@ -1,0 +1,296 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  role         String         @default("user") // "user" | "admin"
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  consents     UserConsent[]
+  documents    Document[]
+  incomes      Income[]
+  expenses     Expense[]
+  deductions   Deduction[]
+  taxEstimations       TaxEstimation[]
+  healthScores         FinancialHealthScore[]
+  goals                Goal[]
+  auditLogs            AuditLog[]
+  assetHoldings        AssetHolding[]
+  allocationTargets    AllocationTarget[]
+  subscriptions        Subscription[]
+  liabilities          Liability[]
+  nominees             Nominee[]
+  estateDocuments      EstateDocument[]
+}
+
+model UserConsent {
+  id          String   @id @default(cuid())
+  userId      String
+  consentType String
+  consentText String
+  acceptedAt  DateTime @default(now())
+  revokedAt   DateTime?
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Document {
+  id               String           @id @default(cuid())
+  userId           String
+  documentType     String
+  fileName         String
+  filePath         String
+  fileHash         String
+  fileSizeBytes    Int
+  mimeType         String
+  processingStatus String           @default("pending")
+  confidenceScore  Float?
+  errorMessage     String?
+  rawText          String?
+  extractedTables  String?
+  detectedDocType  String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  user             User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  extractedFields  ExtractedField[]
+  incomes          Income[]
+  expenses         Expense[]
+  deductions       Deduction[]
+
+  @@unique([userId, fileHash])
+  @@index([userId])
+  @@index([fileHash])
+}
+
+model ExtractedField {
+  id              String   @id @default(cuid())
+  documentId      String
+  fieldName       String
+  fieldValue      String
+  confidenceScore Float
+  verifiedByUser  Boolean  @default(false)
+  sourceSnippet   String?
+  createdAt       DateTime @default(now())
+  document        Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([fieldName])
+}
+
+model Income {
+  id             String    @id @default(cuid())
+  userId         String
+  incomeType     String
+  source         String
+  amount         Float
+  month          Int
+  financialYear  String
+  documentId     String?
+  verified       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document       Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model Expense {
+  id              String    @id @default(cuid())
+  userId          String
+  transactionDate DateTime
+  description     String
+  category        String
+  amount          Float
+  documentId      String?
+  createdAt       DateTime  @default(now())
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document        Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([transactionDate])
+}
+
+model Deduction {
+  id             String    @id @default(cuid())
+  userId         String
+  deductionType  String
+  amount         Float
+  financialYear  String
+  documentId     String?
+  verified       Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  document       Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}
+
+model TaxEstimation {
+  id                     String   @id @default(cuid())
+  userId                 String
+  financialYear          String
+  grossIncome            Float
+  totalDeductions        Float
+  taxableIncomeOldRegime Float
+  taxableIncomeNewRegime Float
+  estimatedTaxOldRegime  Float
+  estimatedTaxNewRegime  Float
+  recommendedRegime      String
+  computedAt             DateTime @default(now())
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, financialYear])
+  @@index([userId])
+}
+
+model FinancialHealthScore {
+  id                   String   @id @default(cuid())
+  userId               String
+  month                DateTime
+  savingsRate          Float
+  debtToIncomeRatio    Float
+  emergencyFundMonths  Float
+  subscriptionTotal    Float
+  score                Int
+  computedAt           DateTime @default(now())
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, month])
+  @@index([userId])
+}
+
+model Goal {
+  id                  String    @id @default(cuid())
+  userId              String
+  goalName            String
+  targetAmount        Float
+  currentAmount       Float     @default(0)
+  monthlyContribution Float    @default(0)
+  targetDate          DateTime?
+  expectedReturnRate  Float     @default(0)
+  createdAt           DateTime  @default(now())
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  details   String?
+  ipAddress String?
+  timestamp DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
+
+model RevokedToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String?
+  revokedAt DateTime @default(now())
+
+  @@index([token])
+}
+
+// ============================================================
+// NEW MODELS — Artha AI Wealth Intelligence
+// ============================================================
+
+model AssetHolding {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String   // e.g. "Equities (Domestic)"
+  assetClass  String   // "equity_domestic" | "equity_global" | "fixed_income" | "real_estate" | "cash"
+  value       Float
+  color       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AllocationTarget {
+  id          String   @id @default(cuid())
+  userId      String
+  assetClass  String
+  targetPct   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, assetClass])
+  @@index([userId])
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  amount      Float
+  frequency   String   // "Monthly" | "Yearly"
+  status      String   @default("Active") // "Active" | "Cancelled"
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Liability {
+  id                 String   @id @default(cuid())
+  userId             String
+  name               String
+  loanType           String   // "home" | "car" | "personal" | "education" | "credit_card"
+  principal          Float
+  remaining          Float
+  rate               Float    // annual interest rate %
+  emi                Float
+  tenureLeftMonths   Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Nominee {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  relation    String   // "Spouse" | "Child" | "Parent" | "Sibling" | "Other"
+  allocation  Float    // percentage
+  status      String   @default("Pending Verification") // "Verified" | "Pending Verification"
+  assets      String   // JSON array of asset names
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EstateDocument {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  docType     String   // "will" | "trust" | "power_of_attorney" | "other"
+  filePath    String
+  uploadedAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
