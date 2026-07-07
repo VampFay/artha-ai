@@ -115,7 +115,7 @@ export default function RetirementView() {
             <div className="p-8 border border-carbon/10">
               <h4 className="text-[10px] font-bold tracking-[0.15em] text-stone uppercase mb-2">Target FIRE Corpus</h4>
               <div className="text-3xl font-light text-carbon mb-1">
-                <span className="font-display text-stone mr-1">₹</span>
+                <span className="font-michroma text-stone mr-1">₹</span>
                 <KineticNumber value={Math.round(targetCorpus)} />
               </div>
               <p className="text-xs text-stone">To sustain ₹{Math.round(futureMonthlyExpense).toLocaleString()}/mo at age {targetAge}</p>
@@ -124,7 +124,7 @@ export default function RetirementView() {
             <div className="p-8 bg-carbon text-white">
               <h4 className="text-[10px] font-bold tracking-[0.15em] text-stone uppercase mb-2">Required Monthly SIP</h4>
               <div className="text-3xl font-light mb-1">
-                <span className="font-display text-stone mr-1">₹</span>
+                <span className="font-michroma text-stone mr-1">₹</span>
                 <KineticNumber value={Math.max(0, Math.round(requiredSIP))} />
               </div>
               <p className="text-xs text-stone">For the next {yearsToRetire} years</p>

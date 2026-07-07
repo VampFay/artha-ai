@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@source "../**/*.{tsx,ts}";
+
+/* Michroma + Geist Pixel — MUST be outside @layer to survive Tailwind tree-shaking */
+.font-michroma { font-family: "Michroma", ui-sans-serif, system-ui, sans-serif !important; letter-spacing: 0.05em; }
+.font-geist-pixel { font-family: "Geist Pixel", ui-monospace, monospace !important; font-feature-settings: "tnum", "zero"; }
 
 /* ============================================================
    ARTHA AI — DESIGN SYSTEM v6 "EDITORIAL CARBON"
@@ -10,6 +15,8 @@
   --font-sans: var(--font-geist), "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-geist), "Geist", ui-serif, Georgia, serif;
+  --font-michroma: "Michroma", ui-sans-serif, system-ui, sans-serif;
+  --font-terminal: "Geist Pixel", ui-monospace, monospace;
 
   /* Core palette */
   --color-canvas: #f4f0ea;
@@ -65,9 +72,7 @@
   border-radius: 8px;
 }
 
-/* Font utility classes — outside @layer to avoid Tailwind tree-shaking */
-.font-display { font-family: "Michroma", sans-serif !important; letter-spacing: 0.05em; }
-.font-pixel { font-family: "Geist Pixel", monospace !important; font-feature-settings: "tnum","zero"; }
+/* Custom utility classes */
 
 .live-dot {
   position: relative; display: inline-block;

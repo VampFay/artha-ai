@@ -120,7 +120,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* Desktop Sidebar (Dark) */}
       <aside className="hidden lg:flex w-[260px] flex-col bg-[#111111] text-stone-light relative z-20 shrink-0" style={{ position: "sticky", top: 0, height: "100vh", alignSelf: "flex-start" }}>
         <div className="pt-12 pb-10 px-8 cursor-pointer" onClick={() => handleNav("dashboard")}>
-          <h1 className="font-display text-2xl tracking-widest text-saffron mb-1">ARTHA AI</h1>
+          <h1 className="font-michroma text-2xl tracking-widest text-saffron mb-1">ARTHA AI</h1>
           <p className="text-[9px] font-bold tracking-[0.2em] text-stone uppercase">Wealth Intelligence</p>
         </div>
 
@@ -168,7 +168,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-canvas/90 border-b border-carbon/5 z-40 flex items-center justify-between px-6">
         <div className="flex items-center gap-2" onClick={() => handleNav("dashboard")}>
-          <span className="font-display text-xl tracking-widest text-saffron">ARTHA AI</span>
+          <span className="font-michroma text-xl tracking-widest text-saffron">ARTHA AI</span>
         </div>
         <button aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 rounded-lg text-carbon hover:bg-carbon/5 transition-colors">
           <Menu className="w-6 h-6" />
@@ -190,7 +190,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               className="fixed top-0 left-0 bottom-0 w-4/5 max-w-sm bg-[#111111] text-stone-light z-50 p-8 shadow-2xl lg:hidden overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-10">
-                <span className="font-display text-2xl tracking-widest text-saffron">ARTHA AI</span>
+                <span className="font-michroma text-2xl tracking-widest text-saffron">ARTHA AI</span>
                 <button aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 rounded-lg text-stone hover:text-white transition-colors">
                   <X className="w-6 h-6" />
                 </button>
@@ -274,7 +274,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         <div className="flex items-center justify-between mb-2 w-full max-w-[1200px] mx-auto">
           <div />
           <div className="text-[9px] font-bold text-carbon/40 uppercase tracking-[0.1em] flex items-center gap-1.5 pointer-events-auto">
-            <Command className="w-2.5 h-2.5" /> <span className="font-pixel bg-carbon/5 px-1 rounded text-carbon">⌘K</span> command palette
+            <Command className="w-2.5 h-2.5" /> <span className="font-geist-pixel bg-carbon/5 px-1 rounded text-carbon">⌘K</span> command palette
           </div>
         </div>
         <div className="w-full bg-white rounded-full h-10 shadow-sm border border-carbon/5 overflow-hidden flex items-center relative pointer-events-auto">
@@ -291,7 +291,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 ) : (
                   <ArrowDown className="w-3.5 h-3.5 text-red-500 mr-1" />
                 )}
-                <span className="font-pixel font-medium text-carbon">{item.value}</span>
+                <span className="font-geist-pixel font-medium text-carbon">{item.value}</span>
               </div>
             ))}
           </motion.div>
