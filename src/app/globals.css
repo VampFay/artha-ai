@@ -11,12 +11,10 @@
    ============================================================ */
 
 @theme {
-  /* Fonts — Michroma (headings/branding) + Geist Pixel (numbers/metrics/system) + Geist (body) */
+  /* Fonts — Geist (body) + Geist Mono (code) */
   --font-sans: var(--font-geist), "Geist", ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-geist), "Geist", ui-serif, Georgia, serif;
-  --font-michroma: "Michroma", ui-sans-serif, system-ui, sans-serif;
-  --font-terminal: "Geist Pixel", ui-monospace, monospace;
 
   /* Core palette */
   --color-canvas: #f4f0ea;

@@ -36,7 +36,7 @@ export default function ReportsView() {
     <div className="flex flex-col">
       <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10">
-          <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Reports</h1>
+          <h1 className="text-3xl font-michroma tracking-tight text-carbon mb-2">Reports</h1>
           <p className="text-stone">Generate CA-ready PDF reports from your analyzed data.</p>
         </header>
 
@@ -77,7 +77,7 @@ export default function ReportsView() {
                     <FileText className="w-5 h-5 text-stone/50" />
                     <div>
                       <p className="font-medium text-carbon text-sm capitalize">{rec.type.replace(/_/g, " ")} Report</p>
-                      <p className="text-xs text-stone">{new Date(rec.generatedAt).toLocaleString("en-IN")}</p>
+                      <p className="text-xs font-geist-pixel text-stone">{new Date(rec.generatedAt).toLocaleString("en-IN")}</p>
                     </div>
                   </div>
                   <button className="p-2 text-stone hover:text-carbon transition-colors"><Download className="w-4 h-4" /></button>

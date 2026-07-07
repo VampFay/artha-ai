@@ -54,7 +54,7 @@ export default function FinanceView() {
       <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Financial Health</h1>
+            <h1 className="text-3xl font-michroma tracking-tight text-carbon mb-2">Financial Health</h1>
             <p className="text-stone">Your money flow and overall financial stability.</p>
           </div>
           <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-xl border border-stone/10 shadow-sm">
@@ -74,7 +74,7 @@ export default function FinanceView() {
                 <circle cx="50" cy="50" r="45" fill="none" className="stroke-saffron drop-shadow-[0_0_8px_rgba(217,119,6,0.5)]" strokeWidth="6" strokeLinecap="round" strokeDasharray="283" strokeDashoffset={dashOffset} style={{ transition: "stroke-dashoffset 1.5s ease-out" }} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <KineticNumber value={score} className="text-3xl font-semibold tracking-tighter" />
+                <KineticNumber value={score} className="text-3xl font-geist-pixel font-semibold tracking-tighter" />
               </div>
             </div>
             <div>
@@ -96,7 +96,7 @@ export default function FinanceView() {
                 <span className="text-sm font-medium text-stone truncate">{metric.label}</span>
               </div>
               <div className="flex items-end justify-between">
-                <span className="text-2xl font-semibold text-carbon">{metric.val}</span>
+                <span className="text-2xl font-geist-pixel font-semibold text-carbon">{metric.val}</span>
                 <Sparkline data={metric.spark} width={60} height={20} color="#1a1a1a" className="opacity-20" />
               </div>
             </div>

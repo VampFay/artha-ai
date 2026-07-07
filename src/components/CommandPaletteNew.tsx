@@ -109,7 +109,7 @@ export default function CommandPalette({ isOpen, onClose, onNavigate }: CommandP
                   placeholder="Search pages, actions, documents..."
                   className="flex-1 bg-transparent border-none outline-none px-3 text-lg font-medium placeholder:text-stone/40"
                 />
-                <div className="px-2 py-1 rounded bg-stone/5 text-stone text-xs font-mono tracking-widest uppercase">
+                <div className="px-2 py-1 rounded bg-stone/5 text-stone text-xs font-geist-pixel tracking-widest uppercase">
                   Esc
                 </div>
               </div>

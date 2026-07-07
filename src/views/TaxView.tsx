@@ -45,7 +45,7 @@ export default function TaxView() {
     <div className="flex flex-col">
       <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto w-full">
         <header className="mb-10">
-          <h1 className="text-3xl font-semibold tracking-tight text-carbon mb-2">Tax Readiness</h1>
+          <h1 className="text-3xl font-michroma tracking-tight text-carbon mb-2">Tax Readiness</h1>
           <p className="text-stone">AI-driven analysis of your tax profile for FY {data?.financial_year || "2024-25"}.</p>
         </header>
 
@@ -58,7 +58,7 @@ export default function TaxView() {
                 <motion.circle cx="50" cy="50" r="45" fill="none" className="stroke-saffron drop-shadow-[0_0_8px_rgba(217,119,6,0.5)]" strokeWidth="8" strokeLinecap="round" strokeDasharray="283" initial={{ strokeDashoffset: 283 }} animate={{ strokeDashoffset: dashOffset }} transition={{ duration: 1.5, ease: "easeOut" }} />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <KineticNumber value={score} className="text-4xl font-semibold tracking-tighter" />
+                <KineticNumber value={score} className="text-4xl font-geist-pixel font-semibold tracking-tighter" />
                 <span className="text-stone font-medium text-sm">Score</span>
               </div>
             </div>
@@ -122,7 +122,7 @@ export default function TaxView() {
               <p className="text-white/90 font-medium text-sm">Estimated Savings</p>
               <div className="flex items-baseline gap-1">
                 <span className="text-lg">₹</span>
-                <KineticNumber value={r.savings_amount} format={v => Math.round(v).toLocaleString("en-IN")} className="text-3xl font-bold tracking-tight" />
+                <KineticNumber value={r.savings_amount} format={v => Math.round(v).toLocaleString("en-IN")} className="text-3xl font-geist-pixel font-bold tracking-tight" />
               </div>
             </div>
           </div>
@@ -133,16 +133,16 @@ export default function TaxView() {
               {r.recommended_regime === "old" && <div className="absolute top-4 right-4 bg-saffron text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Best Choice</div>}
               <h3 className="text-lg font-medium text-stone mb-8">Old Regime</h3>
               <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center text-sm"><span className="text-stone">Gross Income</span><span className="font-medium text-carbon">₹{Math.round(r.old_regime?.gross_income || 0).toLocaleString("en-IN")}</span></div>
-                <div className="flex justify-between items-center text-sm"><span className="text-stone">Total Deductions</span><span className="font-medium text-emerald-600">-₹{Math.round(r.old_regime?.total_deductions || 0).toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between items-center text-sm"><span className="text-stone">Gross Income</span><span className="font-geist-pixel font-medium text-carbon">₹{Math.round(r.old_regime?.gross_income || 0).toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between items-center text-sm"><span className="text-stone">Total Deductions</span><span className="font-geist-pixel font-medium text-emerald-600">-₹{Math.round(r.old_regime?.total_deductions || 0).toLocaleString("en-IN")}</span></div>
                 <div className="h-px bg-stone/10 w-full" />
-                <div className="flex justify-between items-center font-medium"><span className="text-carbon">Taxable Income</span><span className="text-carbon">₹{Math.round(r.old_regime?.taxable_income || 0).toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between items-center font-medium"><span className="text-carbon">Taxable Income</span><span className="font-geist-pixel text-carbon">₹{Math.round(r.old_regime?.taxable_income || 0).toLocaleString("en-IN")}</span></div>
               </div>
               <div className="pt-6 border-t border-stone/10">
                 <p className="text-sm font-medium text-stone mb-1">Total Tax Liability</p>
                 <div className="flex items-baseline gap-1 text-carbon">
                   <span className="text-2xl font-medium">₹</span>
-                  <KineticNumber value={Math.round(r.old_regime?.total_tax || 0)} format={v => v.toLocaleString("en-IN")} className="text-4xl font-semibold tracking-tight" />
+                  <KineticNumber value={Math.round(r.old_regime?.total_tax || 0)} format={v => v.toLocaleString("en-IN")} className="text-4xl font-geist-pixel font-semibold tracking-tight" />
                 </div>
               </div>
             </div>
@@ -152,16 +152,16 @@ export default function TaxView() {
               {r.recommended_regime === "new" && <div className="absolute top-4 right-4 bg-saffron text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1"><CheckCircle2 className="w-3.5 h-3.5" /> Best Choice</div>}
               <h3 className="text-lg font-semibold text-carbon mb-8">New Regime</h3>
               <div className="space-y-4 mb-8">
-                <div className="flex justify-between items-center text-sm"><span className="text-stone">Gross Income</span><span className="font-medium text-carbon">₹{Math.round(r.new_regime?.gross_income || 0).toLocaleString("en-IN")}</span></div>
-                <div className="flex justify-between items-center text-sm"><span className="text-stone">Standard Deduction</span><span className="font-medium text-emerald-600">-₹{Math.round(r.new_regime?.total_deductions || 0).toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between items-center text-sm"><span className="text-stone">Gross Income</span><span className="font-geist-pixel font-medium text-carbon">₹{Math.round(r.new_regime?.gross_income || 0).toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between items-center text-sm"><span className="text-stone">Standard Deduction</span><span className="font-geist-pixel font-medium text-emerald-600">-₹{Math.round(r.new_regime?.total_deductions || 0).toLocaleString("en-IN")}</span></div>
                 <div className="h-px bg-stone/10 w-full" />
-                <div className="flex justify-between items-center font-medium"><span className="text-carbon">Taxable Income</span><span className="text-carbon">₹{Math.round(r.new_regime?.taxable_income || 0).toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between items-center font-medium"><span className="text-carbon">Taxable Income</span><span className="font-geist-pixel text-carbon">₹{Math.round(r.new_regime?.taxable_income || 0).toLocaleString("en-IN")}</span></div>
               </div>
               <div className="pt-6 border-t border-stone/10">
                 <p className="text-sm font-medium text-stone mb-1">Total Tax Liability</p>
                 <div className="flex items-baseline gap-1 text-carbon">
                   <span className="text-2xl font-medium">₹</span>
-                  <KineticNumber value={Math.round(r.new_regime?.total_tax || 0)} format={v => v.toLocaleString("en-IN")} className="text-4xl font-semibold tracking-tight" />
+                  <KineticNumber value={Math.round(r.new_regime?.total_tax || 0)} format={v => v.toLocaleString("en-IN")} className="text-4xl font-geist-pixel font-semibold tracking-tight" />
                 </div>
               </div>
             </div>
