@@ -91,7 +91,7 @@ export default function DocumentVerifyView() {
                     </div>
                   ) : (
                     <>
-                      <p className="text-sm font-mono text-carbon">{f.field_value}</p>
+                      <p className="text-sm font-geist-pixel text-carbon">{f.field_value}</p>
                       {f.source_snippet && !f.verified_by_user && <p className="text-xs text-stone mt-1 italic truncate">Source: "{f.source_snippet}"</p>}
                     </>
                   )}
