@@ -79,7 +79,7 @@ export default function LiabilitiesView() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-mono text-carbon">₹{loan.remaining.toLocaleString("en-IN")}</div>
+                      <div className="text-lg font-pixel text-carbon">₹{loan.remaining.toLocaleString("en-IN")}</div>
                       <div className="text-[10px] text-stone uppercase tracking-wider">Remaining</div>
                     </div>
                   </div>
@@ -93,8 +93,8 @@ export default function LiabilitiesView() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-carbon/5">
-                    <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Monthly EMI</span><span className="font-mono text-sm text-carbon">₹{loan.emi.toLocaleString("en-IN")}</span></div>
-                    <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Tenure Left</span><span className="font-mono text-sm text-carbon">{Math.floor(loan.tenureLeftMonths / 12)}y {loan.tenureLeftMonths % 12}m</span></div>
+                    <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Monthly EMI</span><span className="font-pixel text-sm text-carbon">₹{loan.emi.toLocaleString("en-IN")}</span></div>
+                    <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Tenure Left</span><span className="font-pixel text-sm text-carbon">{Math.floor(loan.tenureLeftMonths / 12)}y {loan.tenureLeftMonths % 12}m</span></div>
                     <div className="md:col-span-2 flex justify-end items-center"><button className="text-xs text-carbon font-medium hover:text-saffron transition-colors flex items-center gap-1">Prepayment Options <ArrowRight className="w-3 h-3" /></button></div>
                   </div>
                 </div>
@@ -106,8 +106,8 @@ export default function LiabilitiesView() {
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="space-y-6">
           <div className="p-8 bg-carbon text-white">
             <h3 className="text-[10px] font-bold tracking-[0.15em] text-stone uppercase mb-6">Total Debt Burden</h3>
-            <div className="text-3xl font-light mb-1"><span className="font-serif italic text-stone mr-1">₹</span><KineticNumber value={totalDebt} /></div>
-            <p className="text-xs text-stone mt-4 mb-6">Total Monthly EMI outflow: <span className="text-white font-mono">₹{totalEmi.toLocaleString("en-IN")}</span></p>
+            <div className="text-3xl font-light mb-1"><span className="font-display text-stone mr-1">₹</span><KineticNumber value={totalDebt} /></div>
+            <p className="text-xs text-stone mt-4 mb-6">Total Monthly EMI outflow: <span className="text-white font-pixel">₹{totalEmi.toLocaleString("en-IN")}</span></p>
             <div className="pt-6 border-t border-white/10">
               <div className="flex justify-between items-center mb-2"><span className="text-xs text-stone">Debt-to-Income Ratio</span><span className="text-xs font-medium text-white">{dti.toFixed(0)}%</span></div>
               <div className="relative h-1 bg-white/20 rounded-full overflow-hidden"><div className="absolute top-0 left-0 h-full bg-saffron" style={{ width: `${Math.min(100, dti)}%` }} /></div>

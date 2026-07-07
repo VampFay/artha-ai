@@ -119,9 +119,9 @@ export default function GoalsView() {
                   <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 1, delay: i * 0.1 }} className="absolute top-0 left-0 h-full bg-saffron" />
                 </div>
                 <div className="grid grid-cols-3 gap-4 pt-4 border-t border-carbon/5">
-                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Saved</span><span className="font-mono text-sm text-carbon">₹{g.currentAmount.toLocaleString("en-IN")}</span></div>
-                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Monthly</span><span className="font-mono text-sm text-carbon">₹{g.monthlyContribution.toLocaleString("en-IN")}</span></div>
-                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">ETA</span><span className="font-mono text-sm text-carbon">{g.projection?.projected_completion_date ? new Date(g.projection.projected_completion_date).toLocaleDateString("en-IN", { year: "numeric", month: "short" }) : "—"}</span></div>
+                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Saved</span><span className="font-pixel text-sm text-carbon">₹{g.currentAmount.toLocaleString("en-IN")}</span></div>
+                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Monthly</span><span className="font-pixel text-sm text-carbon">₹{g.monthlyContribution.toLocaleString("en-IN")}</span></div>
+                  <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">ETA</span><span className="font-pixel text-sm text-carbon">{g.projection?.projected_completion_date ? new Date(g.projection.projected_completion_date).toLocaleDateString("en-IN", { year: "numeric", month: "short" }) : "—"}</span></div>
                 </div>
                 {g.projection?.shortfall && g.projection.shortfall > 0 && (
                   <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded flex items-center gap-2">

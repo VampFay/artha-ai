@@ -21,8 +21,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Geist Pixel — not available via next/font, load via CSS @import */}
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Pixel&display=swap" />
+        {/* Michroma (futuristic geometric sans) + Geist Pixel (pixelated monospace) */}
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Michroma&family=Geist+Pixel&family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap" />
       </head>
       <body className={`${geist.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>

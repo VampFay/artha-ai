@@ -48,10 +48,10 @@ export default function PortfolioView() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
             <h1 className="text-4xl md:text-6xl font-light tracking-tight text-carbon mb-2">
-              <span className="font-serif italic text-stone text-3xl md:text-5xl mr-2">₹</span>
+              <span className="font-display text-stone text-3xl md:text-5xl mr-2">₹</span>
               <KineticNumber value={totalValue} />
             </h1>
-            <p className="text-xs font-mono text-stone-dark flex items-center gap-2">
+            <p className="text-xs font-pixel text-stone-dark flex items-center gap-2">
               <TrendingUp className="w-3 h-3 text-saffron" />
               <span className="text-saffron">+{irrPct.toFixed(1)}%</span> IRR since inception
             </p>
@@ -85,7 +85,7 @@ export default function PortfolioView() {
                           <span className="text-sm text-carbon font-medium group-hover:text-saffron transition-colors">{asset.name}</span>
                         </div>
                         <div className="flex items-center gap-4">
-                          <span className="text-xs font-mono text-stone">₹{(asset.value / 100000).toFixed(1)}L</span>
+                          <span className="text-xs font-pixel text-stone">₹{(asset.value / 100000).toFixed(1)}L</span>
                           <span className="text-xs font-bold text-carbon w-12 text-right">{asset.percentage.toFixed(1)}%</span>
                         </div>
                       </motion.div>
@@ -101,7 +101,7 @@ export default function PortfolioView() {
                   <div key={i}>
                     <div className="flex justify-between text-xs mb-2">
                       <span className="text-carbon font-medium capitalize">{item.name.replace(/_/g, " ")}</span>
-                      <span className={cn("font-mono", Math.abs(item.actualPct - item.targetPct) > 5 ? "text-red-500" : "text-stone")}>{item.actualPct.toFixed(0)}% / {item.targetPct.toFixed(0)}%</span>
+                      <span className={cn("font-pixel", Math.abs(item.actualPct - item.targetPct) > 5 ? "text-red-500" : "text-stone")}>{item.actualPct.toFixed(0)}% / {item.targetPct.toFixed(0)}%</span>
                     </div>
                     <div className="relative h-1.5 bg-carbon/5 rounded-full overflow-hidden">
                       <div className="absolute top-0 left-0 h-full bg-carbon/20" style={{ width: `${item.targetPct}%` }} />

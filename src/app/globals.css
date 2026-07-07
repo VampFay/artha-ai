@@ -6,9 +6,9 @@
    ============================================================ */
 
 @theme {
-  /* Fonts — Geist + Geist Pixel (terminal aesthetic) */
+  /* Fonts — Michroma (headings/branding) + Geist Pixel (numbers/metrics/system) + Geist (body) */
   --font-sans: var(--font-geist), "Geist", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "Geist Pixel", var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
   --font-serif: var(--font-geist), "Geist", ui-serif, Georgia, serif;
 
   /* Core palette */
@@ -65,8 +65,9 @@
   border-radius: 8px;
 }
 
-.font-serif { font-family: var(--font-serif); }
-.font-mono { font-family: var(--font-mono); font-feature-settings: "tnum","zero"; }
+/* Font utility classes — outside @layer to avoid Tailwind tree-shaking */
+.font-display { font-family: "Michroma", sans-serif !important; letter-spacing: 0.05em; }
+.font-pixel { font-family: "Geist Pixel", monospace !important; font-feature-settings: "tnum","zero"; }
 
 .live-dot {
   position: relative; display: inline-block;
