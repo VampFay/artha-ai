@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
 import { createHash } from "crypto";
-import { writeFile, mkdir, unlink } from "fs/promises";
 import path from "path";
+import { getFileStore } from "@/lib/storage/file-store";
 
 const ALLOWED_TYPES = ["salary_slip", "form16", "bank_statement", "rent_receipt", "insurance_receipt", "loan_certificate", "investment_statement", "other"];
 const ALLOWED_EXTS = [".pdf", ".jpg", ".jpeg", ".png", ".csv", ".xlsx"];
@@ -42,16 +42,15 @@ export async function POST(req: NextRequest) {
     const existing = await db.document.findFirst({ where: { userId: payload.sub, fileHash } });
     if (existing) return NextResponse.json({ detail: "This file has already been uploaded." }, { status: 409 });
 
-    // Save file OUTSIDE public/ — not web-accessible
-    const uploadDir = path.join(process.cwd(), "uploads", payload.sub);
-    await mkdir(uploadDir, { recursive: true });
+    // Save file using storage abstraction (local or S3)
     const docId = `doc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-    const filePath = path.join(uploadDir, `${docId}${ext}`);
-    await writeFile(filePath, buffer);
+    const storageKey = `${payload.sub}/${docId}${ext}`;
+    const fileStore = getFileStore();
+    const storedPath = await fileStore.save(storageKey, buffer, file.type || "application/octet-stream");
 
     // Create DB record
     const doc = await db.document.create({
-      data: { userId: payload.sub, documentType, fileName: file.name, filePath: `uploads/${payload.sub}/${docId}${ext}`, fileHash, fileSizeBytes: file.size, mimeType: file.type || "application/octet-stream", processingStatus: "processing" },
+      data: { userId: payload.sub, documentType, fileName: file.name, filePath: storedPath, fileHash, fileSizeBytes: file.size, mimeType: file.type || "application/octet-stream", processingStatus: "processing" },
     });
 
     await db.auditLog.create({ data: { userId: payload.sub, action: "document_uploaded", details: JSON.stringify({ document_id: doc.id, document_type: documentType }) } });

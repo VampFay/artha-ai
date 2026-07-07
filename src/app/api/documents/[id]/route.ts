@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
-import { unlink } from "fs/promises";
-import path from "path";
+import { getFileStore } from "@/lib/storage/file-store";
 
 // DELETE single document
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -16,9 +15,9 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (!doc) return NextResponse.json({ detail: "Not found" }, { status: 404 });
     if (doc.userId !== payload.sub) return NextResponse.json({ detail: "Not your document" }, { status: 403 });
 
-    // Delete file from disk
-    const fullPath = path.join(process.cwd(), doc.filePath);
-    try { await unlink(fullPath); } catch {}
+    // Delete file using storage abstraction
+    const fileStore = getFileStore();
+    await fileStore.delete(doc.filePath);
 
     // Delete DB records (cascade deletes ExtractedField)
     await db.document.delete({ where: { id } });
