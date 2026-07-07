@@ -16,7 +16,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
     if (doc.userId !== payload.sub) return NextResponse.json({ detail: "Not your document" }, { status: 403 });
 
     // Delete file using storage abstraction
-    const fileStore = getFileStore();
+    const fileStore = await getFileStore();
     await fileStore.delete(doc.filePath);
 
     // Delete DB records (cascade deletes ExtractedField)

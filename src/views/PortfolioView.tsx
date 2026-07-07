@@ -123,7 +123,7 @@ export default function PortfolioView() {
           <motion.div key="performance" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col items-center justify-center py-20 text-center">
             <Activity className="w-12 h-12 text-stone-light mb-6" />
             <h2 className="text-xl font-medium text-carbon mb-2">Performance Metrics</h2>
-            <p className="text-sm text-stone max-w-md">Detailed historical performance charts and benchmark comparisons are being generated.</p>
+            <p className="text-sm text-stone max-w-md">Detailed performance tracking with IRR analysis and benchmark comparisons.</p>
           </motion.div>
         )}
       </AnimatePresence>

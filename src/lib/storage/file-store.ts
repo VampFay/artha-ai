@@ -22,17 +22,16 @@ export interface FileStore {
 
 let storeInstance: FileStore | null = null;
 
-export function getFileStore(): FileStore {
+export async function getFileStore(): Promise<FileStore> {
   if (storeInstance) return storeInstance;
 
   const driver = process.env.STORAGE_DRIVER || "local";
 
   if (driver === "s3") {
-    // Lazy-load S3 to avoid importing AWS SDK in dev mode
-    const { S3FileStore } = require("./s3-store");
+    const { S3FileStore } = await import("./s3-store");
     storeInstance = new S3FileStore();
   } else {
-    const { LocalFileStore } = require("./local-store");
+    const { LocalFileStore } = await import("./local-store");
     storeInstance = new LocalFileStore();
   }
 
