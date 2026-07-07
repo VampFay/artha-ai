@@ -100,7 +100,7 @@ export default function EstateView() {
                         <p className="text-xs text-stone">{n.relation}</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        {n.allocation > 0 && <span className="text-xs font-pixel text-carbon">{n.allocation}%</span>}
+                        {n.allocation > 0 && <span className="text-xs font-geist-pixel text-carbon">{n.allocation}%</span>}
                         <span className={cn("text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded", n.status === "Verified" ? "bg-emerald-100 text-emerald-700" : "bg-saffron/10 text-saffron")}>{n.status}</span>
                       </div>
                     </div>

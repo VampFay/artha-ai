@@ -171,7 +171,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
         {/* Header */}
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-[#111] text-xl font-sans shadow-[0_0_20px_rgba(245,158,11,0.3)]">A</div>
-          <span className="font-display text-2xl tracking-widest uppercase text-white">ARTHA</span>
+          <span className="font-michroma text-2xl tracking-widest uppercase text-white">ARTHA</span>
         </div>
 
         {/* Center Dynamic Content */}
@@ -187,7 +187,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
               >
                 <h1 className="text-5xl xl:text-7xl font-light tracking-tighter text-white mb-10 leading-[1.05]">
                   Master your wealth. <br />
-                  <span className="font-pixel text-saffron tracking-tight">Without the noise.</span>
+                  <span className="font-geist-pixel text-saffron tracking-tight">Without the noise.</span>
                 </h1>
                 <div className="grid grid-cols-2 gap-5">
                   {/* Card 1 */}
@@ -197,7 +197,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Live Net Worth</p>
                         <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-pixel text-white tracking-tighter">₹1.42 Cr</h3>
+                      <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">₹1.42 Cr</h3>
                       <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3 bg-emerald-400/10 w-fit px-2.5 py-1 rounded-full border border-emerald-400/20">
                         <ArrowUpRight className="w-3 h-3" /><span>+12.4% YTD</span>
                       </div>
@@ -210,7 +210,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Tax Harvested</p>
                         <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-pixel text-white tracking-tighter">₹42.5K</h3>
+                      <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">₹42.5K</h3>
                       <div className="flex items-center gap-1.5 text-saffron text-xs font-bold mt-3">
                         <CheckCircle2 className="w-3.5 h-3.5" /><span>Fully Optimized</span>
                       </div>
@@ -224,7 +224,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                           <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">Portfolio Trajectory</p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-xl font-sans font-medium text-white tracking-tight">Alpha</span>
-                            <span className="text-sm font-pixel text-emerald-400">+4.2%</span>
+                            <span className="text-sm font-geist-pixel text-emerald-400">+4.2%</span>
                           </div>
                         </div>
                         <Sparkles className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-500" />
@@ -255,7 +255,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
               >
                 <h1 className="text-5xl xl:text-7xl font-light tracking-tighter text-white mb-10 leading-[1.05]">
                   Institutional logic. <br />
-                  <span className="font-pixel text-saffron tracking-tight">For personal wealth.</span>
+                  <span className="font-geist-pixel text-saffron tracking-tight">For personal wealth.</span>
                 </h1>
                 <div className="grid grid-cols-2 gap-5">
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
@@ -264,7 +264,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Global Integration</p>
                         <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-pixel text-white tracking-tighter leading-tight">12,000+</h3>
+                      <h3 className="text-3xl font-geist-pixel text-white tracking-tighter leading-tight">12,000+</h3>
                       <p className="text-stone-400 text-xs mt-3 font-medium">Supported Institutions</p>
                     </div>
                   </div>
@@ -274,7 +274,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Data Security</p>
                         <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-pixel text-white tracking-tighter leading-tight">SOC2</h3>
+                      <h3 className="text-3xl font-geist-pixel text-white tracking-tighter leading-tight">SOC2</h3>
                       <p className="text-stone-400 text-xs mt-3 font-medium">Bank-grade encryption</p>
                     </div>
                   </div>
@@ -285,7 +285,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                           <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">Automated Optimization</p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-xl font-sans font-medium text-white tracking-tight">Always On</span>
-                            <span className="text-sm font-pixel text-saffron">24/7</span>
+                            <span className="text-sm font-geist-pixel text-saffron">24/7</span>
                           </div>
                         </div>
                         <Sparkles className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-500" />
@@ -303,7 +303,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
           <p className="text-[10px] font-bold tracking-widest text-stone-500 uppercase">Institutional Grade Infrastructure</p>
           <div className="flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-pixel text-stone-400">ALL SYSTEMS OPERATIONAL</span>
+            <span className="text-[10px] font-geist-pixel text-stone-400">ALL SYSTEMS OPERATIONAL</span>
           </div>
         </div>
       </div>
@@ -314,7 +314,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
 
         <div className="lg:hidden flex items-center gap-3 mb-16 relative z-10">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-[#111] text-xl font-sans shadow-[0_0_20px_rgba(245,158,11,0.3)]">A</div>
-          <span className="font-display text-2xl tracking-widest uppercase text-white">ARTHA</span>
+          <span className="font-michroma text-2xl tracking-widest uppercase text-white">ARTHA</span>
         </div>
 
         <div className="w-full max-w-md mx-auto relative z-10">
@@ -389,11 +389,11 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("test@finsight.ai"); setPassword("test1234"); }}>
                       <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">test@finsight.ai</span>
-                      <span className="text-xs font-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">test1234</span>
+                      <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">test1234</span>
                     </div>
                     <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); }}>
                       <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">admin@finsight.ai</span>
-                      <span className="text-xs font-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">admin1234</span>
+                      <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">admin1234</span>
                     </div>
                   </div>
                 </div>

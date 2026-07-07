@@ -55,10 +55,10 @@ export default function CashflowView() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div>
             <h1 className="text-4xl md:text-6xl font-light tracking-tight text-carbon mb-2">
-              <span className="font-display text-stone text-3xl md:text-5xl mr-2">₹</span>
+              <span className="font-michroma text-stone text-3xl md:text-5xl mr-2">₹</span>
               <KineticNumber value={freeCashFlow} />
             </h1>
-            <p className="text-xs font-pixel text-stone-dark"><span className="text-carbon font-medium">Monthly Free Cash Flow</span></p>
+            <p className="text-xs font-geist-pixel text-stone-dark"><span className="text-carbon font-medium">Monthly Free Cash Flow</span></p>
           </div>
           <div className="flex gap-4">
             <button onClick={() => setActiveTab("overview")} className={cn("text-[10px] font-bold tracking-[0.15em] uppercase pb-2 border-b-2 transition-colors", activeTab === "overview" ? "border-carbon text-carbon" : "border-transparent text-stone hover:text-carbon")}>Overview</button>
@@ -80,7 +80,7 @@ export default function CashflowView() {
                   <div key={i} className="flex-1 flex items-end justify-center gap-1.5 h-full">
                     <motion.div initial={{ height: 0 }} animate={{ height: `${(d.income / maxIE) * 100}%` }} transition={{ duration: 0.8, delay: i * 0.1 }} className="w-4 md:w-6 bg-carbon rounded-t-sm" title={`Income: ₹${d.income.toLocaleString("en-IN")}`} />
                     <motion.div initial={{ height: 0 }} animate={{ height: `${(d.expense / maxIE) * 100}%` }} transition={{ duration: 0.8, delay: i * 0.1 + 0.1 }} className="w-4 md:w-6 bg-saffron rounded-t-sm" title={`Expense: ₹${d.expense.toLocaleString("en-IN")}`} />
-                    <span className="absolute -mb-6 text-[10px] text-stone font-pixel">{d.month}</span>
+                    <span className="absolute -mb-6 text-[10px] text-stone font-geist-pixel">{d.month}</span>
                   </div>
                 ))}
               </div>
@@ -98,11 +98,11 @@ export default function CashflowView() {
                   {topExpenses.map((e, i) => (
                     <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-center justify-between group">
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-pixel text-stone w-6">{String(i + 1).padStart(2, "0")}</span>
+                        <span className="text-[10px] font-geist-pixel text-stone w-6">{String(i + 1).padStart(2, "0")}</span>
                         <span className="text-sm text-carbon font-medium">{e.category}</span>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-xs font-pixel text-stone">₹{e.amount.toLocaleString("en-IN")}</span>
+                        <span className="text-xs font-geist-pixel text-stone">₹{e.amount.toLocaleString("en-IN")}</span>
                         {e.trend !== 0 && <span className={cn("text-[10px] font-bold", e.trend > 0 ? "text-red-500" : "text-emerald-600")}>{e.trend > 0 ? "+" : ""}{e.trend.toFixed(0)}%</span>}
                       </div>
                     </motion.div>
@@ -113,11 +113,11 @@ export default function CashflowView() {
             <div className="bg-carbon text-white p-8">
               <h3 className="text-[10px] font-bold tracking-[0.15em] text-stone uppercase mb-6">Liquidity Runway</h3>
               <div className="text-4xl font-light mb-1"><KineticNumber value={runwayMonths} format={(v) => v.toFixed(1)} /><span className="text-lg text-stone ml-2">months</span></div>
-              <p className="text-xs text-stone mt-4 mb-6">Burn rate: <span className="text-white font-pixel">₹{burnRate.toLocaleString("en-IN")}/mo</span></p>
+              <p className="text-xs text-stone mt-4 mb-6">Burn rate: <span className="text-white font-geist-pixel">₹{burnRate.toLocaleString("en-IN")}/mo</span></p>
               <div className="pt-6 border-t border-white/10 space-y-4">
-                <div className="flex justify-between text-xs"><span className="text-stone">Liquid Assets</span><span className="text-white font-pixel">₹{liquidAmount.toLocaleString("en-IN")}</span></div>
-                <div className="flex justify-between text-xs"><span className="text-stone">Savings Rate</span><span className="text-white font-pixel">{savingsRate.toFixed(0)}%</span></div>
-                <div className="flex justify-between text-xs"><span className="text-stone">Fixed Expenses</span><span className="text-white font-pixel">₹{fixedExpenses.toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-stone">Liquid Assets</span><span className="text-white font-geist-pixel">₹{liquidAmount.toLocaleString("en-IN")}</span></div>
+                <div className="flex justify-between text-xs"><span className="text-stone">Savings Rate</span><span className="text-white font-geist-pixel">{savingsRate.toFixed(0)}%</span></div>
+                <div className="flex justify-between text-xs"><span className="text-stone">Fixed Expenses</span><span className="text-white font-geist-pixel">₹{fixedExpenses.toLocaleString("en-IN")}</span></div>
               </div>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function CashflowView() {
                     <h4 className="text-sm font-medium text-carbon">{sub.name}</h4>
                     <span className={cn("text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded", sub.status === "Active" ? "bg-emerald-100 text-emerald-700" : "bg-stone/20 text-stone")}>{sub.status}</span>
                   </div>
-                  <div className="text-2xl font-light text-carbon"><span className="font-display text-stone text-lg mr-1">₹</span><KineticNumber value={sub.amount} /></div>
+                  <div className="text-2xl font-light text-carbon"><span className="font-michroma text-stone text-lg mr-1">₹</span><KineticNumber value={sub.amount} /></div>
                   <p className="text-[10px] text-stone uppercase tracking-wider mt-2">{sub.frequency}</p>
                 </motion.div>
               ))}
