@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
+import { createHash } from "crypto";
 import { db } from "./db";
 
 // JWT secret: read from env. In dev, a known fallback is used (safe because
@@ -24,8 +25,86 @@ export async function createToken(userId: string): Promise<string> {
   return new SignJWT({ sub: userId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("24h")
+    .setExpirationTime("24h") // Access token (upgrade to 15m when frontend supports auto-refresh)
     .sign(JWT_SECRET);
+}
+
+/**
+ * Create a refresh token (30-day) and store its hash in the DB.
+ * Returns the raw token string (only seen once by the client).
+ */
+export async function createRefreshToken(
+  userId: string,
+  userAgent?: string,
+  ipAddress?: string
+): Promise<string> {
+  const rawToken = `${userId}:${Date.now()}:${Math.random().toString(36).slice(2)}`;
+  const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+  await db.refreshToken.create({
+    data: { userId, tokenHash, expiresAt, userAgent, ipAddress },
+  });
+
+  return rawToken;
+}
+
+/**
+ * Verify a refresh token, rotate it (revoke old, issue new), return new pair.
+ * Returns null if token is invalid, expired, or already revoked.
+ */
+export async function rotateRefreshToken(
+  rawToken: string,
+  userAgent?: string,
+  ipAddress?: string
+): Promise<{ accessToken: string; refreshToken: string; userId: string } | null> {
+  const tokenHash = createHash("sha256").update(rawToken).digest("hex");
+
+  const stored = await db.refreshToken.findUnique({
+    where: { tokenHash },
+    include: { user: { select: { id: true } } },
+  });
+
+  if (!stored) return null;
+  if (stored.revokedAt) return null;
+  if (stored.expiresAt < new Date()) return null;
+
+  // Revoke old token (rotation — prevents replay attacks)
+  await db.refreshToken.update({
+    where: { id: stored.id },
+    data: { revokedAt: new Date() },
+  });
+
+  // Issue new pair
+  const accessToken = await createToken(stored.userId);
+  const newRefreshToken = await createRefreshToken(stored.userId, userAgent, ipAddress);
+
+  return { accessToken, refreshToken: newRefreshToken, userId: stored.userId };
+}
+
+/**
+ * Revoke all refresh tokens for a user (logout all devices).
+ */
+export async function revokeAllRefreshTokens(userId: string): Promise<void> {
+  await db.refreshToken.updateMany({
+    where: { userId, revokedAt: null },
+    data: { revokedAt: new Date() },
+  });
+}
+
+/**
+ * Get active sessions for a user (non-revoked, non-expired refresh tokens).
+ */
+export async function getActiveSessions(userId: string) {
+  return db.refreshToken.findMany({
+    where: {
+      userId,
+      revokedAt: null,
+      expiresAt: { gt: new Date() },
+    },
+    select: { id: true, userAgent: true, ipAddress: true, createdAt: true, expiresAt: true },
+    orderBy: { createdAt: "desc" },
+  });
 }
 
 export async function verifyToken(token: string): Promise<{ sub: string } | null> {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { verifyPassword, createToken } from "@/lib/auth";
+import { verifyPassword, createToken, createRefreshToken } from "@/lib/auth";
 import { checkRateLimit, getClientIp } from "@/lib/security";
 import { z } from "zod";
 
@@ -39,7 +39,9 @@ export async function POST(req: NextRequest) {
     });
 
     const token = await createToken(user.id);
-    return NextResponse.json({ access_token: token, user: { id: user.id, name: user.name, email: user.email, role: user.role, created_at: user.createdAt } });
+    const userAgent = req.headers.get("user-agent") || undefined;
+    const refreshToken = await createRefreshToken(user.id, userAgent, ip);
+    return NextResponse.json({ access_token: token, refresh_token: refreshToken, user: { id: user.id, name: user.name, email: user.email, role: user.role, created_at: user.createdAt } });
   } catch (e) {
     console.error("Login error:", e);
     return NextResponse.json({ detail: "Login failed" }, { status: 500 });
