@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
+import { z } from "zod";
+
+const nomineeSchema = z.object({
+  name: z.string().min(1).max(255),
+  relation: z.string().max(100),
+  allocation: z.number().min(0).max(100).default(0),
+  assets: z.array(z.string().max(200)).max(50).optional().default([]),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -60,16 +68,20 @@ export async function POST(req: NextRequest) {
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { name, relation, allocation, assets } = body;
+    const parsed = nomineeSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ detail: "Invalid input", errors: parsed.error.issues }, { status: 400 });
+    }
+    const { name, relation, allocation, assets } = parsed.data;
 
     const nominee = await db.nominee.create({
       data: {
         userId: payload.sub,
         name,
         relation,
-        allocation: Number(allocation) || 0,
+        allocation,
         status: "Pending Verification",
-        assets: JSON.stringify(assets || []),
+        assets: JSON.stringify(assets),
       },
     });
 

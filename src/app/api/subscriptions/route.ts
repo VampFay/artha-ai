@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
+import { z } from "zod";
+
+const subscriptionSchema = z.object({
+  name: z.string().min(1).max(255),
+  amount: z.number().positive().max(1_000_000),
+  frequency: z.enum(["Monthly", "Yearly", "Quarterly", "Weekly"]).default("Monthly"),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -38,14 +45,18 @@ export async function POST(req: NextRequest) {
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { name, amount, frequency } = body;
+    const parsed = subscriptionSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ detail: "Invalid input", errors: parsed.error.issues }, { status: 400 });
+    }
+    const { name, amount, frequency } = parsed.data;
 
     const sub = await db.subscription.create({
       data: {
         userId: payload.sub,
         name,
-        amount: Number(amount),
-        frequency: frequency || "Monthly",
+        amount,
+        frequency,
         status: "Active",
       },
     });

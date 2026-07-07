@@ -164,7 +164,7 @@ export default function DocumentsView({ onNavigate }: DocumentsViewProps) {
                         )}
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <button onClick={() => handleDelete(doc.id)} className="p-2 text-stone hover:text-crimson hover:bg-crimson/5 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
+                        <button aria-label="Delete document" onClick={() => handleDelete(doc.id)} className="p-2 text-stone hover:text-crimson hover:bg-crimson/5 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>
                         <button onClick={() => onNavigate("document-verify" as ViewState)} className="flex items-center gap-1.5 px-4 py-2 bg-stone/5 hover:bg-stone/10 text-carbon rounded-xl text-sm font-medium transition-colors"><span>Review</span><ArrowRight className="w-4 h-4" /></button>
                       </div>
                     </div>

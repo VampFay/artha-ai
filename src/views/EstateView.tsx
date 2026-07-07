@@ -13,6 +13,8 @@ export default function EstateView() {
   const [wills, setWills] = useState<Will[]>([]);
   const [audit, setAudit] = useState<{ unassignedAssetsCount: number; auditMessage: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showNomineeForm, setShowNomineeForm] = useState(false);
+  const [nomineeForm, setNomineeForm] = useState({ name: "", relation: "", allocation: "" });
 
   useEffect(() => {
     const token = localStorage.getItem("finsight_token");
@@ -58,8 +60,30 @@ export default function EstateView() {
           <div className="lg:col-span-2">
             <div className="flex justify-between items-center mb-8">
               <h3 className="text-[10px] font-bold tracking-[0.15em] text-carbon uppercase">Registered Nominees</h3>
-              <button className="text-xs text-carbon font-medium hover:text-saffron transition-colors flex items-center gap-1"><Users className="w-3 h-3" /> Add Nominee</button>
+              <button onClick={() => setShowNomineeForm(!showNomineeForm)} className="text-xs text-carbon font-medium hover:text-saffron transition-colors flex items-center gap-1">
+                <Users className="w-3 h-3" /> {showNomineeForm ? "Cancel" : "Add Nominee"}
+              </button>
             </div>
+            {showNomineeForm && (
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const token = localStorage.getItem("finsight_token");
+                try {
+                  await fetch("/api/estate/nominees", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ name: nomineeForm.name, relation: nomineeForm.relation, allocation: Number(nomineeForm.allocation), assets: [] }) });
+                  setShowNomineeForm(false);
+                  setNomineeForm({ name: "", relation: "", allocation: "" });
+                  // Reload nominees
+                  fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => { setNominees(d.nominees || []); setAudit(d.audit || null); });
+                } catch {}
+              }} className="mb-6 p-6 border border-carbon/10 bg-[#FAFAFA] space-y-3">
+                <div className="grid grid-cols-3 gap-3">
+                  <input type="text" value={nomineeForm.name} onChange={e => setNomineeForm({ ...nomineeForm, name: e.target.value })} placeholder="Name" required className="px-3 py-2 rounded-lg border border-stone/20 bg-white text-sm" />
+                  <input type="text" value={nomineeForm.relation} onChange={e => setNomineeForm({ ...nomineeForm, relation: e.target.value })} placeholder="Relation" required className="px-3 py-2 rounded-lg border border-stone/20 bg-white text-sm" />
+                  <input type="number" value={nomineeForm.allocation} onChange={e => setNomineeForm({ ...nomineeForm, allocation: e.target.value })} placeholder="Allocation %" required className="px-3 py-2 rounded-lg border border-stone/20 bg-white text-sm" />
+                </div>
+                <button type="submit" className="px-4 py-2 bg-carbon text-white text-xs font-bold uppercase tracking-wider rounded-lg">Add Nominee</button>
+              </form>
+            )}
             {nominees.length === 0 ? (
               <div className="p-12 border border-carbon/10 bg-[#FAFAFA] text-center">
                 <Users className="w-10 h-10 text-stone/30 mx-auto mb-3" />

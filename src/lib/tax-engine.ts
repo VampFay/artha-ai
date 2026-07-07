@@ -1,12 +1,14 @@
 // Tax engine: FY 2024-25 Indian tax slabs + regime comparison + score
 import { db } from "@/lib/db";
 
-const OLD_SLABS = [[0, 250000, 0.0], [250000, 500000, 0.05], [500000, 1000000, 0.20], [1000000, Infinity, 0.30]];
-const NEW_SLABS = [[0, 300000, 0.0], [300000, 700000, 0.05], [700000, 1000000, 0.10], [1000000, 1200000, 0.15], [1200000, 1500000, 0.20], [1500000, Infinity, 0.30]];
-const STD_DED = 50000;
+const OLD_SLABS: [number, number, number][] = [[0, 250000, 0.0], [250000, 500000, 0.05], [500000, 1000000, 0.20], [1000000, Infinity, 0.30]];
+const NEW_SLABS: [number, number, number][] = [[0, 300000, 0.0], [300000, 700000, 0.05], [700000, 1000000, 0.10], [1000000, 1200000, 0.15], [1200000, 1500000, 0.20], [1500000, Infinity, 0.30]];
+const STD_DED_OLD = 50000;
+const STD_DED_NEW = 75000; // Budget 2024 raised new regime std deduction to ₹75k
 const CESS = 0.04;
+const REBATE_87A_LIMIT = 700000; // Section 87A: no tax if taxable income ≤ ₹7L (new regime)
 
-function applySlabs(taxable: number, slabs: number[][]): number {
+function applySlabs(taxable: number, slabs: [number, number, number][]): number {
   let tax = 0;
   for (const [lo, hi, rate] of slabs) {
     if (taxable <= lo) break;
@@ -39,11 +41,14 @@ export async function computeTaxSummary(userId: string, fy: string) {
     totalDed += val;
   }
 
-  const stdDed = salary > 0 ? STD_DED : 0;
-  const oldTaxable = Math.max(0, gross - totalDed - stdDed);
-  const newTaxable = Math.max(0, gross - stdDed);
+  const stdDedOld = salary > 0 ? STD_DED_OLD : 0;
+  const stdDedNew = salary > 0 ? STD_DED_NEW : 0;
+  const oldTaxable = Math.max(0, gross - totalDed - stdDedOld);
+  const newTaxable = Math.max(0, gross - stdDedNew);
   const oldTax = applySlabs(oldTaxable, OLD_SLABS);
-  const newTax = applySlabs(newTaxable, NEW_SLABS);
+  let newTax = applySlabs(newTaxable, NEW_SLABS);
+  // Section 87A rebate: if taxable income ≤ ₹7L under new regime, tax = 0
+  if (newTaxable <= REBATE_87A_LIMIT) newTax = 0;
   const oldTotal = Math.round(oldTax * (1 + CESS));
   const newTotal = Math.round(newTax * (1 + CESS));
   const recommended = newTotal < oldTotal ? "new" : "old";

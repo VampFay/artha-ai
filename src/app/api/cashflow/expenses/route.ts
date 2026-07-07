@@ -11,11 +11,12 @@ export async function GET(req: NextRequest) {
 
     const expenses = await db.expense.findMany({ where: { userId: payload.sub } });
     const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 
-    const thisMonth = expenses.filter(e => new Date(e.month || e.createdAt) >= monthStart);
-    const lastMonth = expenses.filter(e => { const d = new Date(e.month || e.createdAt); return d >= lastMonthStart && d < monthStart; });
+    // Filter by transactionDate
+    const thisMonth = expenses.filter(e => new Date(e.transactionDate) >= thisMonthStart);
+    const lastMonth = expenses.filter(e => { const d = new Date(e.transactionDate); return d >= lastMonthStart && d < thisMonthStart; });
 
     // Group by category
     const byCategory: Record<string, { current: number; previous: number }> = {};
@@ -32,7 +33,7 @@ export async function GET(req: NextRequest) {
 
     const items = Object.entries(byCategory)
       .map(([category, vals]) => {
-        const trend = vals.previous > 0 ? ((vals.current - vals.previous) / vals.previous) * 100 : 0;
+        const trend = vals.previous > 0 ? ((vals.current - vals.previous) / vals.previous) * 100 : (vals.current > 0 ? 100 : 0);
         return { category, amount: vals.current, trend };
       })
       .sort((a, b) => b.amount - a.amount)

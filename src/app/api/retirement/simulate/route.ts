@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
+import { z } from "zod";
+
+const retirementSchema = z.object({
+  currentAge: z.number().int().min(18).max(100),
+  targetAge: z.number().int().min(20).max(110),
+  monthlyExpense: z.number().positive().max(10_000_000),
+  currentCorpus: z.number().min(0).max(1_000_000_000),
+}).refine(d => d.targetAge > d.currentAge, { message: "Target age must be greater than current age" });
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,22 +17,26 @@ export async function POST(req: NextRequest) {
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
-    const { currentAge, targetAge, monthlyExpense, currentCorpus } = body;
+    const parsed = retirementSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ detail: "Invalid input", errors: parsed.error.issues }, { status: 400 });
+    }
+    const { currentAge, targetAge, monthlyExpense, currentCorpus } = parsed.data;
 
     const inflationRate = 0.06;
     const returnRate = 0.12;
     const withdrawalRate = 0.04;
 
-    const yearsToRetirement = Number(targetAge) - Number(currentAge);
-    const futureMonthlyExpense = Number(monthlyExpense) * Math.pow(1 + inflationRate, yearsToRetirement);
+    const yearsToRetirement = targetAge - currentAge;
+    const futureMonthlyExpense = monthlyExpense * Math.pow(1 + inflationRate, yearsToRetirement);
     const targetCorpus = (futureMonthlyExpense * 12) / withdrawalRate;
-    const requiredSIP = computeRequiredSIP(Number(currentCorpus), targetCorpus, returnRate, yearsToRetirement);
+    const requiredSIP = computeRequiredSIP(currentCorpus, targetCorpus, returnRate, yearsToRetirement);
 
     // Trajectory points
     const trajectory: { age: number; corpus: number }[] = [];
-    let corpus = Number(currentCorpus);
+    let corpus = currentCorpus;
     const annualContribution = requiredSIP * 12;
-    for (let age = Number(currentAge); age <= Number(targetAge); age++) {
+    for (let age = currentAge; age <= targetAge; age++) {
       trajectory.push({ age, corpus: Math.round(corpus) });
       corpus = (corpus + annualContribution) * (1 + returnRate);
     }
@@ -42,11 +54,8 @@ export async function POST(req: NextRequest) {
 }
 
 function computeRequiredSIP(currentCorpus: number, targetCorpus: number, annualReturn: number, years: number): number {
-  // Future value of current corpus
   const futureCorpus = currentCorpus * Math.pow(1 + annualReturn, years);
-  // Remaining amount needed
   const remaining = Math.max(0, targetCorpus - futureCorpus);
-  // Monthly SIP via future value of annuity formula
   const monthlyRate = annualReturn / 12;
   const months = years * 12;
   if (monthlyRate === 0) return remaining / months;

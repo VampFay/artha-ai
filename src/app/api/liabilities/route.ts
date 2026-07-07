@@ -14,7 +14,12 @@ export async function GET(req: NextRequest) {
     const totalDebt = loans.reduce((s, l) => s + l.remaining, 0);
     const totalEmi = loans.reduce((s, l) => s + l.emi, 0);
 
-    const income = (await db.income.findMany({ where: { userId: payload.sub } })).reduce((s, i) => s + i.amount, 0);
+    // Current month income for D/I ratio
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentFY = now.getMonth() >= 3 ? `${now.getFullYear()}-${String(now.getFullYear() + 1).slice(2)}` : `${now.getFullYear() - 1}-${String(now.getFullYear()).slice(2)}`;
+    const allIncomes = await db.income.findMany({ where: { userId: payload.sub, month: currentMonth, financialYear: currentFY } });
+    const income = allIncomes.reduce((s, i) => s + i.amount, 0);
     const debtToIncomePct = income > 0 ? (totalEmi / income) * 100 : 0;
 
     // Prepayment insight for largest loan

@@ -3,6 +3,9 @@
  * Supports HDFC, ICICI, SBI, Axis, Kotak bank CSV/XLSX exports.
  */
 
+import Papa from "papaparse";
+import * as XLSX from "xlsx";
+
 export type BankFormat = "hdfc" | "icici" | "sbi" | "axis" | "kotak" | "unknown";
 
 export interface Transaction {
@@ -229,13 +232,40 @@ export function parseBankStatement(buffer: Buffer, fileName: string): BankStatem
   let headers: string[] = [];
 
   if (ext === "csv") {
-    const Papa = require("papaparse");
     const text = buffer.toString("utf-8");
-    const parsed = Papa.parse(text, { header: true, dynamicTyping: false, skipEmptyLines: true });
-    rows = (parsed.data || []).filter((r: any) => Object.keys(r).length > 1);
-    headers = parsed.meta?.fields || (rows[0] ? Object.keys(rows[0]) : []);
+    // Parse as raw rows first (no header) to detect metadata preamble
+    const rawParsed = Papa.parse<string[]>(text, { skipEmptyLines: true });
+    const rawRows = rawParsed.data as string[][];
+
+    // Scan first 15 rows for a header row that matches a known bank format
+    let headerRowIndex = -1;
+    for (let i = 0; i < Math.min(rawRows.length, 15); i++) {
+      const candidateHeaders = rawRows[i].map(h => String(h || "").trim());
+      const fmt = detectBankFormat(candidateHeaders);
+      if (fmt !== "unknown") {
+        headerRowIndex = i;
+        break;
+      }
+    }
+
+    if (headerRowIndex >= 0) {
+      // Re-parse with the detected header row
+      const dataRows = rawRows.slice(headerRowIndex + 1);
+      headers = rawRows[headerRowIndex].map(h => String(h || "").trim());
+      rows = dataRows
+        .filter(r => r.some(c => String(c || "").trim() !== ""))
+        .map(r => {
+          const obj: Record<string, any> = {};
+          headers.forEach((h, i) => { obj[h] = r[i]; });
+          return obj;
+        });
+    } else {
+      // Fallback: standard header parse
+      const parsed = Papa.parse(text, { header: true, dynamicTyping: false, skipEmptyLines: true });
+      rows = (parsed.data || []).filter((r: any) => Object.keys(r).length > 1);
+      headers = parsed.meta?.fields || (rows[0] ? Object.keys(rows[0]) : []);
+    }
   } else if (ext === "xlsx") {
-    const XLSX = require("xlsx");
     const wb = XLSX.read(buffer, { type: "buffer" });
     const sheetName = wb.SheetNames[0];
     const sheet = wb.Sheets[sheetName];
@@ -244,24 +274,7 @@ export function parseBankStatement(buffer: Buffer, fileName: string): BankStatem
     headers = rows[0] ? Object.keys(rows[0]) : [];
   }
 
-  // Skip leading metadata rows (HDFC has account info before headers)
-  // Detect: if first 5 rows don't match any format, scan for a header row
-  let format = detectBankFormat(headers);
-  if (format === "unknown" && rows.length > 0) {
-    for (let i = 0; i < Math.min(rows.length, 15); i++) {
-      const candidateHeaders = Object.keys(rows[i]).map(k => k);
-      const f = detectBankFormat(candidateHeaders);
-      if (f !== "unknown") {
-        format = f;
-        headers = candidateHeaders;
-        // Re-parse: rows from this point onwards use these headers
-        // But since papaparse already used the first row as headers, we need to re-interpret
-        // Simpler: re-read the CSV skipping i+1 lines
-        break;
-      }
-    }
-  }
-
+  const format = detectBankFormat(headers);
   const txns = parseTransactions(rows, headers);
   const summary = summarizeTransactions(txns, format);
   return summary;
