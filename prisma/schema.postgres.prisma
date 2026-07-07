@@ -30,6 +30,7 @@ model User {
   liabilities          Liability[]
   nominees             Nominee[]
   estateDocuments      EstateDocument[]
+  refreshTokens        RefreshToken[]
 }
 
 model UserConsent {
@@ -205,6 +206,21 @@ model RevokedToken {
   revokedAt DateTime @default(now())
 
   @@index([token])
+}
+
+model RefreshToken {
+  id          String    @id @default(cuid())
+  userId      String
+  tokenHash   String    @unique
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  userAgent   String?
+  ipAddress   String?
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
 }
 
 // ============================================================
