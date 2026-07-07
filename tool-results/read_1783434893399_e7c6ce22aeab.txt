@@ -1,0 +1,518 @@
+     1→import React, { useState, useEffect, useRef } from 'react';
+     2→import { User } from '../types';
+     3→import { motion, AnimatePresence } from 'motion/react';
+     4→import { ShieldCheck, Loader2, ArrowRight, Activity, Sparkles, CheckCircle2, ArrowUpRight, Eye, EyeOff } from 'lucide-react';
+     5→
+     6→interface LoginScreenProps {
+     7→  onLogin: (user: User) => void;
+     8→}
+     9→
+    10→const NOISE_SVG_URL = 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")';
+    11→
+    12→const LiveVideoLoop = React.memo(() => {
+    13→  const canvasRef = useRef<HTMLCanvasElement>(null);
+    14→  
+    15→  useEffect(() => {
+    16→    const canvas = canvasRef.current;
+    17→    if (!canvas) return;
+    18→    const ctx = canvas.getContext('2d');
+    19→    if (!ctx) return;
+    20→
+    21→    let animationFrameId: number;
+    22→    let particles: { x: number, y: number, z: number, vx: number, vy: number, symbol: string }[] = [];
+    23→    const currencies = ['$', '€', '£', '¥', '₹', '₽', '₩', '฿', '₪'];
+    24→    const mouse = { x: -1000, y: -1000, isActive: false };
+    25→
+    26→    const resize = () => {
+    27→      if (canvas.parentElement) {
+    28→        canvas.width = canvas.parentElement.clientWidth;
+    29→        canvas.height = canvas.parentElement.clientHeight;
+    30→        init();
+    31→      }
+    32→    };
+    33→
+    34→    const init = () => {
+    35→      particles = [];
+    36→      const num = Math.floor((canvas.width * canvas.height) / 12000); 
+    37→      for (let i = 0; i < num; i++) {
+    38→        particles.push({
+    39→          x: Math.random() * canvas.width,
+    40→          y: Math.random() * canvas.height,
+    41→          z: Math.random() * 1.5 + 0.5,
+    42→          vx: (Math.random() - 0.5) * 0.3,
+    43→          vy: (Math.random() - 1.2) * 0.4,
+    44→          symbol: currencies[Math.floor(Math.random() * currencies.length)]
+    45→        });
+    46→      }
+    47→    };
+    48→
+    49→    const handleMouseMove = (e: MouseEvent) => {
+    50→      const rect = canvas.getBoundingClientRect();
+    51→      mouse.x = e.clientX - rect.left;
+    52→      mouse.y = e.clientY - rect.top;
+    53→      mouse.isActive = true;
+    54→    };
+    55→
+    56→    const handleMouseLeave = () => {
+    57→      mouse.isActive = false;
+    58→      mouse.x = -1000;
+    59→      mouse.y = -1000;
+    60→    };
+    61→
+    62→    window.addEventListener('resize', resize);
+    63→    window.addEventListener('mousemove', handleMouseMove);
+    64→    window.addEventListener('mouseout', handleMouseLeave);
+    65→    resize();
+    66→
+    67→    const draw = () => {
+    68→      ctx.fillStyle = 'rgba(10, 10, 10, 0.2)';
+    69→      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    70→      
+    71→      particles.forEach(p => {
+    72→        p.x += p.vx * p.z;
+    73→        p.y += p.vy * p.z;
+    74→        
+    75→        // Mouse repulsion
+    76→        if (mouse.isActive) {
+    77→          const dx = p.x - mouse.x;
+    78→          const dy = p.y - mouse.y;
+    79→          const dist = Math.sqrt(dx * dx + dy * dy);
+    80→          if (dist < 200) {
+    81→            p.x += (dx / dist) * 1.5;
+    82→            p.y += (dy / dist) * 1.5;
+    83→          }
+    84→        }
+    85→
+    86→        if (p.y < -50) {
+    87→          p.y = canvas.height + 50;
+    88→          p.x = Math.random() * canvas.width;
+    89→        }
+    90→        if (p.x < -50) p.x = canvas.width + 50;
+    91→        if (p.x > canvas.width + 50) p.x = -50;
+    92→      });
+    93→
+    94→      ctx.lineWidth = 1;
+    95→      for (let i = 0; i < particles.length; i++) {
+    96→        for (let j = i + 1; j < particles.length; j++) {
+    97→          const dx = particles[i].x - particles[j].x;
+    98→          const dy = particles[i].y - particles[j].y;
+    99→          const dist = Math.sqrt(dx * dx + dy * dy);
+   100→          
+   101→          if (dist < 180) {
+   102→            const opacity = (1 - dist / 180) * 0.35;
+   103→            const heightRatio = particles[i].y / canvas.height;
+   104→            const r = Math.floor(245 * (1 - heightRatio) + 16 * heightRatio);
+   105→            const g = Math.floor(158 * (1 - heightRatio) + 185 * heightRatio);
+   106→            const b = Math.floor(11 * (1 - heightRatio) + 129 * heightRatio);
+   107→            
+   108→            ctx.beginPath();
+   109→            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+   110→            ctx.moveTo(particles[i].x, particles[i].y);
+   111→            ctx.lineTo(particles[j].x, particles[j].y);
+   112→            ctx.stroke();
+   113→          }
+   114→        }
+   115→        
+   116→        // Draw connection to mouse
+   117→        if (mouse.isActive) {
+   118→          const dx = particles[i].x - mouse.x;
+   119→          const dy = particles[i].y - mouse.y;
+   120→          const dist = Math.sqrt(dx * dx + dy * dy);
+   121→          if (dist < 250) {
+   122→            const opacity = (1 - dist / 250) * 0.5;
+   123→            ctx.beginPath();
+   124→            ctx.strokeStyle = `rgba(245, 158, 11, ${opacity})`;
+   125→            ctx.moveTo(particles[i].x, particles[i].y);
+   126→            ctx.lineTo(mouse.x, mouse.y);
+   127→            ctx.stroke();
+   128→          }
+   129→        }
+   130→      }
+   131→
+   132→      ctx.textAlign = 'center';
+   133→      ctx.textBaseline = 'middle';
+   134→      particles.forEach(p => {
+   135→        ctx.font = `${Math.floor(12 + p.z * 5)}px monospace`;
+   136→        ctx.fillStyle = `rgba(255, 255, 255, ${0.15 + p.z * 0.35})`;
+   137→        ctx.fillText(p.symbol, p.x, p.y);
+   138→      });
+   139→      
+   140→      animationFrameId = requestAnimationFrame(draw);
+   141→    };
+   142→
+   143→    draw();
+   144→
+   145→    return () => {
+   146→      window.removeEventListener('resize', resize);
+   147→      window.removeEventListener('mousemove', handleMouseMove);
+   148→      window.removeEventListener('mouseout', handleMouseLeave);
+   149→      cancelAnimationFrame(animationFrameId);
+   150→    };
+   151→  }, []);
+   152→
+   153→  return (
+   154→    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+   155→      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+   156→      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0a]/40 via-transparent to-[#0a0a0a]/90 pointer-events-none" />
+   157→      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(10,10,10,0.8)_100%)] pointer-events-none" />
+   158→    </div>
+   159→  );
+   160→});
+   161→
+   162→export default function LoginScreen({ onLogin }: LoginScreenProps) {
+   163→  const [mode, setMode] = useState<'login' | 'register'>('login');
+   164→  const [email, setEmail] = useState('');
+   165→  const [password, setPassword] = useState('');
+   166→  const [name, setName] = useState('');
+   167→  const [isLoading, setIsLoading] = useState(false);
+   168→  const [showPassword, setShowPassword] = useState(false);
+   169→  const [error, setError] = useState('');
+   170→
+   171→  const handleSubmit = (e: React.FormEvent) => {
+   172→    e.preventDefault();
+   173→    setIsLoading(true);
+   174→    setError('');
+   175→
+   176→    // Simulate API call
+   177→    setTimeout(() => {
+   178→      if ((email === 'test@finsight.ai' || email === 'test@vantage.ai') && password === 'test1234') {
+   179→        onLogin({ id: '1', name: 'Demo User', email, role: 'user' });
+   180→      } else if ((email === 'admin@finsight.ai' || email === 'admin@vantage.ai') && password === 'admin1234') {
+   181→        onLogin({ id: '2', name: 'Admin User', email, role: 'admin' });
+   182→      } else {
+   183→        setError('Invalid credentials. Use demo accounts provided below.');
+   184→        setIsLoading(false);
+   185→      }
+   186→    }, 1200);
+   187→  };
+   188→
+   189→  return (
+   190→    <div className="min-h-screen flex w-full bg-black text-white font-sans overflow-hidden">
+   191→      
+   192→      {/* Left Panel */}
+   193→      <div className="hidden lg:flex flex-1 flex-col justify-between p-12 lg:p-20 relative">
+   194→        <LiveVideoLoop />
+   195→        
+   196→        {/* Noise overlay restricted to left panel */}
+   197→        <div className="absolute inset-0 z-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: NOISE_SVG_URL }} />
+   198→
+   199→        {/* Header */}
+   200→        <div className="relative z-10 flex items-center gap-3">
+   201→          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-[#111] text-xl font-sans shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+   202→            A
+   203→          </div>
+   204→          <span className="font-mono text-2xl tracking-widest uppercase text-white">Artha</span>
+   205→        </div>
+   206→
+   207→        {/* Center Dynamic Content */}
+   208→        <div className="relative z-10 w-full max-w-xl mx-auto my-auto pt-8">
+   209→          <AnimatePresence mode="wait">
+   210→            {mode === 'login' ? (
+   211→              <motion.div
+   212→                key="login-content"
+   213→                initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+   214→                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+   215→                exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+   216→                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+   217→              >
+   218→                <h1 className="text-5xl xl:text-7xl font-light tracking-tighter text-white mb-10 leading-[1.05]">
+   219→                  Master your wealth. <br />
+   220→                  <span className="font-mono text-saffron tracking-tight">Without the noise.</span>
+   221→                </h1>
+   222→
+   223→                <div className="grid grid-cols-2 gap-5">
+   224→                  {/* Card 1 */}
+   225→                  <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
+   226→                    <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
+   227→                      <div className="flex justify-between items-start mb-6">
+   228→                        <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Live Net Worth</p>
+   229→                        <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
+   230→                      </div>
+   231→                      <h3 className="text-3xl font-mono text-white tracking-tighter">₹1.42 Cr</h3>
+   232→                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3 bg-emerald-400/10 w-fit px-2.5 py-1 rounded-full border border-emerald-400/20">
+   233→                        <ArrowUpRight className="w-3 h-3" />
+   234→                        <span>+12.4% YTD</span>
+   235→                      </div>
+   236→                    </div>
+   237→                  </div>
+   238→
+   239→                  {/* Card 2 */}
+   240→                  <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
+   241→                    <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
+   242→                      <div className="flex justify-between items-start mb-6">
+   243→                        <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Tax Harvested</p>
+   244→                        <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
+   245→                      </div>
+   246→                      <h3 className="text-3xl font-mono text-white tracking-tighter">₹42.5K</h3>
+   247→                      <div className="flex items-center gap-1.5 text-saffron text-xs font-bold mt-3">
+   248→                        <CheckCircle2 className="w-3.5 h-3.5" />
+   249→                        <span>Fully Optimized</span>
+   250→                      </div>
+   251→                    </div>
+   252→                  </div>
+   253→
+   254→                  {/* Card 3 (Chart) */}
+   255→                  <div className="col-span-2 bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group relative">
+   256→                    <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500 overflow-hidden">
+   257→                      <div className="relative z-10 flex justify-between items-end">
+   258→                        <div>
+   259→                          <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">Portfolio Trajectory</p>
+   260→                          <div className="flex items-baseline gap-2">
+   261→                            <span className="text-xl font-sans font-medium text-white tracking-tight">Alpha</span>
+   262→                            <span className="text-sm font-mono text-emerald-400">+4.2%</span>
+   263→                          </div>
+   264→                        </div>
+   265→                        <Sparkles className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-500" />
+   266→                      </div>
+   267→                      
+   268→                      {/* SVG Chart */}
+   269→                      <div className="absolute bottom-0 left-0 right-0 h-28 opacity-40 group-hover:opacity-70 transition-opacity duration-500">
+   270→                        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
+   271→                          <defs>
+   272→                            <linearGradient id="chart-grad-1" x1="0" y1="0" x2="0" y2="1">
+   273→                              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.5" />
+   274→                              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+   275→                            </linearGradient>
+   276→                          </defs>
+   277→                          <path
+   278→                            d="M0,80 Q50,70 100,75 T200,50 T300,60 T400,20"
+   279→                            fill="none"
+   280→                            stroke="#f59e0b"
+   281→                            strokeWidth="1.5"
+   282→                          />
+   283→                          <path
+   284→                            d="M0,80 Q50,70 100,75 T200,50 T300,60 T400,20 L400,100 L0,100 Z"
+   285→                            fill="url(#chart-grad-1)"
+   286→                          />
+   287→                        </svg>
+   288→                      </div>
+   289→                    </div>
+   290→                  </div>
+   291→                </div>
+   292→              </motion.div>
+   293→            ) : (
+   294→              <motion.div
+   295→                key="register-content"
+   296→                initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+   297→                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+   298→                exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+   299→                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+   300→              >
+   301→                <h1 className="text-5xl xl:text-7xl font-light tracking-tighter text-white mb-10 leading-[1.05]">
+   302→                  Institutional logic. <br />
+   303→                  <span className="font-mono text-saffron tracking-tight">For personal wealth.</span>
+   304→                </h1>
+   305→
+   306→                <div className="grid grid-cols-2 gap-5">
+   307→                  {/* Alt Card 1 */}
+   308→                  <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
+   309→                    <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
+   310→                      <div className="flex justify-between items-start mb-6">
+   311→                        <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Global Integration</p>
+   312→                        <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
+   313→                      </div>
+   314→                      <h3 className="text-3xl font-mono text-white tracking-tighter leading-tight">12,000+</h3>
+   315→                      <p className="text-stone-400 text-xs mt-3 font-medium">Supported Institutions</p>
+   316→                    </div>
+   317→                  </div>
+   318→
+   319→                  {/* Alt Card 2 */}
+   320→                  <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
+   321→                    <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
+   322→                      <div className="flex justify-between items-start mb-6">
+   323→                        <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">Data Security</p>
+   324→                        <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
+   325→                      </div>
+   326→                      <h3 className="text-3xl font-mono text-white tracking-tighter leading-tight">SOC2</h3>
+   327→                      <p className="text-stone-400 text-xs mt-3 font-medium">Bank-grade encryption</p>
+   328→                    </div>
+   329→                  </div>
+   330→
+   331→                  {/* Alt Card 3 */}
+   332→                  <div className="col-span-2 bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group relative">
+   333→                    <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
+   334→                      <div className="relative z-10 flex justify-between items-end">
+   335→                        <div>
+   336→                          <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">Automated Optimization</p>
+   337→                          <div className="flex items-baseline gap-2">
+   338→                            <span className="text-xl font-sans font-medium text-white tracking-tight">Always On</span>
+   339→                            <span className="text-sm font-mono text-saffron">24/7</span>
+   340→                          </div>
+   341→                        </div>
+   342→                        <Sparkles className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-500" />
+   343→                      </div>
+   344→                    </div>
+   345→                  </div>
+   346→                </div>
+   347→              </motion.div>
+   348→            )}
+   349→          </AnimatePresence>
+   350→        </div>
+   351→
+   352→        {/* Footer */}
+   353→        <div className="relative z-10 flex justify-between items-center pt-6 mt-8 border-t border-white/5">
+   354→          <p className="text-[10px] font-bold tracking-widest text-stone-500 uppercase">Institutional Grade Infrastructure</p>
+   355→          <div className="flex items-center gap-2">
+   356→            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+   357→            <span className="text-[10px] font-mono text-stone-400">ALL SYSTEMS OPERATIONAL</span>
+   358→          </div>
+   359→        </div>
+   360→      </div>
+   361→
+   362→      {/* Right Panel (Auth Form) */}
+   363→      <div className="w-full lg:w-[480px] xl:w-[560px] flex-shrink-0 bg-[#050505] border-l border-white/5 z-10 flex flex-col justify-center px-8 lg:px-16 relative">
+   364→        {/* Subtle right panel noise */}
+   365→        <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: NOISE_SVG_URL }} />
+   366→
+   367→        <div className="lg:hidden flex items-center gap-3 mb-16 relative z-10">
+   368→          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-[#111] text-xl font-sans shadow-[0_0_20px_rgba(245,158,11,0.3)]">
+   369→            A
+   370→          </div>
+   371→          <span className="font-mono text-2xl tracking-widest uppercase text-white">Artha</span>
+   372→        </div>
+   373→
+   374→        <div className="w-full max-w-md mx-auto relative z-10">
+   375→          <AnimatePresence mode="wait">
+   376→            <motion.div 
+   377→              key={mode}
+   378→              initial={{ opacity: 0, x: mode === 'login' ? -20 : 20, filter: 'blur(4px)' }}
+   379→              animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+   380→              exit={{ opacity: 0, x: mode === 'login' ? 20 : -20, filter: 'blur(4px)' }}
+   381→              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+   382→            >
+   383→              <div className="mb-12">
+   384→                <h2 className="text-4xl font-light tracking-tight mb-3 text-white">
+   385→                  {mode === 'login' ? 'Welcome back.' : 'Join Artha.'}
+   386→                </h2>
+   387→                <p className="text-stone-400 font-medium text-sm">
+   388→                  {mode === 'login' 
+   389→                    ? 'Sign in to access your intelligence dashboard.' 
+   390→                    : 'Create an account to unify your wealth.'}
+   391→                </p>
+   392→              </div>
+   393→
+   394→              <AnimatePresence mode="wait">
+   395→                {error && (
+   396→                  <motion.div 
+   397→                    initial={{ opacity: 0, height: 0 }}
+   398→                    animate={{ opacity: 1, height: 'auto' }}
+   399→                    exit={{ opacity: 0, height: 0 }}
+   400→                    className="mb-8 overflow-hidden"
+   401→                  >
+   402→                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium">
+   403→                      {error}
+   404→                    </div>
+   405→                  </motion.div>
+   406→                )}
+   407→              </AnimatePresence>
+   408→
+   409→              <form onSubmit={handleSubmit} className="space-y-5">
+   410→                {mode === 'register' && (
+   411→                  <div className="space-y-1.5">
+   412→                    <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">Legal Name</label>
+   413→                    <input
+   414→                      type="text"
+   415→                      required
+   416→                      value={name}
+   417→                      onChange={(e) => setName(e.target.value)}
+   418→                      placeholder="Jane Doe"
+   419→                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner"
+   420→                    />
+   421→                  </div>
+   422→                )}
+   423→                
+   424→                <div className="space-y-1.5">
+   425→                  <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">Email Address</label>
+   426→                  <input
+   427→                    type="email"
+   428→                    required
+   429→                    value={email}
+   430→                    onChange={(e) => setEmail(e.target.value)}
+   431→                    placeholder="you@domain.com"
+   432→                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner"
+   433→                  />
+   434→                </div>
+   435→                
+   436→                <div className="space-y-1.5">
+   437→                  <div className="flex justify-between items-center ml-1">
+   438→                    <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500">Security Key</label>
+   439→                    {mode === 'login' && <span className="text-[10px] font-bold tracking-wider text-saffron uppercase cursor-pointer hover:text-saffron-light transition-colors">Forgot?</span>}
+   440→                  </div>
+   441→                  <div className="relative">
+   442→                    <input
+   443→                      type={showPassword ? "text" : "password"}
+   444→                      required
+   445→                      value={password}
+   446→                      onChange={(e) => setPassword(e.target.value)}
+   447→                      placeholder="••••••••"
+   448→                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all tracking-widest shadow-inner pr-12"
+   449→                    />
+   450→                    <button
+   451→                      type="button"
+   452→                      onClick={() => setShowPassword(!showPassword)}
+   453→                      className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white transition-colors"
+   454→                    >
+   455→                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+   456→                    </button>
+   457→                  </div>
+   458→                </div>
+   459→
+   460→                <button
+   461→                  type="submit"
+   462→                  disabled={isLoading}
+   463→                  className="w-full mt-8 bg-white text-[#111] py-4 px-6 rounded-xl font-bold tracking-widest uppercase text-xs transition-transform active:scale-[0.98] hover:bg-stone-200 flex items-center justify-center group h-14 shadow-[0_0_20px_rgba(255,255,255,0.1)] relative overflow-hidden"
+   464→                >
+   465→                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out" />
+   466→                  {isLoading ? (
+   467→                    <Loader2 className="w-5 h-5 animate-spin text-[#111]" />
+   468→                  ) : (
+   469→                    <span className="flex items-center gap-3 relative z-10">
+   470→                      {mode === 'login' ? 'Authenticate' : 'Initialize Account'}
+   471→                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#111]" />
+   472→                    </span>
+   473→                  )}
+   474→                </button>
+   475→              </form>
+   476→
+   477→              <div className="mt-8 text-center">
+   478→                <button
+   479→                  type="button"
+   480→                  onClick={() => {
+   481→                    setMode(mode === 'login' ? 'register' : 'login');
+   482→                    setError('');
+   483→                  }}
+   484→                  className="text-[11px] font-bold tracking-wider text-stone-400 uppercase hover:text-white transition-colors"
+   485→                >
+   486→                  {mode === 'login' ? "New to Artha? Apply for Access" : "Existing Member? Sign In"}
+   487→                </button>
+   488→              </div>
+   489→
+   490→              {/* Demo Accounts */}
+   491→              {mode === 'login' && (
+   492→                <div className="mt-12 pt-8 border-t border-white/5">
+   493→                  <p className="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4 ml-1">Demo Credentials</p>
+   494→                  <div className="space-y-3">
+   495→                    <div 
+   496→                      className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group"
+   497→                      onClick={() => { setEmail('test@finsight.ai'); setPassword('test1234'); }}
+   498→                    >
+   499→                      <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">test@finsight.ai</span>
+   500→                      <span className="text-xs font-mono text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">test1234</span>
+   501→                    </div>
+   502→                    <div 
+   503→                      className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group"
+   504→                      onClick={() => { setEmail('admin@finsight.ai'); setPassword('admin1234'); }}
+   505→                    >
+   506→                      <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">admin@finsight.ai</span>
+   507→                      <span className="text-xs font-mono text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">admin1234</span>
+   508→                    </div>
+   509→                  </div>
+   510→                </div>
+   511→              )}
+   512→            </motion.div>
+   513→          </AnimatePresence>
+   514→        </div>
+   515→      </div>
+   516→    </div>
+   517→  );
+   518→}
