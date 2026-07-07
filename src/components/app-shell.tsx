@@ -79,7 +79,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => { setMobileMenuOpen(false); }, [page]);
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-canvas">
+    <div className="min-h-screen flex items-center justify-center bg-black">
       <Loader2 className="h-6 w-6 animate-spin text-saffron" />
     </div>
   );
@@ -113,7 +113,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
   const TICKER_ITEMS = tickerItems;
 
   return (
-    <div className="bg-canvas text-carbon font-sans flex w-full relative">
+    <div className="bg-black text-white font-sans flex w-full relative">
       <CommandPaletteNew isOpen={cmdOpen} onClose={() => setCmdOpen(false)} onNavigate={handleNav} />
       <OnboardingFlowNew user={user as any} onComplete={() => {}} />
 
@@ -166,11 +166,11 @@ export default function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Mobile Top Bar */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-canvas/90 border-b border-carbon/5 z-40 flex items-center justify-between px-6">
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-black/90 border-b border-white/5 z-40 flex items-center justify-between px-6">
         <div className="flex items-center gap-2" onClick={() => handleNav("dashboard")}>
           <span className="font-serif italic text-xl tracking-tight text-saffron">Artha AI</span>
         </div>
-        <button aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 rounded-lg text-carbon hover:bg-carbon/5 transition-colors">
+        <button aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 rounded-lg text-white hover:bg-white/5 transition-colors">
           <Menu className="w-6 h-6" />
         </button>
       </div>
@@ -236,10 +236,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
       </AnimatePresence>
 
       {/* Main Content — no forced height, content determines page height */}
-      <main className="flex-1 relative pt-16 lg:pt-0 pb-16 bg-canvas flex flex-col" style={{ minHeight: 0 }}>
+      <main className="flex-1 relative pt-16 lg:pt-0 pb-16 bg-black flex flex-col" style={{ minHeight: 0 }}>
         {/* Desktop Header */}
         <div className="hidden lg:flex shrink-0 top-0 z-10 h-20 items-center justify-between px-12 max-w-[1200px] mx-auto w-full">
-          <div className="text-[10px] font-bold text-carbon uppercase tracking-[0.2em]">Assessment Period: FY 2024-25</div>
+          <div className="text-[10px] font-bold text-white uppercase tracking-[0.2em]">Assessment Period: FY 2024-25</div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />AI Model Online
@@ -270,28 +270,28 @@ export default function AppShell({ children }: { children: ReactNode }) {
       </main>
 
       {/* Fixed Footer Ticker Bar — compact */}
-      <div className="fixed bottom-0 left-0 lg:left-[260px] right-0 z-40 bg-canvas/95 pt-3 pb-3 px-6 lg:px-12 pointer-events-none" style={{ backdropFilter: "blur(8px)" }}>
+      <div className="fixed bottom-0 left-0 lg:left-[260px] right-0 z-40 bg-black/95 pt-3 pb-3 px-6 lg:px-12 pointer-events-none" style={{ backdropFilter: "blur(8px)" }}>
         <div className="flex items-center justify-between mb-2 w-full max-w-[1200px] mx-auto">
           <div />
-          <div className="text-[9px] font-bold text-carbon/40 uppercase tracking-[0.1em] flex items-center gap-1.5 pointer-events-auto">
-            <Command className="w-2.5 h-2.5" /> <span className="font-mono bg-carbon/5 px-1 rounded text-carbon">⌘K</span> command palette
+          <div className="text-[9px] font-bold text-white/40 uppercase tracking-[0.1em] flex items-center gap-1.5 pointer-events-auto">
+            <Command className="w-2.5 h-2.5" /> <span className="font-mono bg-white/5 px-1 rounded text-white">⌘K</span> command palette
           </div>
         </div>
-        <div className="w-full bg-white rounded-full h-10 shadow-sm border border-carbon/5 overflow-hidden flex items-center relative pointer-events-auto">
+        <div className="w-full bg-white/10 rounded-full h-10 shadow-sm border border-white/5 overflow-hidden flex items-center relative pointer-events-auto">
           <motion.div
             animate={{ x: [0, -1000] }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
             className="flex items-center whitespace-nowrap min-w-max"
           >
             {[...TICKER_ITEMS, ...TICKER_ITEMS, ...TICKER_ITEMS].map((item, i) => (
-              <div key={i} className="flex items-center text-xs px-6 border-r border-carbon/5 last:border-0">
+              <div key={i} className="flex items-center text-xs px-6 border-r border-white/5 last:border-0">
                 <span className="font-bold text-stone tracking-[0.15em] uppercase mr-3">{item.label}</span>
                 {item.up ? (
                   <ArrowUp className="w-3.5 h-3.5 text-stone-dark mr-1" />
                 ) : (
                   <ArrowDown className="w-3.5 h-3.5 text-red-500 mr-1" />
                 )}
-                <span className="font-mono font-medium text-carbon">{item.value}</span>
+                <span className="font-mono font-medium text-white">{item.value}</span>
               </div>
             ))}
           </motion.div>

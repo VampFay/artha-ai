@@ -1,8 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { motion } from "motion/react";
-import { ShieldCheck, Loader2 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Eye, EyeOff, ShieldCheck, Loader2, ArrowRight, TrendingUp, Calculator } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { LiveVideoLoop } from "@/components/LiveVideoLoop";
+
+const DEMO_ACCOUNTS = [
+  { label: "Test User", email: "test@finsight.ai", password: "test1234" },
+  { label: "Admin User", email: "admin@finsight.ai", password: "admin1234" },
+];
 
 export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void }) {
   const { login, register } = useAuth();
@@ -10,6 +16,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -18,110 +25,246 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
     setError("");
     setIsLoading(true);
     try {
-      if (mode === "login") {
-        await login(email, password);
-      } else {
-        await register(name, email, password);
-      }
+      if (mode === "login") await login(email, password);
+      else await register(name, email, password);
     } catch (err: any) {
       setError(err?.detail || "Authentication failed");
       setIsLoading(false);
     }
   };
 
+  const quickFill = (acc: typeof DEMO_ACCOUNTS[0]) => {
+    setEmail(acc.email);
+    setPassword(acc.password);
+    setMode("login");
+    setError("");
+  };
+
+  const LIVE_STATS = [
+    { label: "TOTAL NET WORTH", value: "₹1.42 Cr", change: "+12.4%", positive: true },
+    { label: "TAX READINESS", value: "90/100", change: "₹90,740 saved", positive: true },
+    { label: "FINANCIAL HEALTH", value: "70/100", change: "Stable", positive: true },
+  ];
+
+  const FEATURES = [
+    { icon: Calculator, title: "Old vs New regime", desc: "Auto-compare tax slabs and pick the best" },
+    { icon: TrendingUp, title: "Financial Health Score", desc: "13-category insights with actionable tips" },
+    { icon: ShieldCheck, title: "Privacy-first", desc: "Masked, encrypted, deletable on demand" },
+  ];
+
   return (
-    <div className="min-h-screen flex w-full bg-carbon text-canvas overflow-hidden">
-      {/* Left Panel */}
-      <div className="hidden lg:flex flex-1 relative flex-col justify-between p-12 bg-carbon">
+    <div className="min-h-screen flex w-full bg-black text-white overflow-hidden">
+      {/* ============ LEFT PANEL (Desktop only) ============ */}
+      <div className="hidden lg:flex flex-1 relative flex-col justify-between p-12 bg-black">
+        {/* Canvas background */}
+        <LiveVideoLoop />
+
+        {/* Content overlay */}
         <div className="relative z-10">
-          <div className="flex items-center gap-2 mb-12">
-            <div className="w-8 h-8 rounded-md bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-white shadow-lg shadow-saffron/20">A</div>
-            <span className="font-semibold text-xl tracking-tight">Artha AI</span>
+          {/* Logo */}
+          <div className="flex items-center gap-3 mb-16">
+            <div className="w-10 h-10 rounded-lg bg-saffron flex items-center justify-center font-bold text-black text-lg shadow-lg shadow-saffron/20">A</div>
+            <div>
+              <span className="font-semibold text-xl tracking-tight">Artha AI</span>
+              <p className="text-[9px] font-bold tracking-[0.2em] text-stone uppercase">Wealth Intelligence</p>
+            </div>
           </div>
-          <h1 className="text-5xl font-serif italic tracking-tight leading-[1.1] max-w-xl text-canvas">
+
+          {/* Hero heading */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="text-5xl xl:text-6xl font-bold tracking-tight leading-[1.05] mb-4"
+          >
             Your money,<br />
             <span className="text-saffron">finally clear.</span>
-          </h1>
-          <div className="mt-16 flex flex-col gap-6">
-            {["Old vs New regime", "Financial Health Score", "Privacy-first"].map((pill, i) => (
-              <motion.div key={pill} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.1 }} className="flex items-center gap-3 group cursor-default">
-                <div className="w-1.5 h-1.5 rounded-full bg-saffron opacity-50 group-hover:opacity-100 group-hover:scale-150 transition-all duration-300" />
-                <span className="text-lg text-stone group-hover:text-canvas transition-colors duration-300">{pill}</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.15 }}
+            className="text-base text-stone-light max-w-md mb-12"
+          >
+            AI-powered document extraction, tax readiness scores, and CA-ready reports — all privacy-first, all in 60 seconds.
+          </motion.p>
+
+          {/* Live stats */}
+          <div className="grid grid-cols-3 gap-6 max-w-md">
+            {LIVE_STATS.map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 + i * 0.1 }}
+              >
+                <p className="text-[9px] font-bold tracking-[0.15em] text-stone uppercase mb-1">{stat.label}</p>
+                <p className="text-xl font-mono font-bold text-white">{stat.value}</p>
+                <p className={`text-[10px] font-mono mt-0.5 ${stat.positive ? "text-emerald" : "text-crimson"}`}>
+                  {stat.positive ? "▲" : "▼"} {stat.change}
+                </p>
               </motion.div>
             ))}
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16 border-t border-carbon-light bg-carbon/50 overflow-hidden flex items-center">
-          <motion.div animate={{ x: [0, -800] }} transition={{ repeat: Infinity, duration: 25, ease: "linear" }} className="flex whitespace-nowrap gap-12 text-sm font-mono text-stone">
-            {[...Array(3)].map((_, dup) => (
-              <React.Fragment key={dup}>
-                <span className="flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-saffron" /> Tax Score: 85/100</span>
-                <span>Tax Saved: ₹42,500</span>
-                <span>Savings Rate: 24%</span>
-                <span>Health Score: Good</span>
-                <span>Documents: 4 Processed</span>
-              </React.Fragment>
-            ))}
-          </motion.div>
+
+        {/* Bottom: Status + features */}
+        <div className="relative z-10">
+          <div className="flex items-center gap-2 mb-8">
+            <span className="live-dot" />
+            <span className="text-[10px] font-mono font-bold tracking-[0.2em] text-emerald uppercase">All Systems Operational</span>
+          </div>
+          <div className="space-y-3">
+            {FEATURES.map((f, i) => {
+              const Icon = f.icon;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, delay: 0.5 + i * 0.1 }}
+                  className="flex items-center gap-3 group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-saffron" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-white">{f.title}</p>
+                    <p className="text-xs text-stone">{f.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-canvas text-carbon">
-        <div className="w-full max-w-md">
-          <div className="lg:hidden flex items-center gap-2 mb-12">
-            <div className="w-8 h-8 rounded-md bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-white">A</div>
-            <span className="font-semibold text-xl tracking-tight">Artha AI</span>
+      {/* ============ RIGHT PANEL (Form) ============ */}
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-8 bg-black relative">
+        <div className="w-full max-w-sm">
+          {/* Mobile logo */}
+          <div className="lg:hidden flex items-center gap-3 mb-10 justify-center">
+            <div className="w-10 h-10 rounded-lg bg-saffron flex items-center justify-center font-bold text-black text-lg">A</div>
+            <span className="font-semibold text-xl">Artha AI</span>
           </div>
 
-          <div className="mb-10">
-            <h2 className="text-3xl font-semibold tracking-tight">{mode === "login" ? "Welcome back" : "Create an account"}</h2>
-            <p className="text-stone mt-2">{mode === "login" ? "Enter your details to access your dashboard." : "Sign up to get your financial clarity."}</p>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={mode}
+              initial={{ opacity: 0, filter: "blur(4px)", x: mode === "login" ? -20 : 20 }}
+              animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
+              exit={{ opacity: 0, filter: "blur(4px)", x: mode === "login" ? 20 : -20 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h2 className="text-3xl font-bold tracking-tight mb-2">
+                {mode === "login" ? "Welcome back" : "Create account"}
+              </h2>
+              <p className="text-sm text-stone mb-8">
+                {mode === "login" ? "Sign in to access your dashboard" : "Start your financial journey today"}
+              </p>
 
-          {error && (
-            <div className="mb-6 p-4 rounded-xl bg-crimson/10 border border-crimson/20 flex items-start gap-3">
-              <span className="text-crimson mt-0.5">⚠️</span>
-              <p className="text-sm text-crimson font-medium">{error}</p>
-            </div>
-          )}
+              <form onSubmit={handleSubmit} className="space-y-4" suppressHydrationWarning>
+                {mode === "register" && (
+                  <div>
+                    <label className="text-[10px] font-bold tracking-[0.1em] text-stone uppercase mb-1.5 block">Name</label>
+                    <input
+                      type="text" required value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name" suppressHydrationWarning
+                      className="w-full h-12 rounded-xl px-4 text-sm outline-none bg-white/5 border border-white/10 text-white placeholder:text-stone/50 transition-all focus:border-saffron/50 focus:bg-white/10"
+                    />
+                  </div>
+                )}
+                <div>
+                  <label className="text-[10px] font-bold tracking-[0.1em] text-stone uppercase mb-1.5 block">Email</label>
+                  <input
+                    type="email" required value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com" suppressHydrationWarning
+                    className="w-full h-12 rounded-xl px-4 text-sm outline-none bg-white/5 border border-white/10 text-white placeholder:text-stone/50 transition-all focus:border-saffron/50 focus:bg-white/10"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold tracking-[0.1em] text-stone uppercase mb-1.5 block">Password</label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      required minLength={8} value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Min 8 chars, 1 letter + 1 digit" suppressHydrationWarning
+                      className="w-full h-12 rounded-xl px-4 pr-12 text-sm outline-none bg-white/5 border border-white/10 text-white placeholder:text-stone/50 transition-all focus:border-saffron/50 focus:bg-white/10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone hover:text-white transition-colors"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5" suppressHydrationWarning>
-            {mode === "register" && (
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-carbon-light">Name</label>
-                <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" suppressHydrationWarning className="w-full px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-shadow placeholder:text-stone/40" />
+                {/* Animated error */}
+                <AnimatePresence>
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-3 rounded-xl bg-crimson/10 border border-crimson/20 flex items-start gap-2">
+                        <span className="text-crimson text-sm">⚠</span>
+                        <p className="text-sm text-crimson">{error}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <button
+                  type="submit" disabled={isLoading}
+                  className="w-full h-12 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 bg-saffron text-black hover:bg-saffron-light transition-colors disabled:opacity-60"
+                >
+                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>{mode === "login" ? "Sign In" : "Create Account"} <ArrowRight className="w-4 h-4" /></>}
+                </button>
+              </form>
+
+              <div className="mt-6 flex items-center gap-3">
+                <div className="flex-1 h-px bg-white/10" />
+                <span className="text-xs text-stone">or</span>
+                <div className="flex-1 h-px bg-white/10" />
               </div>
-            )}
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-carbon-light">Email</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" suppressHydrationWarning className="w-full px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-shadow placeholder:text-stone/40" />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-carbon-light">Password</label>
-              <input type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 8 chars, 1 letter + 1 digit" suppressHydrationWarning className="w-full px-4 py-3 rounded-xl border border-stone/20 bg-white focus:outline-none focus:ring-2 focus:ring-saffron/50 transition-shadow placeholder:text-stone/40" />
-            </div>
-            <button type="submit" disabled={isLoading} className="w-full mt-2 relative overflow-hidden group rounded-xl bg-carbon text-canvas px-4 py-3.5 font-medium transition-transform active:scale-[0.98] flex items-center justify-center h-12 disabled:opacity-60">
-              {isLoading ? <Loader2 className="w-5 h-5 animate-spin text-stone" /> : <span className="relative z-10">{mode === "login" ? "Sign In" : "Create Account"}</span>}
-            </button>
-          </form>
 
-          <div className="mt-8 text-center">
-            <button type="button" onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }} className="text-sm text-stone hover:text-carbon transition-colors">
-              {mode === "login" ? "Don't have an account? Register" : "Already have an account? Sign in"}
-            </button>
-          </div>
+              <button
+                onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }}
+                className="w-full mt-4 text-sm font-medium py-3 rounded-xl text-stone hover:text-white hover:bg-white/5 transition-all"
+              >
+                {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+                <span className="font-bold text-saffron">{mode === "login" ? "Register" : "Sign in"}</span>
+              </button>
 
-          <div className="mt-12 p-5 rounded-2xl bg-saffron/5 border border-saffron/10">
-            <div className="flex items-center gap-2 mb-3">
-              <ShieldCheck className="w-4 h-4 text-saffron" />
-              <h3 className="text-sm font-medium text-carbon">Demo Accounts</h3>
-            </div>
-            <div className="space-y-2 text-sm font-mono text-stone">
-              <div className="flex justify-between"><span>test@finsight.ai</span><span>test1234</span></div>
-              <div className="flex justify-between"><span>admin@finsight.ai</span><span>admin1234</span></div>
-            </div>
-          </div>
+              {/* Demo quick-fill buttons */}
+              <div className="mt-8 p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                <p className="text-[10px] font-bold tracking-[0.1em] text-stone uppercase mb-2">Demo Quick-Fill</p>
+                {DEMO_ACCOUNTS.map((acc) => (
+                  <button
+                    key={acc.email}
+                    onClick={() => quickFill(acc)}
+                    className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-black/30 hover:bg-black/50 transition-colors text-left"
+                  >
+                    <div>
+                      <p className="text-xs font-medium text-white">{acc.label}</p>
+                      <p className="text-[10px] font-mono text-stone">{acc.email}</p>
+                    </div>
+                    <span className="text-[10px] font-mono text-saffron">{acc.password}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>
