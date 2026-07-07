@@ -6,10 +6,10 @@
    ============================================================ */
 
 @theme {
-  /* Fonts */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
-  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+  /* Fonts — Geist + Geist Pixel (terminal aesthetic) */
+  --font-sans: var(--font-geist), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Pixel", var(--font-geist-mono), "Geist Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: var(--font-geist), "Geist", ui-serif, Georgia, serif;
 
   /* Core palette */
   --color-canvas: #f4f0ea;
