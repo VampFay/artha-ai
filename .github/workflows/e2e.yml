@@ -1,0 +1,34 @@
+name: E2E Tests
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+      - run: bun install
+      - run: bun run db:generate
+      - run: bun run db:push
+        env:
+          DATABASE_URL: "file:/tmp/test.db"
+          JWT_SECRET: "e2e-test-secret"
+      - name: Start dev server
+        run: |
+          bun run dev &
+          sleep 15
+          curl -s http://localhost:3000/api/health
+      - name: Run E2E tests (when available)
+        run: echo "E2E tests will run here once Playwright is configured"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
