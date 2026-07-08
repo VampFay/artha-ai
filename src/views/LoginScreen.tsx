@@ -138,7 +138,7 @@ const LiveVideoLoop = memo(() => {
   );
 });
 
-export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void }) {
+export default function LoginScreen() {
   const { login, register } = useAuth();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -362,7 +362,7 @@ export default function LoginScreen({ onLogin }: { onLogin: (user: any) => void 
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center ml-1">
                     <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500">Security Key</label>
-                    {mode === "login" && <span className="text-[10px] font-bold tracking-wider text-saffron uppercase cursor-pointer hover:text-saffron-light transition-colors">Forgot?</span>}
+                    {mode === "login" && <span onClick={() => alert("Password reset is not available in this demo. Use the demo credentials below.")} className="text-[10px] font-bold tracking-wider text-saffron uppercase cursor-pointer hover:text-saffron-light transition-colors">Forgot?</span>}
                   </div>
                   <div className="relative">
                     <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all tracking-widest shadow-inner pr-12" />

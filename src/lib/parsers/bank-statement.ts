@@ -15,7 +15,7 @@ export interface Transaction {
   type: "debit" | "credit";
   balance?: number;
   category?: string;
-  merchant?: string;
+  merchant?: string | null;
 }
 
 export interface BankStatementResult {

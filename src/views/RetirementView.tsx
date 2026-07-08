@@ -23,7 +23,7 @@ export default function RetirementView() {
       });
       const data = await res.json();
       if (res.ok) setResult(data);
-    } catch {} finally { setLoading(false); }
+    } catch (e: any) { alert("Failed to calculate. Try again."); } finally { setLoading(false); }
   }, [currentAge, targetAge, monthlyExpense, currentCorpus]);
 
   // Debounced API call on slider change

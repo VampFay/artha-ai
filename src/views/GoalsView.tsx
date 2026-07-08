@@ -41,7 +41,7 @@ export default function GoalsView() {
       setForm({ goalName: "", targetAmount: "", monthlyContribution: "", targetDate: "" });
       setIsFormOpen(false);
       load();
-    } catch {}
+    } catch (e: any) { alert(e?.message || "Failed to create goal"); }
   };
 
   const handleDelete = async (id: string) => {
@@ -49,7 +49,7 @@ export default function GoalsView() {
     try {
       await fetch(`/api/goals/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       load();
-    } catch {}
+    } catch (e: any) { alert(e?.message || "Failed to create goal"); }
   };
 
   if (loading) return (

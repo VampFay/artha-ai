@@ -67,12 +67,6 @@ function fv(current: number, monthly: number, rate: number, months: number): num
   return current * gf + monthly * af;
 }
 
-export function compareScenarios(target: number, current: number, monthly: number, targetDate: Date | null, rate: number) {
-  const scenarios = [];
-  for (const [label, m] of [["Current", monthly], ["+25%", monthly * 1.25], ["+50%", monthly * 1.5]]) {
-    const proj = projectGoal(target, current, m, targetDate, rate);
-    scenarios.push({ label, monthly_contribution: Math.round(m * 100) / 100, projected_completion_date: proj.projected_completion_date, months_to_complete: proj.months_to_target });
-  }
   if (targetDate) {
     const proj = projectGoal(target, current, monthly, targetDate, rate);
     scenarios.push({ label: "Needed to meet on time", monthly_contribution: proj.monthly_contribution_needed, projected_completion_date: targetDate.toISOString(), months_to_complete: proj.months_to_target });

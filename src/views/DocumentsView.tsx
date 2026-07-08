@@ -79,7 +79,7 @@ export default function DocumentsView({ onNavigate }: DocumentsViewProps) {
     try {
       await fetch(`/api/documents/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       load();
-    } catch {}
+    } catch (e: any) { alert("Upload failed. Please try again."); }
   };
 
   const getIcon = (fname: string) => {

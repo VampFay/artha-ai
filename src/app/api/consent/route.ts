@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     if (!auth?.startsWith("Bearer ")) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
+    if (!validateOrigin(req)) return NextResponse.json({ detail: "Invalid origin" }, { status: 403 });
 
     const body = await req.json();
     const parsed = consentSchema.safeParse(body);
