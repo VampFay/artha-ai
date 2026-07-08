@@ -1,8 +1,9 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { KineticNumber } from "@/components/ui/KineticNumber";
 import { Landmark, ArrowRight, ShieldAlert } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Loan {
   id: string; name: string; loanType: string;
@@ -15,17 +16,8 @@ interface LiabilityData {
 }
 
 export default function LiabilitiesView() {
-  const [data, setData] = useState<LiabilityData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("finsight_token");
-    if (!token) return;
-    fetch("/api/liabilities", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => setData(d))
-      .finally(() => setLoading(false));
-  }, []);
+  const { toast } = useToast();
+  const { data, isLoading: loading } = useLiabilities();
 
   if (loading) return (
     <div className="px-6 lg:px-12 pt-8 max-w-[1200px] mx-auto">
@@ -95,7 +87,7 @@ export default function LiabilitiesView() {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-6 border-t border-carbon/5">
                     <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Monthly EMI</span><span className="font-geist-pixel text-sm text-carbon">₹{loan.emi.toLocaleString("en-IN")}</span></div>
                     <div><span className="block text-[10px] text-stone uppercase tracking-wider mb-1">Tenure Left</span><span className="font-geist-pixel text-sm text-carbon">{Math.floor(loan.tenureLeftMonths / 12)}y {loan.tenureLeftMonths % 12}m</span></div>
-                    <div className="md:col-span-2 flex justify-end items-center"><button onClick={() => alert(data?.prepaymentInsight || "Prepayment simulation will be available soon.")} className="text-xs text-carbon font-medium hover:text-saffron transition-colors flex items-center gap-1">Prepayment Options <ArrowRight className="w-3 h-3" /></button></div>
+                    <div className="md:col-span-2 flex justify-end items-center"><button onClick={() => toast({ title: "Prepayment Insight", description: data?.prepaymentInsight || "Prepayment simulation will be available soon." })} className="text-xs text-carbon font-medium hover:text-saffron transition-colors flex items-center gap-1">Prepayment Options <ArrowRight className="w-3 h-3" /></button></div>
                   </div>
                 </div>
               ))}
@@ -119,7 +111,7 @@ export default function LiabilitiesView() {
               <ShieldAlert className="w-6 h-6 text-saffron mb-4" />
               <h3 className="text-sm font-medium text-carbon mb-2">Prepayment Insight</h3>
               <p className="text-xs text-carbon-light leading-relaxed mb-4">{data.prepaymentInsight}</p>
-              <button onClick={() => alert(data?.prepaymentInsight || "Upload loan details to see prepayment insights.")} className="text-xs text-saffron font-bold uppercase tracking-wider hover:text-carbon transition-colors">Simulate Prepayment</button>
+              <button onClick={() => toast({ title: "Prepayment Insight", description: data?.prepaymentInsight || "Upload loan details to see prepayment insights." })} className="text-xs text-saffron font-bold uppercase tracking-wider hover:text-carbon transition-colors">Simulate Prepayment</button>
             </div>
           )}
         </motion.div>

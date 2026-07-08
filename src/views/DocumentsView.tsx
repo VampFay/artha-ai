@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ViewState } from "@/lib/types";
 import { UploadCloud, CheckCircle2, AlertCircle, ArrowRight, Trash2, FileText, Image as ImageIcon, FileSpreadsheet, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface DocumentsViewProps { onNavigate: (view: ViewState) => void; }
 
@@ -20,6 +21,7 @@ interface Doc {
 }
 
 export default function DocumentsView({ onNavigate }: DocumentsViewProps) {
+  const { toast } = useToast();
   const [activeType, setActiveType] = useState("Salary Slip");
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -79,7 +81,7 @@ export default function DocumentsView({ onNavigate }: DocumentsViewProps) {
     try {
       await fetch(`/api/documents/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       load();
-    } catch (e: any) { alert("Upload failed. Please try again."); }
+    } catch (e: any) { toast({ title: "Upload failed", description: "Please try again.", variant: "destructive" }); }
   };
 
   const getIcon = (fname: string) => {

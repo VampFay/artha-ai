@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, Check, CheckCheck, Edit3, ShieldCheck } from "lucide-react";
 import { useNav } from "@/lib/nav-context";
+import { useToast } from "@/hooks/use-toast";
 
 interface Field {
   id: string;
@@ -14,6 +15,7 @@ interface Field {
 }
 
 export default function DocumentVerifyView() {
+  const { toast } = useToast();
   const { params, navigate } = useNav();
   const docId = params.id as string;
   const [fields, setFields] = useState<Field[]>([]);
@@ -50,7 +52,7 @@ export default function DocumentVerifyView() {
     try {
       await fetch(`/api/extraction/${resolvedDocId}/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({}) });
       setFields(fs => fs.map(f => f.id === id ? { ...f, verified_by_user: true, confidence_score: 1.0 } : f));
-    } catch (e: any) { alert("Verification failed."); }
+    } catch (e: any) { toast({ title: "Verification failed", variant: "destructive" }); }
   };
 
   const verifyAll = async () => {
@@ -59,7 +61,7 @@ export default function DocumentVerifyView() {
     try {
       await fetch(`/api/extraction/${resolvedDocId}/verify-all`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
       setFields(fs => fs.map(f => ({ ...f, verified_by_user: true, confidence_score: 1.0 })));
-    } catch (e: any) { alert("Verify all failed."); }
+    } catch (e: any) { toast({ title: "Verify all failed", variant: "destructive" }); }
   };
 
   const edit = async (id: string) => {
@@ -69,7 +71,7 @@ export default function DocumentVerifyView() {
       await fetch(`/api/extraction/${resolvedDocId}/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ value: editValue }) });
       setFields(fs => fs.map(f => f.id === id ? { ...f, field_value: editValue, verified_by_user: true, confidence_score: 1.0 } : f));
       setEditingId(null);
-    } catch (e: any) { alert("Update failed."); }
+    } catch (e: any) { toast({ title: "Update failed", variant: "destructive" }); }
   };
 
   if (loading) return (
