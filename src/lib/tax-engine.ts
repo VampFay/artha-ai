@@ -88,8 +88,8 @@ export async function computeTaxSummary(userId: string, fy: string) {
     income_summary: { salary, interest, rental, other, gross },
     deduction_summary: cappedDed,
     regime_comparison: {
-      old_regime: { taxable_income: oldTaxable, tax_before_cess: oldTax, cess: oldTotal - oldTax, total_tax: oldTotal },
-      new_regime: { taxable_income: newTaxable, tax_before_cess: newTax, cess: newTotal - newTax, total_tax: newTotal },
+      old_regime: { gross_income: gross, total_deductions: totalDed + stdDedOld, taxable_income: oldTaxable, tax_before_cess: oldTax, cess: oldTotal - oldTax, total_tax: oldTotal },
+      new_regime: { gross_income: gross, total_deductions: stdDedNew, taxable_income: newTaxable, tax_before_cess: newTax, cess: newTotal - newTax, total_tax: newTotal },
       recommended_regime: recommended,
       savings_amount: savings,
     },

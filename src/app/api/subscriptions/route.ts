@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 
     const monthlyTotal = subs
       .filter(s => s.status === "Active")
-      .reduce((sum, s) => sum + (s.frequency === "Yearly" ? s.amount / 12 : s.amount), 0);
+      .reduce((sum, s) => sum + (s.frequency === "Yearly" ? s.amount / 12 : s.frequency === "Quarterly" ? s.amount / 3 : s.frequency === "Weekly" ? s.amount * 52 / 12 : s.amount), 0);
 
     return NextResponse.json({
       items: subs.map(s => ({
