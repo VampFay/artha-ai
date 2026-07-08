@@ -4,6 +4,15 @@ import { verifyToken } from "@/lib/auth";
 import { computeTaxSummary } from "@/lib/tax-engine";
 import { computeFinanceSummary } from "@/lib/finance-engine";
 import { projectGoal } from "@/lib/goal-engine";
+import { createJob, registerHandler } from "@/lib/job-queue";
+
+// Register PDF generation handler
+registerHandler("report_generate", async (data: Record<string, any>) => {
+  const { userId, reportType } = data;
+  // The actual PDF generation logic runs inline in the GET handler below
+  // This handler is for future async processing via job queue
+  return { userId, reportType, status: "completed" };
+});
 
 export async function GET(req: NextRequest) {
   try {

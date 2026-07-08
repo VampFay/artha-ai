@@ -11,6 +11,12 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 export const metadata: Metadata = {
   title: "Artha AI — Wealth Intelligence",
   description: "Privacy-first AI-powered wealth intelligence and tax readiness platform.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Artha AI",
+  },
 };
 
 export const viewport: Viewport = {
@@ -31,6 +37,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </NavProvider>
         </AuthProvider>
         <Toaster />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch(() => {});
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

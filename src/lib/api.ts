@@ -19,11 +19,41 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   if (!(options.body instanceof FormData)) headers["Content-Type"] = "application/json";
   if (token) headers["Authorization"] = `Bearer ${token}`;
   try {
-    const res = await fetch(path, { ...options, headers });
+    let res = await fetch(path, { ...options, headers });
+
+    // On 401, try refresh token once before giving up
     if (res.status === 401) {
-      setToken(null);
-      throw { detail: "Session expired", status: 401 } as ApiError;
+      const refresh = typeof window !== "undefined" ? localStorage.getItem("finsight_refresh_token") : null;
+      if (refresh) {
+        try {
+          const refreshRes = await fetch("/api/auth/refresh", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refresh_token: refresh }),
+          });
+          if (refreshRes.ok) {
+            const data = await refreshRes.json();
+            setToken(data.access_token);
+            localStorage.setItem("finsight_refresh_token", data.refresh_token);
+            // Retry original request with new token
+            headers["Authorization"] = `Bearer ${data.access_token}`;
+            res = await fetch(path, { ...options, headers });
+          } else {
+            localStorage.removeItem("finsight_refresh_token");
+            setToken(null);
+            throw { detail: "Session expired", status: 401 } as ApiError;
+          }
+        } catch {
+          localStorage.removeItem("finsight_refresh_token");
+          setToken(null);
+          throw { detail: "Session expired", status: 401 } as ApiError;
+        }
+      } else {
+        setToken(null);
+        throw { detail: "Session expired", status: 401 } as ApiError;
+      }
     }
+
     if (!res.ok) {
       let detail = "Request failed";
       try { const err = await res.json(); detail = err.detail || detail; } catch {}
@@ -39,8 +69,8 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
 
 // Auth
 export const auth = {
-  register: (d: { name: string; email: string; password: string }) => apiFetch<{ access_token: string; user: User }>("/api/auth/register", { method: "POST", body: JSON.stringify(d) }),
-  login: (d: { email: string; password: string }) => apiFetch<{ access_token: string; user: User }>("/api/auth/login", { method: "POST", body: JSON.stringify(d) }),
+  register: (d: { name: string; email: string; password: string }) => apiFetch<{ access_token: string; refresh_token?: string; user: User }>("/api/auth/register", { method: "POST", body: JSON.stringify(d) }),
+  login: (d: { email: string; password: string }) => apiFetch<{ access_token: string; refresh_token?: string; user: User }>("/api/auth/login", { method: "POST", body: JSON.stringify(d) }),
   logout: () => apiFetch<{ message: string }>("/api/auth/logout", { method: "POST" }),
   me: () => apiFetch<User>("/api/users/me"),
 };
