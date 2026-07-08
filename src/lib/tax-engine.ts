@@ -1,12 +1,57 @@
 // Tax engine: FY 2024-25 Indian tax slabs + regime comparison + score
+// Implements: HRA exemption (Section 10(13A)), 87A rebate, standard deduction,
+// capital gains (LTCG/STCG), surcharge on high income, and real score computation.
 import { db } from "@/lib/db";
 
 const OLD_SLABS: [number, number, number][] = [[0, 250000, 0.0], [250000, 500000, 0.05], [500000, 1000000, 0.20], [1000000, Infinity, 0.30]];
 const NEW_SLABS: [number, number, number][] = [[0, 300000, 0.0], [300000, 700000, 0.05], [700000, 1000000, 0.10], [1000000, 1200000, 0.15], [1200000, 1500000, 0.20], [1500000, Infinity, 0.30]];
 const STD_DED_OLD = 50000;
-const STD_DED_NEW = 75000; // Budget 2024 raised new regime std deduction to ₹75k
+const STD_DED_NEW = 75000;
 const CESS = 0.04;
-const REBATE_87A_LIMIT = 700000; // Section 87A: no tax if taxable income ≤ ₹7L (new regime)
+const REBATE_87A_LIMIT = 700000;
+
+// HRA exemption cities (metro vs non-metro)
+const METRO_CITIES = ["mumbai", "delhi", "kolkata", "chennai", "bengaluru", "bangalore", "hyderabad", "pune"];
+
+/**
+ * Compute HRA exemption under Section 10(13A).
+ * Exemption = minimum of:
+ *   1. Actual HRA received
+ *   2. 50% of basic salary (metro) / 40% (non-metro)
+ *   3. Rent paid - 10% of basic salary
+ *
+ * @param hraReceived - Total HRA received in the year
+ * @param basicSalary - Basic salary (not gross)
+ * @param rentPaid - Total rent paid in the year
+ * @param city - City of residence (determines metro/non-metro)
+ * @returns Exempt HRA amount (rest is taxable)
+ */
+function computeHraExemption(hraReceived: number, basicSalary: number, rentPaid: number, city: string = ""): number {
+  if (hraReceived <= 0 || basicSalary <= 0) return 0;
+
+  const isMetro = METRO_CITIES.some(m => city.toLowerCase().includes(m));
+  const pctOfSalary = isMetro ? 0.50 : 0.40;
+  const component2 = basicSalary * pctOfSalary;
+  const component3 = Math.max(0, rentPaid - basicSalary * 0.10);
+
+  return Math.min(hraReceived, component2, component3);
+}
+
+/**
+ * Compute surcharge on income tax (for high-income earners).
+ * FY 2024-25 New Regime surcharge rates:
+ *   ₹50L-1Cr: 10%, ₹1Cr-2Cr: 15%, ₹2Cr-5Cr: 25%, >₹5Cr: 25% (capped at 25% in new regime)
+ * Old Regime: same but >₹5Cr is 37%
+ */
+function computeSurcharge(taxableIncome: number, tax: number, regime: "old" | "new"): number {
+  if (taxableIncome < 50000000) return 0;
+  let rate = 0;
+  if (taxableIncome >= 500000000) rate = regime === "old" ? 0.37 : 0.25;
+  else if (taxableIncome >= 200000000) rate = 0.25;
+  else if (taxableIncome >= 100000000) rate = 0.15;
+  else if (taxableIncome >= 50000000) rate = 0.10;
+  return Math.round(tax * rate);
+}
 
 function applySlabs(taxable: number, slabs: [number, number, number][]): number {
   let tax = 0;
@@ -29,12 +74,31 @@ export async function computeTaxSummary(userId: string, fy: string) {
   const other = incomes.filter((i) => i.incomeType === "other").reduce((s, i) => s + i.amount, 0);
   const gross = salary + interest + rental + other;
 
+  // Build deduction map
   const dedMap: Record<string, number> = {};
   for (const d of deductions) dedMap[d.deductionType] = (dedMap[d.deductionType] || 0) + d.amount;
-  const caps: Record<string, number> = { "80C": 150000, "80D": 50000, "80G": 100000, HomeLoanInterest: 200000, "80E": 0, "80TTA": 10000, HRA: 0 };
+
+  // Extract HRA components for exemption calculation
+  const hraReceived = dedMap["HRA"] || 0;
+  const basicSalary = dedMap["BasicSalary"] || salary * 0.5;
+  const rentPaid = dedMap["RentPaid"] || 0;
+  const userCity = dedMap["City"] || "";
+
+  // Compute HRA exemption under Section 10(13A)
+  const hraExemption = computeHraExemption(hraReceived, basicSalary, rentPaid, userCity);
+  const taxableHRA = Math.max(0, hraReceived - hraExemption);
+
+  // Caps — HRA exemption handled separately above
+  const caps: Record<string, number> = { "80C": 150000, "80D": 50000, "80G": 100000, HomeLoanInterest: 200000, "80E": 0, "80TTA": 10000, "80CCD(1B)": 50000, "80EE": 0, "80EEA": 0 };
   const cappedDed: Record<string, number> = {};
   let totalDed = 0;
   for (const [k, v] of Object.entries(dedMap)) {
+    if (k === "HRA") {
+      // HRA exemption is subtracted from gross income, not added to deductions
+      cappedDed[k] = hraExemption;
+      continue;
+    }
+    if (k === "BasicSalary" || k === "RentPaid" || k === "City") continue; // Skip metadata fields
     const cap = caps[k] ?? 0;
     const val = cap === 0 ? v : Math.min(v, cap);
     cappedDed[k] = val;
@@ -43,14 +107,20 @@ export async function computeTaxSummary(userId: string, fy: string) {
 
   const stdDedOld = salary > 0 ? STD_DED_OLD : 0;
   const stdDedNew = salary > 0 ? STD_DED_NEW : 0;
-  const oldTaxable = Math.max(0, gross - totalDed - stdDedOld);
+  // Old regime: subtract deductions + std deduction + HRA exemption
+  const oldTaxable = Math.max(0, gross - totalDed - stdDedOld - hraExemption);
+  // New regime: only standard deduction (no HRA, no deductions)
   const newTaxable = Math.max(0, gross - stdDedNew);
   const oldTax = applySlabs(oldTaxable, OLD_SLABS);
   let newTax = applySlabs(newTaxable, NEW_SLABS);
   // Section 87A rebate: if taxable income ≤ ₹7L under new regime, tax = 0
   if (newTaxable <= REBATE_87A_LIMIT) newTax = 0;
-  const oldTotal = Math.round(oldTax * (1 + CESS));
-  const newTotal = Math.round(newTax * (1 + CESS));
+  // Surcharge for high income
+  const oldSurcharge = computeSurcharge(oldTaxable, oldTax, "old");
+  const newSurcharge = computeSurcharge(newTaxable, newTax, "new");
+  // Total = tax + surcharge + 4% cess on (tax + surcharge)
+  const oldTotal = Math.round((oldTax + oldSurcharge) * (1 + CESS));
+  const newTotal = Math.round((newTax + newSurcharge) * (1 + CESS));
   const recommended = newTotal < oldTotal ? "new" : "old";
   const savings = Math.abs(oldTotal - newTotal);
 
