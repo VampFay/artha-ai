@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { FileText, Users, Shield, ShieldAlert, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useNav } from "@/lib/nav-context";
 
 interface Nominee { id: string; name: string; relation: string; allocation: number; status: string; assets: string[]; }
 interface Will { id: string; name: string; docType: string; uploadedAt: string; }
 
 export default function EstateView() {
+  const { navigate } = useNav();
   const [activeTab, setActiveTab] = useState<"nominees" | "wills">("nominees");
   const [nominees, setNominees] = useState<Nominee[]>([]);
   const [wills, setWills] = useState<Will[]>([]);
@@ -74,7 +76,7 @@ export default function EstateView() {
                   setNomineeForm({ name: "", relation: "", allocation: "" });
                   // Reload nominees
                   fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => { setNominees(d.nominees || []); setAudit(d.audit || null); });
-                } catch {}
+                } catch (e: any) { alert("Action failed. Please try again."); }
               }} className="mb-6 p-6 border border-carbon/10 bg-[#FAFAFA] space-y-3">
                 <div className="grid grid-cols-3 gap-3">
                   <input type="text" value={nomineeForm.name} onChange={e => setNomineeForm({ ...nomineeForm, name: e.target.value })} placeholder="Name" required className="px-3 py-2 rounded-lg border border-stone/20 bg-white text-sm" />
@@ -130,7 +132,7 @@ export default function EstateView() {
               <div className="p-6 border border-saffron/20 bg-saffron/5">
                 <ShieldAlert className="w-5 h-5 text-saffron mb-3" />
                 <p className="text-xs text-carbon-light leading-relaxed mb-3">Resolve unassigned assets to ensure your estate is fully protected.</p>
-                <button onClick={() => window.location.hash = "portfolio"} className="text-xs text-saffron font-bold uppercase tracking-wider hover:text-carbon transition-colors flex items-center gap-1">Review Assets <ArrowRight className="w-3 h-3" /></button>
+                <button onClick={() => navigate("portfolio")} className="text-xs text-saffron font-bold uppercase tracking-wider hover:text-carbon transition-colors flex items-center gap-1">Review Assets <ArrowRight className="w-3 h-3" /></button>
               </div>
             )}
           </div>
@@ -142,7 +144,7 @@ export default function EstateView() {
               <FileText className="w-12 h-12 text-stone-light mb-6" />
               <h2 className="text-xl font-medium text-carbon mb-2">No Wills or Trusts Uploaded</h2>
               <p className="text-sm text-stone max-w-md mb-8">Upload your will, trust documents, or power of attorney to keep them securely stored and accessible to your nominees.</p>
-              <button className="px-6 py-3 bg-carbon text-white text-xs font-bold uppercase tracking-wider hover:bg-carbon/90 transition-colors">Upload Document</button>
+              <button onClick={() => navigate("documents")} className="px-6 py-3 bg-carbon text-white text-xs font-bold uppercase tracking-wider hover:bg-carbon/90 transition-colors">Upload Document</button>
             </div>
           ) : (
             <div className="space-y-4">

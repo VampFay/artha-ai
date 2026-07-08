@@ -28,7 +28,7 @@ export default function ReportsView() {
       a.click();
       URL.revokeObjectURL(url);
       setRecords(prev => [{ id: `r_${Date.now()}`, type: id, filename: `${id}_report.pdf`, generatedAt: new Date().toISOString() }, ...prev]);
-    } catch {}
+    } catch (e: any) { alert("Failed to generate report."); }
     setGenerating(null);
   };
 
@@ -80,7 +80,7 @@ export default function ReportsView() {
                       <p className="text-xs font-geist-pixel text-stone">{new Date(rec.generatedAt).toLocaleString("en-IN")}</p>
                     </div>
                   </div>
-                  <button className="p-2 text-stone hover:text-carbon transition-colors"><Download className="w-4 h-4" /></button>
+                  <button onClick={() => handleGenerate(rec.type)} className="p-2 text-stone hover:text-carbon transition-colors" aria-label="Download report"><Download className="w-4 h-4" /></button>
                 </div>
               ))}
             </div>

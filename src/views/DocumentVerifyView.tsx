@@ -50,7 +50,7 @@ export default function DocumentVerifyView() {
     try {
       await fetch(`/api/extraction/${resolvedDocId}/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({}) });
       setFields(fs => fs.map(f => f.id === id ? { ...f, verified_by_user: true, confidence_score: 1.0 } : f));
-    } catch {}
+    } catch (e: any) { alert("Verification failed."); }
   };
 
   const verifyAll = async () => {
@@ -59,7 +59,7 @@ export default function DocumentVerifyView() {
     try {
       await fetch(`/api/extraction/${resolvedDocId}/verify-all`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
       setFields(fs => fs.map(f => ({ ...f, verified_by_user: true, confidence_score: 1.0 })));
-    } catch {}
+    } catch (e: any) { alert("Verify all failed."); }
   };
 
   const edit = async (id: string) => {
@@ -69,7 +69,7 @@ export default function DocumentVerifyView() {
       await fetch(`/api/extraction/${resolvedDocId}/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ value: editValue }) });
       setFields(fs => fs.map(f => f.id === id ? { ...f, field_value: editValue, verified_by_user: true, confidence_score: 1.0 } : f));
       setEditingId(null);
-    } catch {}
+    } catch (e: any) { alert("Update failed."); }
   };
 
   if (loading) return (

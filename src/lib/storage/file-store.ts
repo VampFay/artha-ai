@@ -29,11 +29,11 @@ export async function getFileStore(): Promise<FileStore> {
 
   if (driver === "s3") {
     const { S3FileStore } = await import("./s3-store");
-    storeInstance = new S3FileStore();
+    storeInstance = new S3FileStore() as FileStore;
   } else {
     const { LocalFileStore } = await import("./local-store");
-    storeInstance = new LocalFileStore();
+    storeInstance = new LocalFileStore() as FileStore;
   }
 
-  return storeInstance;
+  return storeInstance!;
 }

@@ -29,7 +29,7 @@ export default function SettingsView({ user, onLogout }: SettingsViewProps) {
       await fetch("/api/consent/revoke", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
       const c = await fetch("/api/consent/history", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
       setConsents(c.items || []);
-    } catch {}
+    } catch (e: any) { alert("Failed to revoke consent."); }
   };
 
   const handleExport = async () => {

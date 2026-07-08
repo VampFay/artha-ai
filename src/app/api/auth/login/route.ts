@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyPassword, createToken, createRefreshToken } from "@/lib/auth";
-import { checkRateLimit, getClientIp } from "@/lib/security";
+import { checkRateLimit, getClientIp, validateOrigin } from "@/lib/security";
 import { z } from "zod";
 
 const LoginSchema = z.object({ email: z.string().email(), password: z.string().min(1) });

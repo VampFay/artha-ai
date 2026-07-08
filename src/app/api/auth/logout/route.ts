@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { revokeToken, verifyToken } from "@/lib/auth";
-import { getClientIp } from "@/lib/security";
+import { getClientIp, validateOrigin } from "@/lib/security";
 
 export async function POST(req: NextRequest) {
   try {

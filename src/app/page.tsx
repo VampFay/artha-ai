@@ -22,7 +22,7 @@ export default function Home() {
     </div>
   );
 
-  if (!user) return <LoginScreen onLogin={() => {}} />;
+  if (!user) return <LoginScreen />;
 
   return <AppShell><div /></AppShell>;
 }
