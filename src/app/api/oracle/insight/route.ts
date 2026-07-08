@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       insights.push(`Your savings rate is ${financeData.savingsRate.toFixed(0)}%. Consider increasing your savings to at least 20% for better financial health.`);
     }
 
-    const monthlySubs = subs.reduce((s, sub) => s + (sub.frequency === "Yearly" ? sub.amount / 12 : sub.amount), 0);
+    const monthlySubs = subs.reduce((s, sub) => s + (sub.frequency === "Yearly" ? sub.amount / 12 : sub.frequency === "Quarterly" ? sub.amount / 3 : sub.frequency === "Weekly" ? sub.amount * 52 / 12 : sub.amount), 0);
     if (monthlySubs > 5000) {
       insights.push(`You have ₹${Math.round(monthlySubs).toLocaleString("en-IN")} in monthly subscriptions. Reviewing and canceling unused ones could boost your savings.`);
     }

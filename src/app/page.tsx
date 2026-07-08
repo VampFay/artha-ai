@@ -6,7 +6,6 @@ import { useNav } from "@/lib/nav-context";
 import AppShell from "@/components/app-shell";
 import LoginScreen from "@/views/LoginScreen";
 import { Loader2 } from "lucide-react";
-import type { User } from "@/lib/types";
 
 export default function Home() {
   const { user, loading } = useAuth();

@@ -63,8 +63,7 @@ export async function POST(req: NextRequest) {
     try {
       if (ext === ".pdf") {
         const { PDFParse } = await import("pdf-parse");
-        const parser = new PDFParse(new Uint8Array(buffer));
-        await parser.load();
+        const parser = new PDFParse({ data: new Uint8Array(buffer) });
         const result: any = await parser.getText();
         extractedText = result?.text || (typeof result === "string" ? result : "") || "";
       }
@@ -189,10 +188,10 @@ export async function DELETE(req: NextRequest) {
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     const docs = await db.document.findMany({ where: { userId: payload.sub } });
-    // Properly DELETE files from disk using unlink
+    // Delete files using storage abstraction
+    const fileStore = await getFileStore();
     for (const d of docs) {
-      const fullPath = path.join(process.cwd(), d.filePath);
-      try { await unlink(fullPath); } catch {}
+      await fileStore.delete(d.filePath);
     }
     await db.document.deleteMany({ where: { userId: payload.sub } });
     await db.auditLog.create({ data: { userId: payload.sub, action: "documents_all_deleted", details: JSON.stringify({ count: docs.length }) } });

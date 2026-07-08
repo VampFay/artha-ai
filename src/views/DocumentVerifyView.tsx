@@ -21,10 +21,11 @@ export default function DocumentVerifyView() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState("");
 
+  const [resolvedDocId, setResolvedDocId] = useState<string | null>(null);
+
   useEffect(() => {
     const token = localStorage.getItem("finsight_token");
     if (!token) { setLoading(false); return; }
-    // Use the document ID from navigation params, or fall back to latest
     const fetchFields = async () => {
       let id = docId;
       if (!id) {
@@ -34,6 +35,7 @@ export default function DocumentVerifyView() {
         if (docs.length === 0) { setLoading(false); return; }
         id = docs[0].id;
       }
+      setResolvedDocId(id);
       const res = await fetch(`/api/extraction/${id}/fields`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setFields(data.items || []);
@@ -44,9 +46,29 @@ export default function DocumentVerifyView() {
 
   const verify = async (id: string) => {
     const token = localStorage.getItem("finsight_token");
+    if (!token || !resolvedDocId) return;
     try {
-      await fetch(`/api/extraction/placeholder/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({}) });
+      await fetch(`/api/extraction/${resolvedDocId}/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({}) });
       setFields(fs => fs.map(f => f.id === id ? { ...f, verified_by_user: true, confidence_score: 1.0 } : f));
+    } catch {}
+  };
+
+  const verifyAll = async () => {
+    const token = localStorage.getItem("finsight_token");
+    if (!token || !resolvedDocId) return;
+    try {
+      await fetch(`/api/extraction/${resolvedDocId}/verify-all`, { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+      setFields(fs => fs.map(f => ({ ...f, verified_by_user: true, confidence_score: 1.0 })));
+    } catch {}
+  };
+
+  const edit = async (id: string) => {
+    const token = localStorage.getItem("finsight_token");
+    if (!token || !resolvedDocId) return;
+    try {
+      await fetch(`/api/extraction/${resolvedDocId}/fields/${id}/verify`, { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ value: editValue }) });
+      setFields(fs => fs.map(f => f.id === id ? { ...f, field_value: editValue, verified_by_user: true, confidence_score: 1.0 } : f));
+      setEditingId(null);
     } catch {}
   };
 
@@ -73,7 +95,7 @@ export default function DocumentVerifyView() {
       ) : (
         <>
           <div className="flex justify-end mb-6">
-            <button className="flex items-center gap-2 px-4 py-2 bg-carbon text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-carbon-light transition-colors">
+            <button onClick={verifyAll} className="flex items-center gap-2 px-4 py-2 bg-carbon text-white text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-carbon-light transition-colors">
               <CheckCheck className="w-4 h-4" /> Verify All
             </button>
           </div>

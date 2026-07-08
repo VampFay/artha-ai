@@ -37,9 +37,13 @@ export async function DELETE(req: NextRequest) {
     // Revoke the current token
     await revokeToken(token, user.id);
 
-    // Delete uploaded files from disk
-    const userUploadDir = path.join(process.cwd(), "uploads", user.id);
-    try { await rm(userUploadDir, { recursive: true, force: true }); } catch {}
+    // Delete uploaded files using storage abstraction
+    const docs = await db.document.findMany({ where: { userId: user.id }, select: { filePath: true } });
+    const { getFileStore } = await import("@/lib/storage/file-store");
+    const fileStore = await getFileStore();
+    for (const d of docs) {
+      await fileStore.delete(d.filePath);
+    }
 
     // Delete user (cascades to all related rows)
     await db.auditLog.create({ data: { userId: user.id, action: "account_deleted" } });

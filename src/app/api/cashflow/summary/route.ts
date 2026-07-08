@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const liquidAmount = allHoldings.filter(h => h.assetClass === "cash").reduce((s, h) => s + h.value, 0);
     const lockedAmount = allHoldings.filter(h => h.assetClass !== "cash").reduce((s, h) => s + h.value, 0);
 
-    const monthlySubs = subscriptions.reduce((s, sub) => s + (sub.frequency === "Yearly" ? sub.amount / 12 : sub.amount), 0);
+    const monthlySubs = subscriptions.reduce((s, sub) => s + (sub.frequency === "Yearly" ? sub.amount / 12 : sub.frequency === "Quarterly" ? sub.amount / 3 : sub.frequency === "Weekly" ? sub.amount * 52 / 12 : sub.amount), 0);
     const totalEmi = liabilities.reduce((s, l) => s + l.emi, 0);
 
     // Current month expenses (use transactionDate, not month)

@@ -202,7 +202,7 @@ export default function DashboardView({ onNavigate }: DashboardViewProps) {
             <div className="flex justify-between items-end mb-6 cursor-pointer group" onClick={() => onNavigate('cashflow')}>
               <h3 className="text-[10px] font-bold tracking-[0.15em] text-carbon uppercase group-hover:text-saffron transition-colors">Cashflow Patterns <ArrowUpRight className="inline w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" /></h3>
               <span className="text-[10px] font-michroma text-stone transition-colors">
-                {hoveredBar !== null ? `Primary: ${SPENDING_DATA[hoveredBar].category}` : `Avg Outflow: ₹${SPENDING_DATA.length > 0 ? (SPENDING_DATA.reduce((s: any, d: any) => s + d.expense, 0) / SPENDING_DATA.length / 100000).toFixed(1) + "L" : "—"}`}
+                {hoveredBar !== null ? `Primary: ${SPENDING_DATA[hoveredBar].category}` : `Avg Outflow: ₹${SPENDING_DATA.length > 0 ? ((data.ie?.items || []).reduce((s: number, d: any) => s + d.expense, 0) / ((data.ie?.items?.length || 1)) / 100000).toFixed(1) + "L" : "—"}`}
               </span>
             </div>
             
