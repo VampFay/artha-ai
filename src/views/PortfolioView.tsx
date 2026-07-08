@@ -1,7 +1,8 @@
 "use client";
-import { useState, useEffect } from "react";
+
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
+import { usePortfolio } from "@/lib/swr-hooks";
 import { KineticNumber } from "@/components/ui/KineticNumber";
 import { TrendingUp, Activity } from "lucide-react";
 
@@ -14,17 +15,7 @@ interface PortfolioData {
 
 export default function PortfolioView() {
   const [activeTab, setActiveTab] = useState<"allocation" | "performance">("allocation");
-  const [data, setData] = useState<PortfolioData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("finsight_token");
-    if (!token) return;
-    fetch("/api/portfolio/summary", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => setData(d))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data, isLoading: loading } = usePortfolio();
 
   if (loading) return (
     <div className="px-6 lg:px-12 pt-8 max-w-[1200px] mx-auto">

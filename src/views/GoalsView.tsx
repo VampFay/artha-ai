@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { Target, Plus, Trash2, TrendingUp } from "lucide-react";
 import { KineticNumber } from "@/components/ui/KineticNumber";
 import { motion, AnimatePresence } from "motion/react";
+import { useToast } from "@/hooks/use-toast";
 
 interface Goal { id: string; goalName: string; targetAmount: number; currentAmount: number; monthlyContribution: number; targetDate: string | null; projection?: { projected_completion_date?: string; shortfall?: number }; }
 
 export default function GoalsView() {
+  const { toast } = useToast();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -41,7 +43,7 @@ export default function GoalsView() {
       setForm({ goalName: "", targetAmount: "", monthlyContribution: "", targetDate: "" });
       setIsFormOpen(false);
       load();
-    } catch (e: any) { alert(e?.message || "Failed to create goal"); }
+    } catch (e: any) { toast({ title: "Failed to create goal", description: e?.message, variant: "destructive" }); }
   };
 
   const handleDelete = async (id: string) => {
@@ -49,7 +51,7 @@ export default function GoalsView() {
     try {
       await fetch(`/api/goals/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       load();
-    } catch (e: any) { alert(e?.message || "Failed to create goal"); }
+    } catch (e: any) { toast({ title: "Failed to create goal", description: e?.message, variant: "destructive" }); }
   };
 
   if (loading) return (

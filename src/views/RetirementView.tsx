@@ -3,8 +3,10 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { KineticNumber } from "@/components/ui/KineticNumber";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RetirementView() {
+  const { toast } = useToast();
   const [currentAge, setCurrentAge] = useState(32);
   const [targetAge, setTargetAge] = useState(50);
   const [monthlyExpense, setMonthlyExpense] = useState(150000);
@@ -23,7 +25,7 @@ export default function RetirementView() {
       });
       const data = await res.json();
       if (res.ok) setResult(data);
-    } catch (e: any) { alert("Failed to calculate. Try again."); } finally { setLoading(false); }
+    } catch (e: any) { toast({ title: "Calculation failed", description: "Please try again.", variant: "destructive" }); } finally { setLoading(false); }
   }, [currentAge, targetAge, monthlyExpense, currentCorpus]);
 
   // Debounced API call on slider change

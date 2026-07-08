@@ -2,10 +2,12 @@
 import { User } from "@/lib/types";
 import { User as UserIcon, Shield, ShieldX, ScrollText, Database, Download, LogOut, Crown } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 interface SettingsViewProps { user: User; onLogout: () => void; }
 
 export default function SettingsView({ user, onLogout }: SettingsViewProps) {
+  const { toast } = useToast();
   const [consents, setConsents] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,7 +31,7 @@ export default function SettingsView({ user, onLogout }: SettingsViewProps) {
       await fetch("/api/consent/revoke", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
       const c = await fetch("/api/consent/history", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
       setConsents(c.items || []);
-    } catch (e: any) { alert("Failed to revoke consent."); }
+    } catch (e: any) { toast({ title: "Failed to revoke consent", variant: "destructive" }); }
   };
 
   const handleExport = async () => {

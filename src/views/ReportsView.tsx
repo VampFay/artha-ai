@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FileText, TrendingUp, Target, Download, FileCheck, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const REPORTS = [
   { id: "tax_summary", icon: FileText, title: "Tax Summary", desc: "Income, deductions, regime comparison, missing documents" },
@@ -11,6 +12,7 @@ const REPORTS = [
 interface GenRecord { id: string; type: string; filename: string; generatedAt: string; }
 
 export default function ReportsView() {
+  const { toast } = useToast();
   const [generating, setGenerating] = useState<string | null>(null);
   const [records, setRecords] = useState<GenRecord[]>([]);
 
@@ -28,7 +30,7 @@ export default function ReportsView() {
       a.click();
       URL.revokeObjectURL(url);
       setRecords(prev => [{ id: `r_${Date.now()}`, type: id, filename: `${id}_report.pdf`, generatedAt: new Date().toISOString() }, ...prev]);
-    } catch (e: any) { alert("Failed to generate report."); }
+    } catch (e: any) { toast({ title: "Failed to generate report", variant: "destructive" }); }
     setGenerating(null);
   };
 

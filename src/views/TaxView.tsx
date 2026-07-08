@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { LiquidProgress } from "@/components/ui/LiquidProgress";
 import { KineticNumber } from "@/components/ui/KineticNumber";
@@ -7,17 +6,7 @@ import { CheckCircle2, TrendingDown, FileWarning, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function TaxView() {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const token = localStorage.getItem("finsight_token");
-    if (!token) return;
-    fetch("/api/tax/summary", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => setData(d))
-      .finally(() => setLoading(false));
-  }, []);
+  const { data, isLoading: loading } = useTaxSummary();
 
   if (loading) return (
     <div className="px-8 lg:px-12 pt-8 max-w-5xl mx-auto">

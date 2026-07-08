@@ -1,35 +1,25 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
 import { FileText, Users, Shield, ShieldAlert, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNav } from "@/lib/nav-context";
+import { useEstate } from "@/lib/swr-hooks";
+import { useToast } from "@/hooks/use-toast";
 
 interface Nominee { id: string; name: string; relation: string; allocation: number; status: string; assets: string[]; }
 interface Will { id: string; name: string; docType: string; uploadedAt: string; }
 
 export default function EstateView() {
+  const { toast } = useToast();
   const { navigate } = useNav();
   const [activeTab, setActiveTab] = useState<"nominees" | "wills">("nominees");
-  const [nominees, setNominees] = useState<Nominee[]>([]);
-  const [wills, setWills] = useState<Will[]>([]);
-  const [audit, setAudit] = useState<{ unassignedAssetsCount: number; auditMessage: string } | null>(null);
-  const [loading, setLoading] = useState(true);
   const [showNomineeForm, setShowNomineeForm] = useState(false);
   const [nomineeForm, setNomineeForm] = useState({ name: "", relation: "", allocation: "" });
-
-  useEffect(() => {
-    const token = localStorage.getItem("finsight_token");
-    if (!token) return;
-    fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => {
-        setNominees(d.nominees || []);
-        setWills(d.wills || []);
-        setAudit(d.audit || null);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: estateData, isLoading: loading } = useEstate();
+  const nominees = estateData?.nominees || [];
+  const wills = estateData?.wills || [];
+  const audit = estateData?.audit || null;
 
   if (loading) return (
     <div className="px-6 lg:px-12 pt-8 max-w-[1200px] mx-auto">
@@ -76,7 +66,7 @@ export default function EstateView() {
                   setNomineeForm({ name: "", relation: "", allocation: "" });
                   // Reload nominees
                   fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => { setNominees(d.nominees || []); setAudit(d.audit || null); });
-                } catch (e: any) { alert("Action failed. Please try again."); }
+                } catch (e: any) { toast({ title: "Action failed", description: "Please try again.", variant: "destructive" }); }
               }} className="mb-6 p-6 border border-carbon/10 bg-[#FAFAFA] space-y-3">
                 <div className="grid grid-cols-3 gap-3">
                   <input type="text" value={nomineeForm.name} onChange={e => setNomineeForm({ ...nomineeForm, name: e.target.value })} placeholder="Name" required className="px-3 py-2 rounded-lg border border-stone/20 bg-white text-sm" />

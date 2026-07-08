@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef, memo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShieldCheck, Loader2, ArrowRight, Activity, Sparkles, CheckCircle2, ArrowUpRight, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/hooks/use-toast";
 
 const NOISE_SVG_URL = 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")';
 
@@ -139,6 +140,7 @@ const LiveVideoLoop = memo(() => {
 });
 
 export default function LoginScreen() {
+  const { toast } = useToast();
   const { login, register } = useAuth();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -362,7 +364,7 @@ export default function LoginScreen() {
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center ml-1">
                     <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500">Security Key</label>
-                    {mode === "login" && <span onClick={() => alert("Password reset is not available in this demo. Use the demo credentials below.")} className="text-[10px] font-bold tracking-wider text-saffron uppercase cursor-pointer hover:text-saffron-light transition-colors">Forgot?</span>}
+                    {mode === "login" && <span onClick={() => toast({ title: "Password reset unavailable", description: "Use the demo credentials below." })} className="text-[10px] font-bold tracking-wider text-saffron uppercase cursor-pointer hover:text-saffron-light transition-colors">Forgot?</span>}
                   </div>
                   <div className="relative">
                     <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all tracking-widest shadow-inner pr-12" />
