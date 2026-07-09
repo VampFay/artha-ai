@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/lib/auth-context";
 import { NavProvider } from "@/lib/nav-context";
+import { PortalProvider } from "@/lib/portal-context";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"], display: "swap" });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], display: "swap" });
@@ -33,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={`${geist.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <NavProvider>
-            {children}
+            <PortalProvider>
+              {children}
+            </PortalProvider>
           </NavProvider>
         </AuthProvider>
         <Toaster />

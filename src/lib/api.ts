@@ -97,6 +97,102 @@ export const goals = {
 export const audit = { list: () => apiFetch<{ items: AuditLogEntry[]; total: number }>("/api/audit-log") };
 export const userData = { exportUrl: () => `/api/users/me/export` };
 
+// ============================================================
+// Entity Portal APIs
+// ============================================================
+
+export interface EntitySummary {
+  id: string;
+  name: string;
+  legalName: string | null;
+  entityType: string;
+  entityTypeLabel: string;
+  iconEmoji: string;
+  industrySector: string | null;
+  pan: string | null;
+  gstin: string | null;
+  cin: string | null;
+  registeredState: string | null;
+  city: string | null;
+  turnoverLastYear: number | null;
+  isActive: boolean;
+  teamCount: number;
+  filingCount: number;
+  createdAt: string;
+}
+
+export interface EntityDetail extends EntitySummary {
+  tan: string | null;
+  incorporationDate: string | null;
+  registeredAddress: string | null;
+  pincode: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  website: string | null;
+  netWorth: number | null;
+  metadata: any;
+  entityTypeDef: any;
+  teamMembers: any[];
+  recentFilings: any[];
+  recentNotices: any[];
+  transactionCount: number;
+  updatedAt: string;
+}
+
+export interface EntityTaxBreakdown {
+  entityType: string;
+  financialYear: string;
+  regime: string;
+  grossIncome: number;
+  totalDeductions: number;
+  taxableIncome: number;
+  baseTax: number;
+  surcharge: number;
+  cess: number;
+  totalIncomeTax: number;
+  mat: number;
+  matCreditUsed: number;
+  finalIncomeTax: number;
+  tdsCredit: number;
+  tcsCredit: number;
+  advanceTaxPaid: number;
+  netTaxPayable: number;
+  gstPayable: number;
+  gstInputTaxCredit: number;
+  gstNetPayable: number;
+  customsDuty: number;
+  stampDuty: number;
+  sttCtt: number;
+  equalisationLevy: number;
+  professionalTax: number;
+  csrLiability: number;
+  totalTaxBurden: number;
+  effectiveTaxRate: number;
+  recommendations: string[];
+}
+
+export const entities = {
+  list: () => apiFetch<{ data: EntitySummary[] }>("/api/entities"),
+  get: (id: string) => apiFetch<{ data: EntityDetail }>(`/api/entities/${id}`),
+  create: (d: any) => apiFetch<{ data: any }>("/api/entities", { method: "POST", body: JSON.stringify(d) }),
+  update: (id: string, d: any) => apiFetch<{ data: any }>(`/api/entities/${id}`, { method: "PATCH", body: JSON.stringify(d) }),
+  delete: (id: string) => apiFetch<void>(`/api/entities/${id}`, { method: "DELETE" }),
+  taxSummary: {
+    get: (id: string, fy = "2024-25") => apiFetch<{ data: any }>(`/api/entities/${id}/tax-summary?financial_year=${fy}`),
+    compute: (id: string, d: any) => apiFetch<{ data: any }>(`/api/entities/${id}/tax-summary`, { method: "POST", body: JSON.stringify(d) }),
+  },
+  complianceCalendar: (id: string, months = 12) => apiFetch<{ data: any }>(`/api/entities/${id}/compliance-calendar?months=${months}`),
+  filings: {
+    list: (id: string) => apiFetch<{ data: any[] }>(`/api/entities/${id}/filings`),
+    markFiled: (id: string, d: any) => apiFetch<{ data: any }>(`/api/entities/${id}/filings`, { method: "POST", body: JSON.stringify(d) }),
+  },
+  team: (id: string) => apiFetch<{ data: any[] }>(`/api/entities/${id}/team`),
+  inviteTeam: (id: string, d: { email: string; role: string }) => apiFetch<{ data: any }>(`/api/entities/${id}/team`, { method: "POST", body: JSON.stringify(d) }),
+  notices: (id: string) => apiFetch<{ data: any[] }>(`/api/entities/${id}/notices`),
+  transactions: (id: string) => apiFetch<{ data: any[] }>(`/api/entities/${id}/transactions`),
+  types: () => apiFetch<{ data: any }>("/api/entities/types"),
+};
+
 // Types
 export interface User { id: string; name: string; email: string; role: string; created_at: string }
 export interface Consent { id: string; consent_type: string; consent_text: string; accepted_at: string; revoked_at: string | null }
