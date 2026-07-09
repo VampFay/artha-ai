@@ -13,7 +13,16 @@ export type ViewState =
   | "assistant"
   | "reports"
   | "settings"
-  | "document-verify";
+  | "document-verify"
+  // Entity Portal
+  | "entity-dashboard"
+  | "entity-tax"
+  | "entity-compliance"
+  | "entity-documents"
+  | "entity-team"
+  | "entity-notices"
+  | "entity-onboarding"
+  | "entity-switcher";
 
 export interface User {
   id: string;

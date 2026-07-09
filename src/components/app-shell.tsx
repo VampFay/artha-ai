@@ -3,7 +3,8 @@ import { ReactNode, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useAuth } from "@/lib/auth-context";
 import { useNav } from "@/lib/nav-context";
-import { Menu, X, LogOut, Command, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { usePortal } from "@/lib/portal-context";
+import { Menu, X, LogOut, Command, ArrowUp, ArrowDown, Loader2, Building2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ViewState } from "@/lib/types";
 import CommandPaletteNew from "@/components/CommandPaletteNew";
@@ -23,8 +24,16 @@ import GoalsView from "@/views/GoalsView";
 import AssistantView from "@/views/AssistantView";
 import ReportsView from "@/views/ReportsView";
 import SettingsView from "@/views/SettingsView";
+import EntitySwitcherView from "@/views/entity/EntitySwitcherView";
+import EntityOnboardingView from "@/views/entity/EntityOnboardingView";
+import EntityDashboardView from "@/views/entity/EntityDashboardView";
+import EntityTaxView from "@/views/entity/EntityTaxView";
+import EntityComplianceView from "@/views/entity/EntityComplianceView";
+import EntityTeamView from "@/views/entity/EntityTeamView";
+import EntityNoticesView from "@/views/entity/EntityNoticesView";
+import EntityDocumentsView from "@/views/entity/EntityDocumentsView";
 
-const NAV_CATEGORIES = [
+const INDIVIDUAL_NAV = [
   { num: "01", category: "OVERVIEW", items: [{ id: "dashboard", label: "Dashboard" }] },
   { num: "02", category: "ASSETS & PORTFOLIO", items: [{ id: "portfolio", label: "Portfolio Analytics" }] },
   { num: "03", category: "CASH & LIQUIDITY", items: [{ id: "cashflow", label: "Cashflow & Runway" }, { id: "liabilities", label: "Debt Management" }] },
@@ -34,9 +43,17 @@ const NAV_CATEGORIES = [
   { num: "07", category: "ORACLE", items: [{ id: "assistant", label: "AI Assistant" }] },
 ];
 
+const ENTITY_NAV = [
+  { num: "01", category: "ENTITIES", items: [{ id: "entity-switcher", label: "Switch Entity" }, { id: "entity-onboarding", label: "Add New Entity" }] },
+  { num: "02", category: "ENTITY OPS", items: [{ id: "entity-dashboard", label: "Dashboard" }, { id: "entity-tax", label: "Tax Computation" }, { id: "entity-compliance", label: "Compliance Calendar" }] },
+  { num: "03", category: "RECORDS", items: [{ id: "entity-documents", label: "Documents" }, { id: "entity-notices", label: "Tax Notices" }] },
+  { num: "04", category: "TEAM", items: [{ id: "entity-team", label: "Team & Access" }] },
+];
+
 export default function AppShell({ children }: { children: ReactNode }) {
   const { user, logout, loading } = useAuth();
   const { page, navigate } = useNav();
+  const { mode, setMode } = usePortal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
   const [tickerItems, setTickerItems] = useState([
@@ -91,7 +108,29 @@ export default function AppShell({ children }: { children: ReactNode }) {
     setMobileMenuOpen(false);
   };
 
+  // When mode switches, navigate to the appropriate landing page
+  const handleModeToggle = (newMode: "individual" | "entities") => {
+    setMode(newMode);
+    if (newMode === "individual") {
+      navigate("dashboard");
+    } else {
+      navigate("entity-switcher");
+    }
+  };
+
   const renderView = () => {
+    // Entity portal views (accessible regardless of mode toggle)
+    switch (page) {
+      case "entity-switcher": return <EntitySwitcherView />;
+      case "entity-onboarding": return <EntityOnboardingView />;
+      case "entity-dashboard": return <EntityDashboardView />;
+      case "entity-tax": return <EntityTaxView />;
+      case "entity-compliance": return <EntityComplianceView />;
+      case "entity-team": return <EntityTeamView />;
+      case "entity-notices": return <EntityNoticesView />;
+      case "entity-documents": return <EntityDocumentsView />;
+    }
+    // Individual portal views
     switch (page) {
       case "dashboard": return <DashboardView onNavigate={navigate as any} />;
       case "portfolio": return <PortfolioView />;
@@ -111,6 +150,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
     }
   };
 
+  const navCategories = mode === "entities" ? ENTITY_NAV : INDIVIDUAL_NAV;
+
   const TICKER_ITEMS = tickerItems;
 
   return (
@@ -120,13 +161,37 @@ export default function AppShell({ children }: { children: ReactNode }) {
 
       {/* Desktop Sidebar (Dark) */}
       <aside className="hidden lg:flex w-[260px] flex-col bg-[#111111] text-stone-light relative z-20 shrink-0" style={{ position: "sticky", top: 0, height: "100vh", alignSelf: "flex-start" }}>
-        <div className="pt-12 pb-10 px-8 cursor-pointer" onClick={() => handleNav("dashboard")}>
+        <div className="pt-12 pb-6 px-8 cursor-pointer" onClick={() => handleNav(mode === "entities" ? "entity-switcher" : "dashboard")}>
           <h1 className="font-michroma text-2xl tracking-widest text-saffron mb-1">ARTHA AI</h1>
-          <p className="text-[9px] font-bold tracking-[0.2em] text-stone uppercase">Wealth Intelligence</p>
+          <p className="text-[9px] font-bold tracking-[0.2em] text-stone uppercase">{mode === "entities" ? "Business Portal" : "Wealth Intelligence"}</p>
+        </div>
+
+        {/* Portal Mode Toggle */}
+        <div className="px-8 mb-6">
+          <div className="flex gap-1 p-1 bg-white/5 rounded-full">
+            <button
+              onClick={() => handleModeToggle("individual")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
+                mode === "individual" ? "bg-saffron text-white" : "text-stone hover:text-white"
+              )}
+            >
+              <User className="w-3 h-3" /> Individual
+            </button>
+            <button
+              onClick={() => handleModeToggle("entities")}
+              className={cn(
+                "flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all",
+                mode === "entities" ? "bg-saffron text-white" : "text-stone hover:text-white"
+              )}
+            >
+              <Building2 className="w-3 h-3" /> Entities
+            </button>
+          </div>
         </div>
 
         <nav className="flex-1 px-8 py-4 space-y-10 overflow-y-auto">
-          {NAV_CATEGORIES.map((cat) => (
+          {navCategories.map((cat) => (
             <div key={cat.category}>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-bold text-saffron tracking-wider">{cat.num}</span>
@@ -197,7 +262,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                 </button>
               </div>
               <nav className="space-y-10">
-                {NAV_CATEGORIES.map((cat) => (
+                {navCategories.map((cat) => (
                   <div key={cat.category}>
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-[10px] font-bold text-saffron tracking-wider">{cat.num}</span>
@@ -240,7 +305,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <main className="flex-1 relative pt-16 lg:pt-0 pb-16 bg-canvas flex flex-col" style={{ minHeight: 0 }}>
         {/* Desktop Header */}
         <div className="hidden lg:flex shrink-0 top-0 z-10 h-20 items-center justify-between px-12 max-w-[1200px] mx-auto w-full">
-          <div className="text-[10px] font-bold text-carbon uppercase tracking-[0.2em]">Assessment Period: FY 2024-25</div>
+          <div className="text-[10px] font-bold text-carbon uppercase tracking-[0.2em]">
+            {mode === "entities" ? "Business Portal" : "Assessment Period"}: FY 2024-25
+          </div>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />AI Model Online

@@ -19,7 +19,7 @@ import { getClientIp } from "../security";
 
 // Re-export for convenience
 export { requirePermission, hasPermission, RbacError };
-export type { Resource, Action };
+export type { Resource, Action, AuthContext };
 
 export interface AuthResult {
   authenticated: boolean;

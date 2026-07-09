@@ -1,6 +1,17 @@
 "use client";
 import { createContext, useContext, useState, ReactNode } from "react";
 
+// Entity-specific page names (in addition to individual ones)
+type EntityPageName =
+  | "entity-dashboard"
+  | "entity-tax"
+  | "entity-compliance"
+  | "entity-documents"
+  | "entity-team"
+  | "entity-notices"
+  | "entity-onboarding"
+  | "entity-switcher";
+
 type PageName =
   | "dashboard"
   | "portfolio"
@@ -15,7 +26,8 @@ type PageName =
   | "assistant"
   | "reports"
   | "settings"
-  | "document-verify";
+  | "document-verify"
+  | EntityPageName;
 
 interface NavState {
   page: PageName;
@@ -43,3 +55,5 @@ export function useNav() {
   if (!ctx) throw new Error("useNav must be used within NavProvider");
   return ctx;
 }
+
+export type { PageName, EntityPageName };
