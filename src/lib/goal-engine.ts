@@ -67,9 +67,26 @@ function fv(current: number, monthly: number, rate: number, months: number): num
   return current * gf + monthly * af;
 }
 
+/**
+ * Generate goal scenarios for visualization.
+ */
+export function generateGoalScenarios(
+  target: number,
+  current: number,
+  monthly: number,
+  targetDate: Date | null,
+  rate: number
+): Array<{ label: string; monthly_contribution: number; projected_completion_date: string | null; months_to_complete: number | null }> {
+  const scenarios: Array<{ label: string; monthly_contribution: number; projected_completion_date: string | null; months_to_complete: number | null }> = [];
+
   if (targetDate) {
     const proj = projectGoal(target, current, monthly, targetDate, rate);
-    scenarios.push({ label: "Needed to meet on time", monthly_contribution: proj.monthly_contribution_needed, projected_completion_date: targetDate.toISOString(), months_to_complete: proj.months_to_target });
+    scenarios.push({
+      label: "Needed to meet on time",
+      monthly_contribution: proj.monthly_contribution_needed,
+      projected_completion_date: targetDate.toISOString(),
+      months_to_complete: proj.months_to_target,
+    });
   }
   return scenarios;
 }

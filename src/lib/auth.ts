@@ -5,13 +5,18 @@ import { db } from "./db";
 
 // JWT secret: read from env. In dev, a known fallback is used (safe because
 // the dev environment is sandboxed). In production, the env var is REQUIRED.
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || (
+// Lazy initialization to allow build without JWT_SECRET set.
+let _jwtSecret: Uint8Array | null = null;
+function getJwtSecret(): Uint8Array {
+  if (_jwtSecret) return _jwtSecret;
+  const secret = process.env.JWT_SECRET || (
     process.env.NODE_ENV === "production"
       ? (() => { throw new Error("JWT_SECRET env var required in production"); })()
       : "dev-only-secret-not-for-production-use-f7a3c9e1b4d8"
-  )
-);
+  );
+  _jwtSecret = new TextEncoder().encode(secret);
+  return _jwtSecret;
+}
 
 export async function hashPassword(plain: string): Promise<string> {
   return bcrypt.hash(plain, 12);
@@ -26,7 +31,7 @@ export async function createToken(userId: string): Promise<string> {
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("24h") // Access token (upgrade to 15m when frontend supports auto-refresh)
-    .sign(JWT_SECRET);
+    .sign(getJwtSecret());
 }
 
 /**
@@ -109,7 +114,7 @@ export async function getActiveSessions(userId: string) {
 
 export async function verifyToken(token: string): Promise<{ sub: string } | null> {
   try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
+    const { payload } = await jwtVerify(token, getJwtSecret());
     // Check if token has been revoked
     const revoked = await db.revokedToken.findUnique({ where: { token } });
     if (revoked) return null;

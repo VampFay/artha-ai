@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { KineticNumber } from "@/components/ui/KineticNumber";
 import { Landmark, ArrowRight, ShieldAlert } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLiabilities } from "@/lib/swr-hooks";
 
 interface Loan {
   id: string; name: string; loanType: string;

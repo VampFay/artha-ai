@@ -262,7 +262,7 @@ export function parseBankStatement(buffer: Buffer, fileName: string): BankStatem
     } else {
       // Fallback: standard header parse
       const parsed = Papa.parse(text, { header: true, dynamicTyping: false, skipEmptyLines: true });
-      rows = (parsed.data || []).filter((r: any) => Object.keys(r).length > 1);
+      rows = ((parsed.data as unknown[]) || []).filter((r: any) => Object.keys(r).length > 1) as Record<string, any>[];
       headers = parsed.meta?.fields || (rows[0] ? Object.keys(rows[0]) : []);
     }
   } else if (ext === "xlsx") {

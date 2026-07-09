@@ -64,8 +64,11 @@ export default function EstateView() {
                   await fetch("/api/estate/nominees", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` }, body: JSON.stringify({ name: nomineeForm.name, relation: nomineeForm.relation, allocation: Number(nomineeForm.allocation), assets: [] }) });
                   setShowNomineeForm(false);
                   setNomineeForm({ name: "", relation: "", allocation: "" });
-                  // Reload nominees
-                  fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json()).then(d => { setNominees(d.nominees || []); setAudit(d.audit || null); });
+                  // Reload nominees via SWR mutate
+                  fetch("/api/estate/nominees", { headers: { Authorization: `Bearer ${token}` } }).then(() => {
+                    // Trigger SWR revalidation by reloading the page data
+                    if (typeof window !== "undefined") window.location.reload();
+                  });
                 } catch (e: any) { toast({ title: "Action failed", description: "Please try again.", variant: "destructive" }); }
               }} className="mb-6 p-6 border border-carbon/10 bg-[#FAFAFA] space-y-3">
                 <div className="grid grid-cols-3 gap-3">
