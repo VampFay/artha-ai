@@ -1,0 +1,86 @@
+# ============================================================
+# Artha AI — Kubernetes Namespace + Service Account
+# ============================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: artha
+  labels:
+    name: artha
+    # Pod Security Standards — restricted (bank-grade)
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: latest
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: latest
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: artha-app
+  namespace: artha
+  annotations:
+    # IRSA — IAM Role for Service Account (no static AWS creds)
+    eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT_ID:role/artha-ai-production-app-sa
+---
+# Network Policy — deny all ingress by default, allow within namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: artha
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-within-namespace
+  namespace: artha
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - podSelector: {}
+  policyTypes:
+    - Ingress
+---
+# Resource Quota — limit namespace resource usage
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: artha-quota
+  namespace: artha
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: 40Gi
+    limits.cpu: "40"
+    limits.memory: 80Gi
+    persistentvolumeclaims: "10"
+    services.loadbalancers: "2"
+---
+# Limit Range — default resource requests/limits
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: artha-limits
+  namespace: artha
+spec:
+  limits:
+    - type: Container
+      default:
+        cpu: 1000m
+        memory: 1Gi
+      defaultRequest:
+        cpu: 100m
+        memory: 256Mi
+      max:
+        cpu: 4000m
+        memory: 8Gi
+      min:
+        cpu: 50m
+        memory: 128Mi

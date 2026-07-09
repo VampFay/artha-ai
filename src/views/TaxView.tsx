@@ -4,6 +4,7 @@ import { LiquidProgress } from "@/components/ui/LiquidProgress";
 import { KineticNumber } from "@/components/ui/KineticNumber";
 import { CheckCircle2, TrendingDown, FileWarning, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTaxSummary } from "@/lib/swr-hooks";
 
 export default function TaxView() {
   const { data, isLoading: loading } = useTaxSummary();

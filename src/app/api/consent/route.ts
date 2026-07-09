@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken, CONSENT_TEXT } from "@/lib/auth";
+import { validateOrigin } from "@/lib/security";
 import { z } from "zod";
 
 const consentSchema = z.object({

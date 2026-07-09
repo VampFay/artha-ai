@@ -75,14 +75,14 @@ export async function computeTaxSummary(userId: string, fy: string) {
   const gross = salary + interest + rental + other;
 
   // Build deduction map
-  const dedMap: Record<string, number> = {};
+  const dedMap: Record<string, any> = {};
   for (const d of deductions) dedMap[d.deductionType] = (dedMap[d.deductionType] || 0) + d.amount;
 
   // Extract HRA components for exemption calculation
-  const hraReceived = dedMap["HRA"] || 0;
-  const basicSalary = dedMap["BasicSalary"] || salary * 0.5;
-  const rentPaid = dedMap["RentPaid"] || 0;
-  const userCity = dedMap["City"] || "";
+  const hraReceived = Number(dedMap["HRA"] || 0);
+  const basicSalary = Number(dedMap["BasicSalary"] || salary * 0.5);
+  const rentPaid = Number(dedMap["RentPaid"] || 0);
+  const userCity = String(dedMap["City"] || "");
 
   // Compute HRA exemption under Section 10(13A)
   const hraExemption = computeHraExemption(hraReceived, basicSalary, rentPaid, userCity);
