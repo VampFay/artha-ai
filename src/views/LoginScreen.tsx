@@ -363,17 +363,17 @@ export default function LoginScreen() {
       </div>
 
       {/* Right Panel (Auth Form) */}
-      <div className="w-full lg:w-[480px] xl:w-[560px] flex-shrink-0 bg-[#050505] border-l border-white/5 z-10 flex flex-col justify-center px-8 lg:px-16 relative">
+      <div className="w-full lg:w-[480px] xl:w-[560px] flex-shrink-0 bg-[#050505] border-l border-white/5 z-10 flex flex-col justify-center px-8 lg:px-16 relative overflow-y-auto max-h-screen">
         <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: NOISE_SVG_URL }} />
 
-        <div className="lg:hidden flex items-center gap-3 mb-16 relative z-10">
+        <div className="lg:hidden flex items-center gap-3 mb-8 relative z-10">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center font-bold text-[#111] text-xl font-sans shadow-[0_0_20px_rgba(245,158,11,0.3)]">A</div>
           <span className="font-michroma text-2xl tracking-widest uppercase text-white">ARTHA</span>
         </div>
 
-        <div className="w-full max-w-md mx-auto relative z-10">
+        <div className="w-full max-w-md mx-auto relative z-10 py-8">
           {/* Portal Mode Toggle — Individual vs Entities */}
-          <div className="mb-10">
+          <div className="mb-6">
             <div className="flex gap-1 p-1 bg-white/[0.03] border border-white/5 rounded-2xl">
               <button
                 type="button"
@@ -413,8 +413,8 @@ export default function LoginScreen() {
               exit={{ opacity: 0, x: mode === "login" ? 20 : -20, filter: "blur(4px)" }}
               transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="mb-8">
-                <h2 className="text-4xl font-light tracking-tight mb-3 text-white">
+              <div className="mb-6">
+                <h2 className="text-3xl font-light tracking-tight mb-2 text-white">
                   {mode === "login"
                     ? (portalMode === "entities" ? "Welcome back." : "Welcome back.")
                     : (portalMode === "entities" ? "Register your entity." : "Join Artha.")}
@@ -486,7 +486,7 @@ export default function LoginScreen() {
               </div>
 
               {mode === "login" && (
-                <div className="mt-12 pt-8 border-t border-white/5">
+                <div className="mt-8 pt-6 border-t border-white/5">
                   <p className="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4 ml-1">
                     {portalMode === "entities" ? "Demo Entity Account" : "Demo Credentials"}
                   </p>
