@@ -8,6 +8,7 @@ interface PortalState {
   activeEntityId: string | null;
   setMode: (mode: PortalMode) => void;
   setActiveEntityId: (id: string | null) => void;
+  hydrated: boolean;
 }
 
 const PortalContext = createContext<PortalState | undefined>(undefined);
@@ -17,11 +18,12 @@ const STORAGE_KEY_ENTITY = "artha_active_entity";
 
 export function PortalProvider({ children }: { children: ReactNode }) {
   // Always start with "individual" on both server and client to prevent
-  // hydration mismatches. Load from localStorage AFTER hydration.
+  // hydration mismatches. Load from localStorage AFTER hydration completes.
   const [mode, setModeState] = useState<PortalMode>("individual");
   const [activeEntityId, setActiveEntityIdState] = useState<string | null>(null);
+  const [hydrated, setHydrated] = useState(false);
 
-  // Load from localStorage on mount (AFTER hydration — this runs only on client)
+  // Load from localStorage on mount (AFTER hydration — runs only on client)
   useEffect(() => {
     try {
       const storedMode = localStorage.getItem(STORAGE_KEY_MODE) as PortalMode | null;
@@ -33,6 +35,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
         setActiveEntityIdState(storedEntity);
       }
     } catch {}
+    setHydrated(true);
   }, []);
 
   const setMode = (newMode: PortalMode) => {
@@ -51,7 +54,7 @@ export function PortalProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <PortalContext.Provider value={{ mode, activeEntityId, setMode, setActiveEntityId }}>
+    <PortalContext.Provider value={{ mode, activeEntityId, setMode, setActiveEntityId, hydrated }}>
       {children}
     </PortalContext.Provider>
   );
