@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
 
-    const loans = await db.liability.findMany({ where: { userId: payload.sub }, orderBy: { remaining: "desc" } });
+    const loans = await db.liability.findMany({ where: { userId: payload.sub }, orderBy: { remaining: "desc" }, take: 100 });
 
     const totalDebt = loans.reduce((s, l) => s + l.remaining, 0);
     const totalEmi = loans.reduce((s, l) => s + l.emi, 0);

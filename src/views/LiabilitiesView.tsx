@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { motion } from "motion/react";
 import { KineticNumber } from "@/components/ui/KineticNumber";
 import { Landmark, ArrowRight, ShieldAlert } from "lucide-react";

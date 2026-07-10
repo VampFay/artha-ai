@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { entities as entitiesApi, type EntityDetail } from "@/lib/api";
 import { usePortal } from "@/lib/portal-context";
 import { useNav } from "@/lib/nav-context";
-import { Loader2, FileText, AlertTriangle, Calendar, Building2 } from "lucide-react";
+import { Loader2, FileText, AlertTriangle, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function EntityNoticesView() {

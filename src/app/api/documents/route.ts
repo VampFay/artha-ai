@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     if (!auth?.startsWith("Bearer ")) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
-    const docs = await db.document.findMany({ where: { userId: payload.sub }, orderBy: { createdAt: "desc" } });
+    const docs = await db.document.findMany({ where: { userId: payload.sub }, orderBy: { createdAt: "desc" }, take: 100 });
     return NextResponse.json({ items: docs.map((d) => ({ id: d.id, document_type: d.documentType, file_name: d.fileName, file_size_bytes: d.fileSizeBytes, mime_type: d.mimeType, processing_status: d.processingStatus, confidence_score: d.confidenceScore, detected_doc_type: d.detectedDocType, created_at: d.createdAt, updated_at: d.updatedAt })), total: docs.length });
   } catch { return NextResponse.json({ detail: "Failed to fetch documents" }, { status: 500 }); }
 }

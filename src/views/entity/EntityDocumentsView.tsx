@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion } from "motion/react";
+
 import { entities as entitiesApi, type EntityDetail } from "@/lib/api";
 import { usePortal } from "@/lib/portal-context";
 import { useNav } from "@/lib/nav-context";
 import { Loader2, FileText, Upload, Search } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 
 const DOC_TYPES = [
   { id: "gstr_1", label: "GSTR-1", desc: "Outward supplies return" },

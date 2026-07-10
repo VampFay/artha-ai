@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { entities as entitiesApi, type EntityDetail, type EntityTaxBreakdown } from "@/lib/api";
 import { usePortal } from "@/lib/portal-context";
 import { useNav } from "@/lib/nav-context";
-import { Loader2, Calculator, TrendingUp, Lightbulb, ArrowRight, Info } from "lucide-react";
+import { Loader2, Calculator, TrendingUp, Lightbulb, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function EntityTaxView() {

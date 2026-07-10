@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     const payload = await verifyToken(auth.slice(7));
     if (!payload) return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
 
-    const subs = await db.subscription.findMany({ where: { userId: payload.sub }, orderBy: { createdAt: "desc" } });
+    const subs = await db.subscription.findMany({ where: { userId: payload.sub }, orderBy: { createdAt: "desc" }, take: 100 });
 
     const monthlyTotal = subs
       .filter(s => s.status === "Active")
