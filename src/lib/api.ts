@@ -21,8 +21,17 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
   try {
     let res = await fetch(path, { ...options, headers });
 
-    // On 401, try refresh token once before giving up
-    if (res.status === 401) {
+    // On 401, try refresh token once — BUT NOT for auth endpoints.
+    // Auth endpoints (login, register, refresh) return 401 for wrong credentials,
+    // not for expired tokens. Intercepting those would show "Session expired"
+    // instead of "Invalid credentials".
+    const isAuthEndpoint =
+      path.startsWith("/api/auth/login") ||
+      path.startsWith("/api/auth/register") ||
+      path.startsWith("/api/auth/refresh") ||
+      path.startsWith("/api/auth/logout");
+
+    if (res.status === 401 && !isAuthEndpoint) {
       const refresh = typeof window !== "undefined" ? localStorage.getItem("finsight_refresh_token") : null;
       if (refresh) {
         try {
@@ -43,7 +52,9 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
             setToken(null);
             throw { detail: "Session expired", status: 401 } as ApiError;
           }
-        } catch {
+        } catch (e: any) {
+          // If it's already an ApiError (like "Session expired"), re-throw it
+          if (e?.detail) throw e;
           localStorage.removeItem("finsight_refresh_token");
           setToken(null);
           throw { detail: "Session expired", status: 401 } as ApiError;

@@ -158,10 +158,24 @@ export default function LoginScreen() {
       if (mode === "login") await login(email, password);
       else await register(name, email, password);
     } catch (err: any) {
-      setError(err?.detail || "Authentication failed");
+      // Don't show "Session expired" on the login screen — that's misleading.
+      // The real issue is invalid credentials (the API returns 401 for wrong email/password).
+      const detail = err?.detail || "";
+      if (detail === "Session expired" || err?.status === 401) {
+        setError("Invalid email or password. Try the demo credentials below.");
+      } else if (detail === "Network error") {
+        setError("Cannot connect to server. Please check your connection.");
+      } else {
+        setError(detail || "Authentication failed");
+      }
       setIsLoading(false);
     }
   };
+
+  // Clear error when user starts typing or switches mode
+  const handleEmailChange = (v: string) => { setEmail(v); if (error) setError(""); };
+  const handlePasswordChange = (v: string) => { setPassword(v); if (error) setError(""); };
+  const handleNameChange = (v: string) => { setName(v); if (error) setError(""); };
 
   return (
     <div className="min-h-screen flex w-full bg-black text-white font-sans overflow-hidden">
@@ -354,12 +368,12 @@ export default function LoginScreen() {
                 {mode === "register" && (
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">Legal Name</label>
-                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
+                    <input type="text" required value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Jane Doe" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
                   </div>
                 )}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">Email Address</label>
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@domain.com" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
+                  <input type="email" required value={email} onChange={(e) => handleEmailChange(e.target.value)} placeholder="you@domain.com" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center ml-1">
@@ -367,7 +381,7 @@ export default function LoginScreen() {
                     {mode === "login" && <span onClick={() => toast({ title: "Password reset unavailable", description: "Use the demo credentials below." })} className="text-[10px] font-bold tracking-wider text-saffron uppercase cursor-pointer hover:text-saffron-light transition-colors">Forgot?</span>}
                   </div>
                   <div className="relative">
-                    <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all tracking-widest shadow-inner pr-12" />
+                    <input type={showPassword ? "text" : "password"} required value={password} onChange={(e) => handlePasswordChange(e.target.value)} placeholder="••••••••" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all tracking-widest shadow-inner pr-12" />
                     <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white transition-colors" aria-label={showPassword ? "Hide password" : "Show password"}>
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -389,11 +403,11 @@ export default function LoginScreen() {
                 <div className="mt-12 pt-8 border-t border-white/5">
                   <p className="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4 ml-1">Demo Credentials</p>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("test@finsight.ai"); setPassword("test1234"); }}>
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("test@finsight.ai"); setPassword("test1234"); setError(""); }}>
                       <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">test@finsight.ai</span>
                       <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">test1234</span>
                     </div>
-                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); }}>
+                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); setError(""); }}>
                       <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">admin@finsight.ai</span>
                       <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">admin1234</span>
                     </div>
