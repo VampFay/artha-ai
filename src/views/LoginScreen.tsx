@@ -363,7 +363,7 @@ export default function LoginScreen() {
       </div>
 
       {/* Right Panel (Auth Form) */}
-      <div className="w-full lg:w-[480px] xl:w-[560px] flex-shrink-0 bg-[#050505] border-l border-white/5 z-10 flex flex-col justify-center px-8 lg:px-16 relative overflow-y-auto max-h-screen">
+      <div className="w-full lg:w-[480px] xl:w-[560px] flex-shrink-0 bg-[#050505] border-l border-white/5 z-10 flex flex-col justify-center px-8 lg:px-16 relative overflow-y-auto max-h-screen" suppressHydrationWarning>
         <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: NOISE_SVG_URL }} />
 
         <div className="lg:hidden flex items-center gap-3 mb-8 relative z-10">
