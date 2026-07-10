@@ -174,7 +174,11 @@ export default function LoginScreen() {
       // The real issue is invalid credentials (the API returns 401 for wrong email/password).
       const detail = err?.detail || "";
       if (detail === "Session expired" || err?.status === 401) {
-        setError("Invalid email or password. Try the demo credentials below.");
+        setError(
+          portalMode === "entities"
+            ? "Invalid email or password. Contact your entity admin if you've forgotten your credentials."
+            : "Invalid email or password. Try the demo credentials below."
+        );
       } else if (detail === "Network error") {
         setError("Cannot connect to server. Please check your connection.");
       } else {
@@ -437,8 +441,13 @@ export default function LoginScreen() {
               <form onSubmit={handleSubmit} className="space-y-5" suppressHydrationWarning>
                 {mode === "register" && (
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">Legal Name</label>
-                    <input type="text" required value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder="Jane Doe" suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
+                    <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">
+                      {portalMode === "entities" ? "Admin Full Name" : "Legal Name"}
+                    </label>
+                    <input type="text" required value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder={portalMode === "entities" ? "Rajesh Kumar (Entity Admin)" : "Jane Doe"} suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
+                    {portalMode === "entities" && (
+                      <p className="text-[9px] text-stone-600 ml-1 mt-1">You'll onboard your entity (company/bank/university/etc.) after registration.</p>
+                    )}
                   </div>
                 )}
                 <div className="space-y-1.5">
