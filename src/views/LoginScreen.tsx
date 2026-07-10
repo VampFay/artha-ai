@@ -508,33 +508,52 @@ export default function LoginScreen() {
                       </>
                     ) : (
                       <>
+                        {/* Platform Admin — sees all 15 entities */}
                         <div className="flex justify-between items-center p-3 rounded-xl bg-saffron/[0.05] hover:bg-saffron/[0.1] cursor-pointer transition-colors border border-saffron/20 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); setError(""); }}>
                           <div className="flex-1 min-w-0">
                             <span className="text-sm font-medium text-white block">admin@finsight.ai</span>
-                            <span className="text-[9px] text-saffron/70 uppercase tracking-wider">Entity Admin · 15 demo entities</span>
+                            <span className="text-[9px] text-saffron/70 uppercase tracking-wider">Platform Admin · All 15 entities</span>
                           </div>
                           <span className="text-xs font-geist-pixel text-saffron bg-black px-2 py-1 rounded border border-saffron/30 group-hover:border-saffron/50 transition-colors">admin1234</span>
                         </div>
-                        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                          <p className="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-2">Pre-seeded demo entities:</p>
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-stone-400">
-                            <span>🏦 HDFC Bank Ltd</span>
-                            <span>💳 Bajaj Finance Ltd</span>
-                            <span>🛡️ LIC of India</span>
-                            <span>💻 Acme Software</span>
-                            <span>🏭 Bharat Steel</span>
-                            <span>🛒 Flipkart</span>
-                            <span>🏗️ Lodha Developers</span>
-                            <span>📱 Razorpay</span>
-                            <span>🎓 IIT Bombay</span>
-                            <span>🏫 BITS Pilani</span>
-                            <span>📚 Delhi Public School</span>
-                            <span>🤲 Tata Trusts</span>
-                            <span>🤝 Khaitan & Co LLP</span>
-                            <span>🏛️ Ministry of Finance</span>
-                            <span>🏭 Artha Tech (MSME)</span>
-                          </div>
+
+                        {/* Per-entity logins — each institution has own creds */}
+                        <p className="text-[9px] font-bold tracking-widest uppercase text-stone-500 mt-4 mb-2 ml-1">Individual Institution Logins:</p>
+                        <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                          {[
+                            { icon: "🏦", name: "HDFC Bank", email: "admin@hdfc.artha.ai", pass: "hdfc1234" },
+                            { icon: "💳", name: "Bajaj Finance", email: "admin@bajaj.artha.ai", pass: "bajaj1234" },
+                            { icon: "🛡️", name: "LIC of India", email: "admin@lic.artha.ai", pass: "lic1234" },
+                            { icon: "💻", name: "Acme Software", email: "admin@acme.artha.ai", pass: "acme1234" },
+                            { icon: "🏭", name: "Bharat Steel", email: "admin@bharat.artha.ai", pass: "bharat1234" },
+                            { icon: "🛒", name: "Flipkart", email: "admin@flipkart.artha.ai", pass: "flipkart1234" },
+                            { icon: "🏗️", name: "Lodha Developers", email: "admin@lodha.artha.ai", pass: "lodha1234" },
+                            { icon: "📱", name: "Razorpay", email: "admin@razorpay.artha.ai", pass: "razorpay1234" },
+                            { icon: "🎓", name: "IIT Bombay", email: "admin@iit.artha.ai", pass: "iit1234" },
+                            { icon: "🏫", name: "BITS Pilani", email: "admin@bits.artha.ai", pass: "bits1234" },
+                            { icon: "📚", name: "Delhi Public School", email: "admin@delhi.artha.ai", pass: "delhi1234" },
+                            { icon: "🤲", name: "Tata Trusts", email: "admin@tata.artha.ai", pass: "tata1234" },
+                            { icon: "🤝", name: "Khaitan & Co LLP", email: "admin@khaitan.artha.ai", pass: "khaitan1234" },
+                            { icon: "🏛️", name: "Ministry of Finance", email: "admin@ministry.artha.ai", pass: "ministry1234" },
+                            { icon: "🏭", name: "Artha Tech (MSME)", email: "admin@artha.artha.ai", pass: "artha1234" },
+                          ].map((cred) => (
+                            <div
+                              key={cred.email}
+                              className="flex justify-between items-center p-2.5 rounded-lg bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group"
+                              onClick={() => { setEmail(cred.email); setPassword(cred.pass); setError(""); }}
+                            >
+                              <div className="flex items-center gap-2 min-w-0">
+                                <span className="text-base shrink-0">{cred.icon}</span>
+                                <div className="min-w-0">
+                                  <span className="text-xs font-medium text-stone-400 group-hover:text-white transition-colors block truncate">{cred.email}</span>
+                                  <span className="text-[9px] text-stone-500">{cred.name}</span>
+                                </div>
+                              </div>
+                              <span className="text-[10px] font-geist-pixel text-stone-500 bg-black px-1.5 py-0.5 rounded border border-white/10 group-hover:border-white/20 transition-colors shrink-0">{cred.pass}</span>
+                            </div>
+                          ))}
                         </div>
+                        <p className="text-[9px] text-stone-600 mt-2 ml-1">Each institution sees only its own data — full isolation.</p>
                       </>
                     )}
                   </div>
