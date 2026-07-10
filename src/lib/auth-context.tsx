@@ -12,7 +12,10 @@ const AuthContext = createContext<AuthState | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  // Start with loading=false on server (SSR renders LoginScreen immediately,
+  // so the portal toggle is in the initial HTML). On client, set to true
+  // during the auth check.
+  const [loading, setLoading] = useState(false);
 
   /**
    * Attempt to refresh the access token using the stored refresh token.
@@ -45,9 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = typeof window !== "undefined" ? localStorage.getItem("finsight_token") : null;
     if (!token) {
-      setLoading(false);
+      // No token — stay on login screen (loading stays false)
       return;
     }
+
+    // We have a token — show loading while we verify it
+    setLoading(true);
 
     auth.me()
       .then((u) => setUser(u))
