@@ -63,7 +63,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             localStorage.removeItem("finsight_refresh_token");
           }
         } else {
+          // Both access + refresh failed — clear all tokens silently.
+          // Don't throw "Session expired" — just show the login screen.
           setToken(null);
+          localStorage.removeItem("finsight_refresh_token");
         }
       })
       .finally(() => setLoading(false));
