@@ -485,18 +485,54 @@ export default function LoginScreen() {
                 </button>
               </div>
 
-              {mode === "login" && portalMode === "individual" && (
+              {mode === "login" && (
                 <div className="mt-12 pt-8 border-t border-white/5">
-                  <p className="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4 ml-1">Demo Credentials</p>
+                  <p className="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4 ml-1">
+                    {portalMode === "entities" ? "Demo Entity Account" : "Demo Credentials"}
+                  </p>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("test@finsight.ai"); setPassword("test1234"); setError(""); }}>
-                      <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">test@finsight.ai</span>
-                      <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">test1234</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); setError(""); }}>
-                      <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">admin@finsight.ai</span>
-                      <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">admin1234</span>
-                    </div>
+                    {portalMode === "individual" ? (
+                      <>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("test@finsight.ai"); setPassword("test1234"); setError(""); }}>
+                          <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">test@finsight.ai</span>
+                          <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">test1234</span>
+                        </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); setError(""); }}>
+                          <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">admin@finsight.ai</span>
+                          <span className="text-xs font-geist-pixel text-stone-500 bg-black px-2 py-1 rounded border border-white/10 group-hover:border-white/20 transition-colors">admin1234</span>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-saffron/[0.05] hover:bg-saffron/[0.1] cursor-pointer transition-colors border border-saffron/20 group" onClick={() => { setEmail("admin@finsight.ai"); setPassword("admin1234"); setError(""); }}>
+                          <div className="flex-1 min-w-0">
+                            <span className="text-sm font-medium text-white block">admin@finsight.ai</span>
+                            <span className="text-[9px] text-saffron/70 uppercase tracking-wider">Entity Admin · 15 demo entities</span>
+                          </div>
+                          <span className="text-xs font-geist-pixel text-saffron bg-black px-2 py-1 rounded border border-saffron/30 group-hover:border-saffron/50 transition-colors">admin1234</span>
+                        </div>
+                        <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                          <p className="text-[9px] font-bold tracking-widest uppercase text-stone-500 mb-2">Pre-seeded demo entities:</p>
+                          <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-stone-400">
+                            <span>🏦 HDFC Bank Ltd</span>
+                            <span>💳 Bajaj Finance Ltd</span>
+                            <span>🛡️ LIC of India</span>
+                            <span>💻 Acme Software</span>
+                            <span>🏭 Bharat Steel</span>
+                            <span>🛒 Flipkart</span>
+                            <span>🏗️ Lodha Developers</span>
+                            <span>📱 Razorpay</span>
+                            <span>🎓 IIT Bombay</span>
+                            <span>🏫 BITS Pilani</span>
+                            <span>📚 Delhi Public School</span>
+                            <span>🤲 Tata Trusts</span>
+                            <span>🤝 Khaitan & Co LLP</span>
+                            <span>🏛️ Ministry of Finance</span>
+                            <span>🏭 Artha Tech (MSME)</span>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
