@@ -195,6 +195,11 @@ export default function LoginScreen() {
 
   return (
     <div className="min-h-screen flex w-full bg-black text-white font-sans overflow-hidden">
+      {/* Version stamp — visible in bottom-right corner to verify which version is served */}
+      <div className="fixed bottom-2 right-2 z-50 text-[8px] text-white/20 font-mono pointer-events-none select-none">
+        v2.0-portal-toggle
+      </div>
+
       {/* Left Panel */}
       <div className="hidden lg:flex flex-1 flex-col justify-between p-12 lg:p-20 relative">
         <LiveVideoLoop />
