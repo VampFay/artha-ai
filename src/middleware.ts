@@ -28,6 +28,13 @@ export function middleware(req: NextRequest) {
   res.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
   res.headers.set("X-XSS-Protection", "1; mode=block");
 
+  // Anti-caching: prevent preview proxy/CDN from caching HTML pages.
+  // This ensures the latest code is always served.
+  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+  res.headers.set("Pragma", "no-cache");
+  res.headers.set("Expires", "0");
+  res.headers.set("Surrogate-Control", "no-store");
+
   // Content Security Policy
   // In production: tighten to specific origins
   const csp = [
