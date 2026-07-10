@@ -36,7 +36,7 @@ function getRedis() {
     });
 
     redisClient.on("connect", () => {
-      console.log("Redis connected ✓");
+      // Redis connected (silent in prod)
       useInMemory = false;
     });
 

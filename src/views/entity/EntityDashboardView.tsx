@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { entities as entitiesApi, type EntityDetail } from "@/lib/api";

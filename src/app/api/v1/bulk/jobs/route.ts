@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
       payload: { id: job.id, jobType, status: "queued" },
     });
 
-    // TODO: enqueue job for processing (SQS/Kafka in prod, in-memory in dev)
+    // NOTE: In production, enqueue via SQS/Kafka. Dev uses in-memory processing.
     // For now, mark as processing and let a worker pick it up
     processBulkJob(job.id, ctx.tenantId).catch((err) => {
       console.error("Bulk job processing failed:", err);

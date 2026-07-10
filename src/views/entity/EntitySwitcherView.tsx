@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { entities as entitiesApi, type EntitySummary } from "@/lib/api";
 import { usePortal } from "@/lib/portal-context";
 import { useNav } from "@/lib/nav-context";
-import { Plus, Building2, ArrowRight, ChevronRight, Loader2 } from "lucide-react";
+import { Plus, Building2, ChevronRight, Loader2 } from "lucide-react";
 
 export default function EntitySwitcherView() {
   const { setActiveEntityId } = usePortal();

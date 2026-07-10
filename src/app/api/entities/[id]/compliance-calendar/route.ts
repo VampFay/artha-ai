@@ -10,6 +10,7 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { errorResponse } from "@/lib/security/middleware";
 import { getEntityForUser } from "../../_helpers";
+import { checkEntityRateLimit, logEntityAccess } from "../../_middleware";
 import {
   generateComplianceCalendar,
   getOverdueFilings,
@@ -19,8 +20,12 @@ import {
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const { entity } = await getEntityForUser(req, id);
+    const { ctx, entity } = await getEntityForUser(req, id);
     if (!entity) return errorResponse({ message: "Entity not found", statusCode: 404 });
+
+    // Rate limit
+    const rateLimited = await checkEntityRateLimit(req, ctx);
+    if (rateLimited) return rateLimited;
 
     const url = new URL(req.url);
     const monthsAhead = parseInt(url.searchParams.get("months") || "12");

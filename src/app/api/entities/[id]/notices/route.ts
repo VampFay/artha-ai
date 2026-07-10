@@ -7,11 +7,16 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import { errorResponse } from "@/lib/security/middleware";
 import { getEntityForUser } from "../../_helpers";
+import { checkEntityRateLimit, logEntityAccess } from "../../_middleware";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const { entity } = await getEntityForUser(req, id);
+    const { ctx, entity } = await getEntityForUser(req, id);
+    if (!entity) return errorResponse({ message: "Entity not found", statusCode: 404 });
+
+    const rateLimited = await checkEntityRateLimit(req, ctx);
+    if (rateLimited) return rateLimited;
     if (!entity) return errorResponse({ message: "Entity not found", statusCode: 404 });
 
     const notices = await db.entityNotice.findMany({

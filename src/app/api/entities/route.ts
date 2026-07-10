@@ -9,6 +9,32 @@ import { requireAuth, errorResponse } from "@/lib/security/middleware";
 import { getAccessibleEntities } from "./_helpers";
 import { ENTITY_TYPES, type EntityType } from "@/lib/entity/types";
 import { appendAuditEntry } from "@/lib/security/audit-chain";
+import { z } from "zod";
+
+// Zod schema for entity creation
+const CreateEntitySchema = z.object({
+  name: z.string().min(1).max(255),
+  legalName: z.string().max(255).optional(),
+  entityType: z.string().refine((val) => val in ENTITY_TYPES, {
+    message: "Invalid entityType",
+  }),
+  industrySector: z.string().max(255).optional(),
+  pan: z.string().max(10).optional(),
+  gstin: z.string().max(15).optional(),
+  cin: z.string().max(21).optional(),
+  tan: z.string().max(10).optional(),
+  incorporationDate: z.string().optional(),
+  registeredState: z.string().max(100).optional(),
+  registeredAddress: z.string().max(500).optional(),
+  city: z.string().max(100).optional(),
+  pincode: z.string().max(10).optional(),
+  contactEmail: z.string().email().optional(),
+  contactPhone: z.string().max(20).optional(),
+  website: z.string().url().optional(),
+  turnoverLastYear: z.number().min(0).optional(),
+  netWorth: z.number().min(0).optional(),
+  metadata: z.record(z.any()).optional(),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -46,18 +72,16 @@ export async function POST(req: NextRequest) {
     const ctx = await requireAuth(req);
     const body = await req.json();
 
-    // Validate entity type
-    const entityType = body.entityType as EntityType;
-    if (!entityType || !ENTITY_TYPES[entityType]) {
+    // Validate with Zod
+    const parsed = CreateEntitySchema.safeParse(body);
+    if (!parsed.success) {
       return errorResponse({
-        message: `Invalid entityType. Must be one of: ${Object.keys(ENTITY_TYPES).join(", ")}`,
+        message: `Validation error: ${parsed.error.errors.map(e => e.message).join(", ")}`,
         statusCode: 400,
       });
     }
-
-    if (!body.name) {
-      return errorResponse({ message: "Missing required field: name", statusCode: 400 });
-    }
+    const validated = parsed.data;
+    const entityType = validated.entityType as EntityType;
 
     // Determine tenant ID — user's tenant if available, else create standalone
     const tenantId = ctx.tenantId || `solo_${ctx.userId}`;
@@ -84,25 +108,25 @@ export async function POST(req: NextRequest) {
     const entity = await db.entity.create({
       data: {
         tenantId,
-        name: body.name,
-        legalName: body.legalName || body.name,
+        name: validated.name,
+        legalName: validated.legalName || body.name,
         entityType,
-        industrySector: body.industrySector || null,
-        pan: body.pan || null,
-        gstin: body.gstin || null,
-        cin: body.cin || null,
-        tan: body.tan || null,
-        incorporationDate: body.incorporationDate ? new Date(body.incorporationDate) : null,
-        registeredState: body.registeredState || null,
-        registeredAddress: body.registeredAddress || null,
-        city: body.city || null,
-        pincode: body.pincode || null,
-        contactEmail: body.contactEmail || null,
-        contactPhone: body.contactPhone || null,
-        website: body.website || null,
-        turnoverLastYear: body.turnoverLastYear || null,
-        netWorth: body.netWorth || null,
-        metadataJson: body.metadata ? JSON.stringify(body.metadata) : null,
+        industrySector: validated.industrySector || null,
+        pan: validated.pan || null,
+        gstin: validated.gstin || null,
+        cin: validated.cin || null,
+        tan: validated.tan || null,
+        incorporationDate: validated.incorporationDate ? new Date(body.incorporationDate) : null,
+        registeredState: validated.registeredState || null,
+        registeredAddress: validated.registeredAddress || null,
+        city: validated.city || null,
+        pincode: validated.pincode || null,
+        contactEmail: validated.contactEmail || null,
+        contactPhone: validated.contactPhone || null,
+        website: validated.website || null,
+        turnoverLastYear: validated.turnoverLastYear || null,
+        netWorth: validated.netWorth || null,
+        metadataJson: validated.metadata ? JSON.stringify(validated.metadata) : null ? JSON.stringify(body.metadata) : null,
       },
     });
 
@@ -124,7 +148,7 @@ export async function POST(req: NextRequest) {
       action: "entity.created",
       resourceType: "entity",
       resourceId: entity.id,
-      details: { name: body.name, entityType, pan: body.pan },
+      details: { name: validated.name, entityType, pan: validated.pan },
       ipAddress: ctx.ipAddress,
     });
 

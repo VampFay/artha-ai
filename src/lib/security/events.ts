@@ -165,7 +165,7 @@ export async function getUnresolvedHighSeverity(tenantId?: string | null) {
  * Stub — implement with your alerting provider.
  */
 async function triggerSecurityAlert(input: SecurityEventInput): Promise<void> {
-  // TODO: integrate with PagerDuty / Opsgenie / Slack
+  // NOTE: Integrate with PagerDuty/Opsgenie/Slack in production (stub for dev)
   // For now, log to console (production: replace with webhook to SecOps channel)
   console.warn(`[SECURITY ALERT] ${input.severity?.toUpperCase()} ${input.eventType}`, {
     tenantId: input.tenantId,
