@@ -16,35 +16,38 @@ const STORAGE_KEY_MODE = "artha_portal_mode";
 const STORAGE_KEY_ENTITY = "artha_active_entity";
 
 export function PortalProvider({ children }: { children: ReactNode }) {
+  // Always start with "individual" on both server and client to prevent
+  // hydration mismatches. Load from localStorage AFTER hydration.
   const [mode, setModeState] = useState<PortalMode>("individual");
   const [activeEntityId, setActiveEntityIdState] = useState<string | null>(null);
 
-  // Load from localStorage on mount
+  // Load from localStorage on mount (AFTER hydration — this runs only on client)
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const storedMode = localStorage.getItem(STORAGE_KEY_MODE) as PortalMode | null;
-    const storedEntity = localStorage.getItem(STORAGE_KEY_ENTITY);
-    if (storedMode === "individual" || storedMode === "entities") {
-      setModeState(storedMode);
-    }
-    if (storedEntity) {
-      setActiveEntityIdState(storedEntity);
-    }
+    try {
+      const storedMode = localStorage.getItem(STORAGE_KEY_MODE) as PortalMode | null;
+      const storedEntity = localStorage.getItem(STORAGE_KEY_ENTITY);
+      if (storedMode === "individual" || storedMode === "entities") {
+        setModeState(storedMode);
+      }
+      if (storedEntity) {
+        setActiveEntityIdState(storedEntity);
+      }
+    } catch {}
   }, []);
 
   const setMode = (newMode: PortalMode) => {
     setModeState(newMode);
-    if (typeof window !== "undefined") {
+    try {
       localStorage.setItem(STORAGE_KEY_MODE, newMode);
-    }
+    } catch {}
   };
 
   const setActiveEntityId = (id: string | null) => {
     setActiveEntityIdState(id);
-    if (typeof window !== "undefined") {
+    try {
       if (id) localStorage.setItem(STORAGE_KEY_ENTITY, id);
       else localStorage.removeItem(STORAGE_KEY_ENTITY);
-    }
+    } catch {}
   };
 
   return (
