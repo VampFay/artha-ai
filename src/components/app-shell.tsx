@@ -119,18 +119,30 @@ export default function AppShell({ children }: { children: ReactNode }) {
   };
 
   const renderView = () => {
-    // Entity portal views (accessible regardless of mode toggle)
-    switch (page) {
-      case "entity-switcher": return <EntitySwitcherView />;
-      case "entity-onboarding": return <EntityOnboardingView />;
-      case "entity-dashboard": return <EntityDashboardView />;
-      case "entity-tax": return <EntityTaxView />;
-      case "entity-compliance": return <EntityComplianceView />;
-      case "entity-team": return <EntityTeamView />;
-      case "entity-notices": return <EntityNoticesView />;
-      case "entity-documents": return <EntityDocumentsView />;
+    // STRICT SEPARATION: Individual portal and Entities portal are completely
+    // isolated. A user in Individual mode can NEVER see entity views, and a
+    // user in Entities mode can NEVER see individual views. Settings is shared
+    // (account-level, not portal-level).
+
+    if (mode === "entities") {
+      // === ENTITIES PORTAL — organizations only ===
+      switch (page) {
+        case "entity-switcher": return <EntitySwitcherView />;
+        case "entity-onboarding": return <EntityOnboardingView />;
+        case "entity-dashboard": return <EntityDashboardView />;
+        case "entity-tax": return <EntityTaxView />;
+        case "entity-compliance": return <EntityComplianceView />;
+        case "entity-team": return <EntityTeamView />;
+        case "entity-notices": return <EntityNoticesView />;
+        case "entity-documents": return <EntityDocumentsView />;
+        case "settings": return <SettingsView user={user as any} onLogout={logout} />;
+        // Block ALL individual views — redirect to entity switcher
+        default:
+          return <EntitySwitcherView />;
+      }
     }
-    // Individual portal views
+
+    // === INDIVIDUAL PORTAL — personal users only ===
     switch (page) {
       case "dashboard": return <DashboardView onNavigate={navigate as any} />;
       case "portfolio": return <PortfolioView />;
@@ -146,7 +158,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
       case "reports": return <ReportsView />;
       case "assistant": return <AssistantView />;
       case "settings": return <SettingsView user={user as any} onLogout={logout} />;
-      default: return <DashboardView onNavigate={navigate as any} />;
+      // Block ALL entity views — redirect to dashboard
+      default:
+        return <DashboardView onNavigate={navigate as any} />;
     }
   };
 
