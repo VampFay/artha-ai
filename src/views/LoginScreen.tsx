@@ -145,7 +145,7 @@ const LiveVideoLoop = memo(() => {
 export default function LoginScreen() {
   const { toast } = useToast();
   const { login, register } = useAuth();
-  const { mode: portalMode, setMode: setPortalMode } = usePortal();
+  const { mode: portalMode, setMode: setPortalMode, hydrated } = usePortal();
   const { navigate } = useNav();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -164,7 +164,7 @@ export default function LoginScreen() {
       else await register(name, email, password);
       // After successful auth, route to the selected portal.
       // The AppShell renders based on the nav page; we set the landing page here.
-      if (portalMode === "entities") {
+      if (effectiveMode === "entities") {
         navigate("entity-switcher");
       } else {
         navigate("dashboard");
@@ -175,7 +175,7 @@ export default function LoginScreen() {
       const detail = err?.detail || "";
       if (detail === "Session expired" || err?.status === 401) {
         setError(
-          portalMode === "entities"
+          effectiveMode === "entities"
             ? "Invalid email or password. Contact your entity admin if you've forgotten your credentials."
             : "Invalid email or password. Try the demo credentials below."
         );
@@ -192,6 +192,10 @@ export default function LoginScreen() {
   const handleEmailChange = (v: string) => { setEmail(v); if (error) setError(""); };
   const handlePasswordChange = (v: string) => { setPassword(v); if (error) setError(""); };
   const handleNameChange = (v: string) => { setName(v); if (error) setError(""); };
+
+  // Use "individual" as default until hydrated to prevent SSR/client mismatch.
+  // After hydration, use the actual portalMode from localStorage.
+  const effectiveMode = hydrated ? portalMode : "individual";
 
   return (
     <div className="min-h-screen flex w-full bg-black text-white font-sans overflow-hidden">
@@ -216,14 +220,14 @@ export default function LoginScreen() {
           <AnimatePresence mode="wait">
             {mode === "login" ? (
               <motion.div
-                key={`login-content-${portalMode}`}
+                key={`login-content-${effectiveMode}`}
                 initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
                 animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                 exit={{ opacity: 0, y: -20, filter: "blur(10px)" }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
                 <h1 className="text-5xl xl:text-7xl font-light tracking-tighter text-white mb-10 leading-[1.05]">
-                  {portalMode === "entities" ? (
+                  {effectiveMode === "entities" ? (
                     <>Institutional tax<br /><span className="font-geist-pixel text-saffron tracking-tight">intelligence.</span></>
                   ) : (
                     <>Master your wealth. <br /><span className="font-geist-pixel text-saffron tracking-tight">Without the noise.</span></>
@@ -235,15 +239,15 @@ export default function LoginScreen() {
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {portalMode === "entities" ? "Entity Tax Burden" : "Live Net Worth"}
+                          {effectiveMode === "entities" ? "Entity Tax Burden" : "Live Net Worth"}
                         </p>
                         <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
                       </div>
                       <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">
-                        {portalMode === "entities" ? "₹2.89 Cr" : "₹1.42 Cr"}
+                        {effectiveMode === "entities" ? "₹2.89 Cr" : "₹1.42 Cr"}
                       </h3>
                       <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3 bg-emerald-400/10 w-fit px-2.5 py-1 rounded-full border border-emerald-400/20">
-                        <ArrowUpRight className="w-3 h-3" /><span>{portalMode === "entities" ? "28.9% effective" : "+12.4% YTD"}</span>
+                        <ArrowUpRight className="w-3 h-3" /><span>{effectiveMode === "entities" ? "28.9% effective" : "+12.4% YTD"}</span>
                       </div>
                     </div>
                   </div>
@@ -252,15 +256,15 @@ export default function LoginScreen() {
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {portalMode === "entities" ? "Compliance Filings" : "Tax Harvested"}
+                          {effectiveMode === "entities" ? "Compliance Filings" : "Tax Harvested"}
                         </p>
                         <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
                       </div>
                       <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">
-                        {portalMode === "entities" ? "34 due" : "₹42.5K"}
+                        {effectiveMode === "entities" ? "34 due" : "₹42.5K"}
                       </h3>
                       <div className="flex items-center gap-1.5 text-saffron text-xs font-bold mt-3">
-                        <CheckCircle2 className="w-3.5 h-3.5" /><span>{portalMode === "entities" ? "0 overdue" : "Fully Optimized"}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5" /><span>{effectiveMode === "entities" ? "0 overdue" : "Fully Optimized"}</span>
                       </div>
                     </div>
                   </div>
@@ -270,14 +274,14 @@ export default function LoginScreen() {
                       <div className="relative z-10 flex justify-between items-end">
                         <div>
                           <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">
-                            {portalMode === "entities" ? "Tax Regime Comparison" : "Portfolio Trajectory"}
+                            {effectiveMode === "entities" ? "Tax Regime Comparison" : "Portfolio Trajectory"}
                           </p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-xl font-sans font-medium text-white tracking-tight">
-                              {portalMode === "entities" ? "§115BAA saves" : "Alpha"}
+                              {effectiveMode === "entities" ? "§115BAA saves" : "Alpha"}
                             </span>
                             <span className="text-sm font-geist-pixel text-emerald-400">
-                              {portalMode === "entities" ? "₹7.77L" : "+4.2%"}
+                              {effectiveMode === "entities" ? "₹7.77L" : "+4.2%"}
                             </span>
                           </div>
                         </div>
@@ -379,7 +383,7 @@ export default function LoginScreen() {
                 type="button"
                 onClick={() => { setPortalMode("individual"); setError(""); }}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  portalMode === "individual"
+                  effectiveMode === "individual"
                     ? "bg-white text-[#111] shadow-[0_0_20px_rgba(255,255,255,0.15)]"
                     : "text-stone-400 hover:text-white"
                 }`}
@@ -390,7 +394,7 @@ export default function LoginScreen() {
                 type="button"
                 onClick={() => { setPortalMode("entities"); setError(""); }}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${
-                  portalMode === "entities"
+                  effectiveMode === "entities"
                     ? "bg-saffron text-[#111] shadow-[0_0_20px_rgba(245,158,11,0.25)]"
                     : "text-stone-400 hover:text-white"
                 }`}
@@ -399,7 +403,7 @@ export default function LoginScreen() {
               </button>
             </div>
             <p className="text-center text-[10px] text-stone-500 mt-2 tracking-wider">
-              {portalMode === "individual"
+              {effectiveMode === "individual"
                 ? "Personal wealth intelligence"
                 : "For companies, banks, govt, universities & more"}
             </p>
@@ -416,15 +420,15 @@ export default function LoginScreen() {
               <div className="mb-6">
                 <h2 className="text-3xl font-light tracking-tight mb-2 text-white">
                   {mode === "login"
-                    ? (portalMode === "entities" ? "Welcome back." : "Welcome back.")
-                    : (portalMode === "entities" ? "Register your entity." : "Join Artha.")}
+                    ? (effectiveMode === "entities" ? "Welcome back." : "Welcome back.")
+                    : (effectiveMode === "entities" ? "Register your entity." : "Join Artha.")}
                 </h2>
                 <p className="text-stone-400 font-medium text-sm">
                   {mode === "login"
-                    ? (portalMode === "entities"
+                    ? (effectiveMode === "entities"
                         ? "Sign in to manage your entities, taxes & compliance."
                         : "Sign in to access your intelligence dashboard.")
-                    : (portalMode === "entities"
+                    : (effectiveMode === "entities"
                         ? "Create an account to onboard your first entity."
                         : "Create an account to unify your wealth.")}
                 </p>
@@ -447,10 +451,10 @@ export default function LoginScreen() {
                 {mode === "register" && (
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold tracking-widest uppercase text-stone-500 ml-1">
-                      {portalMode === "entities" ? "Admin Full Name" : "Legal Name"}
+                      {effectiveMode === "entities" ? "Admin Full Name" : "Legal Name"}
                     </label>
-                    <input type="text" required value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder={portalMode === "entities" ? "Rajesh Kumar (Entity Admin)" : "Jane Doe"} suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
-                    {portalMode === "entities" && (
+                    <input type="text" required value={name} onChange={(e) => handleNameChange(e.target.value)} placeholder={effectiveMode === "entities" ? "Rajesh Kumar (Entity Admin)" : "Jane Doe"} suppressHydrationWarning className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3.5 text-white placeholder:text-stone-600 focus:outline-none focus:ring-1 focus:ring-saffron focus:border-saffron transition-all shadow-inner" />
+                    {effectiveMode === "entities" && (
                       <p className="text-[9px] text-stone-600 ml-1 mt-1">You'll onboard your entity (company/bank/university/etc.) after registration.</p>
                     )}
                   </div>
@@ -480,7 +484,7 @@ export default function LoginScreen() {
               <div className="mt-8 text-center">
                 <button type="button" onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }} className="text-[11px] font-bold tracking-wider text-stone-400 uppercase hover:text-white transition-colors">
                   {mode === "login"
-                    ? (portalMode === "entities" ? "New here? Register your entity" : "New to Artha? Apply for Access")
+                    ? (effectiveMode === "entities" ? "New here? Register your entity" : "New to Artha? Apply for Access")
                     : "Existing Member? Sign In"}
                 </button>
               </div>
@@ -488,10 +492,10 @@ export default function LoginScreen() {
               {mode === "login" && (
                 <div className="mt-8 pt-6 border-t border-white/5">
                   <p className="text-[10px] font-bold tracking-widest uppercase text-stone-500 mb-4 ml-1">
-                    {portalMode === "entities" ? "Demo Entity Account" : "Demo Credentials"}
+                    {effectiveMode === "entities" ? "Demo Entity Account" : "Demo Credentials"}
                   </p>
                   <div className="space-y-3">
-                    {portalMode === "individual" ? (
+                    {effectiveMode === "individual" ? (
                       <>
                         <div className="flex justify-between items-center p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] cursor-pointer transition-colors border border-white/5 group" onClick={() => { setEmail("test@finsight.ai"); setPassword("test1234"); setError(""); }}>
                           <span className="text-sm font-medium text-stone-400 group-hover:text-white transition-colors">test@finsight.ai</span>
