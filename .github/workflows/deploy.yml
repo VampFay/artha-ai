@@ -1,0 +1,54 @@
+name: Deploy
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v1
+
+      - name: Install
+        run: bun install
+
+      - name: Run tests
+        run: bun run test
+
+      - name: Build
+        run: bun run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Push to ECR
+        run: |
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
+          docker build -t artha-ai .
+          docker tag artha-ai:latest ${{ secrets.ECR_REGISTRY }}/artha-ai:latest
+          docker tag artha-ai:latest ${{ secrets.ECR_REGISTRY }}/artha-ai:${{ github.sha }}
+          docker push ${{ secrets.ECR_REGISTRY }}/artha-ai:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/artha-ai:${{ github.sha }}
+
+      - name: Deploy to EKS
+        run: |
+          aws eks update-kubeconfig --name artha-ai-production-cluster --region ap-south-1
+          kubectl set image deployment/artha-app artha-app=${{ secrets.ECR_REGISTRY }}/artha-ai:${{ github.sha }} -n artha
+          kubectl rollout status deployment/artha-app -n artha --timeout=300s
+
+      - name: Health check
+        run: |
+          sleep 30
+          kubectl exec -n artha deployment/artha-app -- wget -qO- http://localhost:3000/api/v1/health || exit 1
