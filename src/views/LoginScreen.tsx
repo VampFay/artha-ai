@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, memo } from "react";
+import React, { useState, useEffect, useRef, memo, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ShieldCheck, Loader2, ArrowRight, Activity, Sparkles, CheckCircle2, ArrowUpRight, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
@@ -142,6 +142,74 @@ const LiveVideoLoop = memo(() => {
   );
 });
 
+/**
+ * AnimatedNumber — smoothly counts up to a target value with easing.
+ * Used for dynamic stats on the login screen.
+ */
+function AnimatedNumber({ value, format = "number", className = "" }: {
+  value: number;
+  format?: "number" | "currency";
+  className?: string;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const prevValue = useRef(0);
+  const rafRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const start = prevValue.current;
+    const end = value;
+    const duration = 1200; // 1.2s smooth animation
+    const startTime = performance.now();
+
+    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = easeOutCubic(progress);
+      const current = start + (end - start) * eased;
+      setDisplayValue(current);
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        prevValue.current = end;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [value]);
+
+  // Format the display value
+  const formatted = format === "currency"
+    ? formatIndianCurrency(displayValue)
+    : Math.round(displayValue).toLocaleString("en-IN");
+
+  return (
+    <motion.h3
+      key={value} // re-trigger motion on value change
+      initial={{ opacity: 0.5, y: 5 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className={className}
+    >
+      {formatted}
+    </motion.h3>
+  );
+}
+
+function formatIndianCurrency(n: number): string {
+  if (n === 0) return "₹0";
+  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2)} Cr`;
+  if (n >= 100000) return `₹${(n / 100000).toFixed(2)} L`;
+  if (n >= 1000) return `₹${(n / 1000).toFixed(1)}K`;
+  return `₹${Math.round(n).toLocaleString("en-IN")}`;
+}
+
 export default function LoginScreen() {
   const { toast } = useToast();
   const { login, register } = useAuth();
@@ -154,6 +222,44 @@ export default function LoginScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  // Fetch real platform stats for dynamic login cards
+  const [stats, setStats] = useState<{
+    totalEntities: number;
+    totalTaxBurden: number;
+    avgEffectiveRate: number;
+    totalFilingsTracked: number;
+    totalAuditEntries: number;
+    entityTypesCount: number;
+    taxTypesCount: number;
+  }>({
+    totalEntities: 0,
+    totalTaxBurden: 0,
+    avgEffectiveRate: 0,
+    totalFilingsTracked: 0,
+    totalAuditEntries: 0,
+    entityTypesCount: 0,
+    taxTypesCount: 0,
+  });
+
+  useEffect(() => {
+    fetch("/api/public/stats")
+      .then(r => r.json())
+      .then(d => {
+        if (d?.data) {
+          setStats({
+            totalEntities: d.data.totalEntities || 0,
+            totalTaxBurden: d.data.totalTaxBurden || 0,
+            avgEffectiveRate: d.data.avgEffectiveRate || 0,
+            totalFilingsTracked: d.data.totalFilingsTracked || 0,
+            totalAuditEntries: d.data.totalAuditEntries || 0,
+            entityTypesCount: d.data.entityTypesCount || 0,
+            taxTypesCount: d.data.taxTypesCount || 0,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -234,54 +340,70 @@ export default function LoginScreen() {
                   )}
                 </h1>
                 <div className="grid grid-cols-2 gap-5">
-                  {/* Card 1 — descriptive, no fake numbers */}
+                  {/* Card 1 — Dynamic: Total Tax Computed (entities) or Tax Types (individual) */}
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {effectiveMode === "entities" ? "14 Tax Types" : "Tax Readiness"}
+                          {effectiveMode === "entities" ? "Total Tax Computed" : "Tax Types Tracked"}
                         </p>
                         <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">
-                        {effectiveMode === "entities" ? "CIT → GST" : "Auto-detect"}
-                      </h3>
-                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3">
-                        <ArrowUpRight className="w-3 h-3" /><span>{effectiveMode === "entities" ? "TDS + TCS + CSR" : "Form 16 + AIS"}</span>
+                      <AnimatedNumber
+                        value={effectiveMode === "entities" ? stats.totalTaxBurden : stats.taxTypesCount}
+                        format={effectiveMode === "entities" ? "currency" : "number"}
+                        className="text-3xl font-geist-pixel text-white tracking-tighter"
+                      />
+                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3 bg-emerald-400/10 w-fit px-2.5 py-1 rounded-full border border-emerald-400/20">
+                        <ArrowUpRight className="w-3 h-3" />
+                        <span>
+                          {effectiveMode === "entities"
+                            ? `${(stats.avgEffectiveRate * 100).toFixed(1)}% avg effective`
+                            : "CIT · GST · TDS · TCS"}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  {/* Card 2 — descriptive, no fake numbers */}
+                  {/* Card 2 — Dynamic: Entity count or filings tracked */}
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {effectiveMode === "entities" ? "30 Entity Types" : "Wealth Score"}
+                          {effectiveMode === "entities" ? "Active Entities" : "Filings Tracked"}
                         </p>
                         <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">
-                        {effectiveMode === "entities" ? "Banks → MSME" : "0-100"}
-                      </h3>
+                      <AnimatedNumber
+                        value={effectiveMode === "entities" ? stats.totalEntities : stats.totalFilingsTracked}
+                        format="number"
+                        className="text-3xl font-geist-pixel text-white tracking-tighter"
+                      />
                       <div className="flex items-center gap-1.5 text-saffron text-xs font-bold mt-3">
-                        <CheckCircle2 className="w-3.5 h-3.5" /><span>{effectiveMode === "entities" ? "Universities → Trusts" : "Health check"}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>
+                          {effectiveMode === "entities"
+                            ? `${stats.entityTypesCount} entity types`
+                            : "GSTR · ITR · TDS · MCA"}
+                        </span>
                       </div>
                     </div>
                   </div>
-                  {/* Card 3 — descriptive, no fake numbers */}
+                  {/* Card 3 — Dynamic: Audit entries or tax profiles */}
                   <div className="col-span-2 bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group relative">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500 overflow-hidden">
                       <div className="relative z-10 flex justify-between items-end">
                         <div>
                           <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">
-                            {effectiveMode === "entities" ? "Compliance Calendar" : "Portfolio Analytics"}
+                            {effectiveMode === "entities" ? "Audit Trail Entries" : "Tax Profiles Computed"}
                           </p>
-                          <div className="flex items-baseline gap-2">
-                            <span className="text-xl font-sans font-medium text-white tracking-tight">
-                              {effectiveMode === "entities" ? "29 Filing Types" : "Real-time"}
-                            </span>
+                          <div className="flex items-baseline gap-3">
+                            <AnimatedNumber
+                              value={effectiveMode === "entities" ? stats.totalAuditEntries : stats.totalTaxProfiles}
+                              format="number"
+                              className="text-2xl font-geist-pixel text-white tracking-tight"
+                            />
                             <span className="text-sm font-geist-pixel text-emerald-400">
-                              {effectiveMode === "entities" ? "Auto-generated" : "Tracking"}
+                              {effectiveMode === "entities" ? "hash-chained" : "FY 2024-25"}
                             </span>
                           </div>
                         </div>
