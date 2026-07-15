@@ -372,24 +372,8 @@ export async function registerEInvoice(invoice: EInvoiceRequest): Promise<EInvoi
     }
   }
 
-  // Dev: generate mock IRN
-  const irn = `${invoice.sellerGstin.substring(0, 3)}${invoice.invoiceNumber}${Date.now().toString(36)}`.substring(0, 64);
-  const qrCode = Buffer.from(JSON.stringify({
-    irn,
-    sellerGstin: invoice.sellerGstin,
-    invoiceNumber: invoice.invoiceNumber,
-    invoiceDate: invoice.invoiceDate,
-    invoiceValue: invoice.invoiceValue,
-  })).toString("base64");
-
-  return {
-    irn,
-    qrCode,
-    signedInvoice: "",
-    status: "registered",
-    ackNo: `ACK${Date.now()}`,
-    ackDate: new Date().toISOString(),
-  };
+  // No NIC API key configured — throw error instead of generating fake IRN
+  throw new Error("E-invoicing not configured. Set NIC_EINVOICE_API_KEY environment variable to enable IRN/QR generation via NIC API.");
 }
 
 /**

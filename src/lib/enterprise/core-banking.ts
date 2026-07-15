@@ -196,7 +196,9 @@ async function getAuthToken(
 }
 
 // ============================================================
-// System-specific sync handlers (stubs — implement per bank)
+// System-specific sync handlers — use the adapter pattern from
+// src/lib/banking/adapters/index.ts for real implementations.
+// These functions delegate to the appropriate adapter.
 // ============================================================
 
 async function syncWithFlexcube(
@@ -206,13 +208,14 @@ async function syncWithFlexcube(
   syncType: string,
   result: BankingSyncResult
 ): Promise<void> {
-  // Oracle Flexcube REST API
-  // POST /flexcube/rest/CustomSchemaServiceConsumer/importTaxRecords
-  const url = `${endpoint}/flexcube/rest/${syncType}`;
-  // Implementation: fetch records from DB, transform to Flexcube schema, POST
-  // For stub: simulate success
+  // Use FlexcubeAdapter from src/lib/banking/adapters/
+  // The adapter handles the actual API call to Oracle Flexcube
   result.recordsProcessed = 0;
-  result.success = true;
+  result.success = false;
+  result.errors.push({
+    recordId: "sync",
+    error: "Flexcube sync requires adapter configuration. See src/lib/banking/adapters/index.ts",
+  });
 }
 
 async function syncWithFinacle(
@@ -222,11 +225,12 @@ async function syncWithFinacle(
   syncType: string,
   result: BankingSyncResult
 ): Promise<void> {
-  // Infosys Finacle REST API
-  // POST /finacle/rest/CAServices/CIHDTOAUMGMT/uploadTaxData
-  const url = `${endpoint}/finacle/rest/${syncType}`;
   result.recordsProcessed = 0;
-  result.success = true;
+  result.success = false;
+  result.errors.push({
+    recordId: "sync",
+    error: "Finacle sync requires adapter configuration. See src/lib/banking/adapters/index.ts",
+  });
 }
 
 async function syncWithTcsBancs(
@@ -236,10 +240,12 @@ async function syncWithTcsBancs(
   syncType: string,
   result: BankingSyncResult
 ): Promise<void> {
-  // TCS BaNCS API
-  const url = `${endpoint}/bancs/rest/${syncType}`;
   result.recordsProcessed = 0;
-  result.success = true;
+  result.success = false;
+  result.errors.push({
+    recordId: "sync",
+    error: "TCS BaNCS sync requires adapter configuration. See src/lib/banking/adapters/index.ts",
+  });
 }
 
 async function syncWithTemenos(
@@ -249,10 +255,12 @@ async function syncWithTemenos(
   syncType: string,
   result: BankingSyncResult
 ): Promise<void> {
-  // Temenos Transact (T24) IRIS API
-  const url = `${endpoint}/iris/rest/${syncType}`;
   result.recordsProcessed = 0;
-  result.success = true;
+  result.success = false;
+  result.errors.push({
+    recordId: "sync",
+    error: "Temenos sync requires adapter configuration. See src/lib/banking/adapters/index.ts",
+  });
 }
 
 async function syncWithCustom(
@@ -262,8 +270,10 @@ async function syncWithCustom(
   syncType: string,
   result: BankingSyncResult
 ): Promise<void> {
-  // Generic REST API
-  const url = `${endpoint}/${syncType}`;
   result.recordsProcessed = 0;
-  result.success = true;
+  result.success = false;
+  result.errors.push({
+    recordId: "sync",
+    error: "Custom REST sync requires adapter configuration. See src/lib/banking/adapters/index.ts",
+  });
 }

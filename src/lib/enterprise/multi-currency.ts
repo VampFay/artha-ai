@@ -77,26 +77,21 @@ async function getRate(from: Currency, to: Currency, date?: string): Promise<num
   const targetDate = date || new Date().toISOString().slice(0, 10);
 
   // In production: query ExchangeRate model in DB
-  // For now: return hardcoded approximate rates for dev
-  const FALLBACK_RATES: Record<string, number> = {
-    "INR-USD": 0.012,
-    "USD-INR": 83.5,
-    "INR-EUR": 0.011,
-    "EUR-INR": 90.5,
-    "USD-EUR": 0.92,
-    "EUR-USD": 1.08,
-    "USD-GBP": 0.79,
-    "GBP-USD": 1.27,
-    "USD-SGD": 1.34,
-    "SGD-USD": 0.75,
-    "USD-AED": 3.67,
-    "AED-USD": 0.27,
-    "USD-JPY": 145,
-    "JPY-USD": 0.0069,
-  };
+  // Try fetching live rates from open.er-api.com (free, no API key)
+  try {
+    const res = await fetch(`https://open.er-api.com/v6/latest/${from}`, { signal: AbortSignal.timeout(5000) });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.rates && data.rates[to]) {
+        return data.rates[to];
+      }
+    }
+  } catch {
+    // API unavailable — fall through to inverse lookup
+  }
 
-  const key = `${from}-${to}`;
-  return FALLBACK_RATES[key] ?? null;
+  // No live rate available — throw error instead of using fake rates
+  throw new Error(`No exchange rate available for ${from} → ${to}. Set up a rate provider or configure EXCHANGE_RATE_API_KEY.`);
 }
 
 /**

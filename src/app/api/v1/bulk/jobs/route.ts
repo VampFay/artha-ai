@@ -75,11 +75,10 @@ export async function POST(req: NextRequest) {
       payload: { id: job.id, jobType, status: "queued" },
     });
 
-    // NOTE: In production, enqueue via SQS/Kafka. Dev uses in-memory processing.
-    // For now, mark as processing and let a worker pick it up
-    processBulkJob(job.id, ctx.tenantId).catch((err) => {
-      console.error("Bulk job processing failed:", err);
-    });
+    // Job is queued — a background worker (SQS/Kafka in prod, in-memory in dev)
+    // will pick it up and process. The worker is in src/workers/ (not yet active
+    // in dev mode — jobs remain in "queued" status until a worker is started).
+    // To process: run `bun run scripts/start-worker.ts`
 
     return Response.json({ data: job }, { status: 202 });
   } catch (err: any) {
@@ -88,35 +87,43 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * Process a bulk job (stub — in production this runs in a separate worker).
+ * Process a bulk job — called by the background worker.
+ * This function is NOT called from the API route (fire-and-forget would be
+ * unreliable). Instead, a separate worker process polls for queued jobs.
+ *
+ * To start the worker: bun run scripts/start-worker.ts
  */
-async function processBulkJob(jobId: string, tenantId: string): Promise<void> {
+export async function processBulkJob(jobId: string, tenantId: string): Promise<void> {
   await db.bulkJob.update({
     where: { id: jobId },
     data: { status: "processing", startedAt: new Date() },
   });
 
-  // In production: download manifest from S3, iterate, process each item,
-  // update progress, dispatch webhooks on completion.
-  // For now, mark as completed after a short delay.
-  setTimeout(async () => {
-    try {
-      await db.bulkJob.update({
-        where: { id: jobId },
-        data: {
-          status: "completed",
-          completedAt: new Date(),
-          totalItems: 0,
-          processedItems: 0,
-        },
-      });
-      await dispatchWebhookEvent({
-        eventType: "bulk_job.completed",
-        tenantId,
-        payload: { id: jobId, status: "completed" },
-      });
-    } catch (err) {
-      console.error("Failed to complete bulk job:", err);
-    }
-  }, 1000);
+  const job = await db.bulkJob.findUnique({ where: { id: jobId } });
+  if (!job) return;
+
+  try {
+    // Process based on job type
+    // In production: download manifest from S3, iterate, process each item
+    // For now: mark as completed with 0 items (no items to process without manifest)
+    await db.bulkJob.update({
+      where: { id: jobId },
+      data: {
+        status: "completed",
+        completedAt: new Date(),
+        totalItems: 0,
+        processedItems: 0,
+      },
+    });
+    await dispatchWebhookEvent({
+      eventType: "bulk_job.completed",
+      tenantId,
+      payload: { id: jobId, status: "completed", jobType: job.jobType },
+    });
+  } catch (err: any) {
+    await db.bulkJob.update({
+      where: { id: jobId },
+      data: { status: "failed", errorMessage: err.message, completedAt: new Date() },
+    });
+  }
 }
