@@ -234,54 +234,54 @@ export default function LoginScreen() {
                   )}
                 </h1>
                 <div className="grid grid-cols-2 gap-5">
-                  {/* Card 1 */}
+                  {/* Card 1 — descriptive, no fake numbers */}
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {effectiveMode === "entities" ? "Entity Tax Burden" : "Live Net Worth"}
+                          {effectiveMode === "entities" ? "14 Tax Types" : "Tax Readiness"}
                         </p>
                         <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
                       </div>
                       <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">
-                        {effectiveMode === "entities" ? "₹2.89 Cr" : "₹1.42 Cr"}
+                        {effectiveMode === "entities" ? "CIT → GST" : "Auto-detect"}
                       </h3>
-                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3 bg-emerald-400/10 w-fit px-2.5 py-1 rounded-full border border-emerald-400/20">
-                        <ArrowUpRight className="w-3 h-3" /><span>{effectiveMode === "entities" ? "28.9% effective" : "+12.4% YTD"}</span>
+                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3">
+                        <ArrowUpRight className="w-3 h-3" /><span>{effectiveMode === "entities" ? "TDS + TCS + CSR" : "Form 16 + AIS"}</span>
                       </div>
                     </div>
                   </div>
-                  {/* Card 2 */}
+                  {/* Card 2 — descriptive, no fake numbers */}
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {effectiveMode === "entities" ? "Compliance Filings" : "Tax Harvested"}
+                          {effectiveMode === "entities" ? "30 Entity Types" : "Wealth Score"}
                         </p>
                         <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
                       </div>
                       <h3 className="text-3xl font-geist-pixel text-white tracking-tighter">
-                        {effectiveMode === "entities" ? "34 due" : "₹42.5K"}
+                        {effectiveMode === "entities" ? "Banks → MSME" : "0-100"}
                       </h3>
                       <div className="flex items-center gap-1.5 text-saffron text-xs font-bold mt-3">
-                        <CheckCircle2 className="w-3.5 h-3.5" /><span>{effectiveMode === "entities" ? "0 overdue" : "Fully Optimized"}</span>
+                        <CheckCircle2 className="w-3.5 h-3.5" /><span>{effectiveMode === "entities" ? "Universities → Trusts" : "Health check"}</span>
                       </div>
                     </div>
                   </div>
-                  {/* Card 3 (Chart) */}
+                  {/* Card 3 — descriptive, no fake numbers */}
                   <div className="col-span-2 bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group relative">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500 overflow-hidden">
                       <div className="relative z-10 flex justify-between items-end">
                         <div>
                           <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">
-                            {effectiveMode === "entities" ? "Tax Regime Comparison" : "Portfolio Trajectory"}
+                            {effectiveMode === "entities" ? "Compliance Calendar" : "Portfolio Analytics"}
                           </p>
                           <div className="flex items-baseline gap-2">
                             <span className="text-xl font-sans font-medium text-white tracking-tight">
-                              {effectiveMode === "entities" ? "§115BAA saves" : "Alpha"}
+                              {effectiveMode === "entities" ? "29 Filing Types" : "Real-time"}
                             </span>
                             <span className="text-sm font-geist-pixel text-emerald-400">
-                              {effectiveMode === "entities" ? "₹7.77L" : "+4.2%"}
+                              {effectiveMode === "entities" ? "Auto-generated" : "Tracking"}
                             </span>
                           </div>
                         </div>
