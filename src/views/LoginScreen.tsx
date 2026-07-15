@@ -143,72 +143,135 @@ const LiveVideoLoop = memo(() => {
 });
 
 /**
- * AnimatedNumber — smoothly counts up to a target value with easing.
- * Used for dynamic stats on the login screen.
+ * Rotating content carousel for the login screen left panel.
+ * Cycles through multiple sets of useful, informative content
+ * with smooth AnimatePresence transitions.
  */
-function AnimatedNumber({ value, format = "number", className = "" }: {
-  value: number;
-  format?: "number" | "currency";
-  className?: string;
-}) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const prevValue = useRef(0);
-  const rafRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    const start = prevValue.current;
-    const end = value;
-    const duration = 1200; // 1.2s smooth animation
-    const startTime = performance.now();
-
-    const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-
-    const animate = (currentTime: number) => {
-      const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = easeOutCubic(progress);
-      const current = start + (end - start) * eased;
-      setDisplayValue(current);
-
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(animate);
-      } else {
-        prevValue.current = end;
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, [value]);
-
-  // Format the display value
-  const formatted = format === "currency"
-    ? formatIndianCurrency(displayValue)
-    : Math.round(displayValue).toLocaleString("en-IN");
-
-  return (
-    <motion.h3
-      key={value} // re-trigger motion on value change
-      initial={{ opacity: 0.5, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={className}
-    >
-      {formatted}
-    </motion.h3>
-  );
+interface CarouselSlide {
+  icon: React.ReactNode;
+  label: string;
+  title: string;
+  subtitle: string;
+  tag: string;
+  tagColor: "emerald" | "saffron" | "blue";
 }
 
-function formatIndianCurrency(n: number): string {
-  if (n === 0) return "₹0";
-  if (n >= 10000000) return `₹${(n / 10000000).toFixed(2)} Cr`;
-  if (n >= 100000) return `₹${(n / 100000).toFixed(2)} L`;
-  if (n >= 1000) return `₹${(n / 1000).toFixed(1)}K`;
-  return `₹${Math.round(n).toLocaleString("en-IN")}`;
-}
+const ENTITY_SLIDES: CarouselSlide[] = [
+  {
+    icon: <Activity className="w-4 h-4 text-emerald-400" />,
+    label: "TAX ENGINE",
+    title: "CIT · GST · TDS · TCS",
+    subtitle: "14 tax types computed automatically",
+    tag: "§115BAA → 25.17%",
+    tagColor: "emerald",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 text-saffron" />,
+    label: "COMPLIANCE",
+    title: "29 Filing Types",
+    subtitle: "ITR · GSTR · TDS · MCA · RERA · RBI",
+    tag: "Auto-generated calendar",
+    tagColor: "saffron",
+  },
+  {
+    icon: <Activity className="w-4 h-4 text-emerald-400" />,
+    label: "ENTITY COVERAGE",
+    title: "30 Entity Types",
+    subtitle: "Banks → NBFCs → Universities → Trusts → MSMEs",
+    tag: "RBI · IRDAI · UGC · MCA",
+    tagColor: "emerald",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 text-saffron" />,
+    label: "BANK-GRADE SECURITY",
+    title: "AES-256-GCM + KMS",
+    subtitle: "Field-level PII encryption · Hash-chained audit",
+    tag: "SOC 2 · ISO 27001 · DPDP",
+    tagColor: "saffron",
+  },
+  {
+    icon: <Sparkles className="w-4 h-4 text-blue-400" />,
+    label: "AI TAX ADVISOR",
+    title: "GLM-Powered Insights",
+    subtitle: "Regime optimization · ITC planning · TP risk",
+    tag: "Proactive alerts + peer benchmarking",
+    tagColor: "blue",
+  },
+  {
+    icon: <Activity className="w-4 h-4 text-emerald-400" />,
+    label: "CORE BANKING",
+    title: "Flexcube · Finacle · BaNCS",
+    subtitle: "Bi-directional sync with adapter pattern",
+    tag: "RBI returns · GL export · transaction import",
+    tagColor: "emerald",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 text-saffron" />,
+    label: "DTAA + TRANSFER PRICING",
+    title: "10 Countries · 5 TP Methods",
+    subtitle: "Withholding rate lookup · Form 3CEB · Safe Harbour",
+    tag: "PE detection · penalty computation",
+    tagColor: "saffron",
+  },
+];
+
+const INDIVIDUAL_SLIDES: CarouselSlide[] = [
+  {
+    icon: <Activity className="w-4 h-4 text-emerald-400" />,
+    label: "TAX READINESS",
+    title: "Auto-detect Form 16 + AIS",
+    subtitle: "PAN · Aadhaar · bank statements · rent receipts",
+    tag: "Old vs New regime comparison",
+    tagColor: "emerald",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 text-saffron" />,
+    label: "WEALTH SCORE",
+    title: "0-100 Health Score",
+    subtitle: "Savings rate · debt-to-income · emergency fund",
+    tag: "Real-time financial health check",
+    tagColor: "saffron",
+  },
+  {
+    icon: <Activity className="w-4 h-4 text-emerald-400" />,
+    label: "PORTFOLIO ANALYTICS",
+    title: "Asset Allocation Tracking",
+    subtitle: "Equity · Debt · Real Estate · Gold · Crypto",
+    tag: "Rebalancing suggestions",
+    tagColor: "emerald",
+  },
+  {
+    icon: <Sparkles className="w-4 h-4 text-blue-400" />,
+    label: "AI ASSISTANT",
+    title: "Ask Artha Oracle",
+    subtitle: "Tax-saving strategies · investment advice",
+    tag: "Powered by GLM-4.6V",
+    tagColor: "blue",
+  },
+  {
+    icon: <ShieldCheck className="w-4 h-4 text-saffron" />,
+    label: "RETIREMENT PLANNING",
+    title: "FIRE Calculator",
+    subtitle: "Project corpus · withdrawal rate · timeline",
+    tag: "Monte Carlo simulation",
+    tagColor: "saffron",
+  },
+  {
+    icon: <Activity className="w-4 h-4 text-emerald-400" />,
+    label: "ESTATE PLANNING",
+    title: "Nominee Management",
+    subtitle: "Will · Trust · Power of Attorney · Asset mapping",
+    tag: "Succession planning",
+    tagColor: "emerald",
+  },
+];
+
+const tagColorClasses: Record<string, string> = {
+  emerald: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20",
+  saffron: "text-saffron bg-saffron/10 border-saffron/20",
+  blue: "text-blue-400 bg-blue-400/10 border-blue-400/20",
+};
 
 export default function LoginScreen() {
   const { toast } = useToast();
@@ -223,43 +286,19 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch real platform stats for dynamic login cards
-  const [stats, setStats] = useState<{
-    totalEntities: number;
-    totalTaxBurden: number;
-    avgEffectiveRate: number;
-    totalFilingsTracked: number;
-    totalAuditEntries: number;
-    entityTypesCount: number;
-    taxTypesCount: number;
-  }>({
-    totalEntities: 0,
-    totalTaxBurden: 0,
-    avgEffectiveRate: 0,
-    totalFilingsTracked: 0,
-    totalAuditEntries: 0,
-    entityTypesCount: 0,
-    taxTypesCount: 0,
-  });
+  // Rotating carousel state
+  const [slideIndex, setSlideIndex] = useState(0);
+  const slides = effectiveMode === "entities" ? ENTITY_SLIDES : INDIVIDUAL_SLIDES;
+  const currentSlide = slides[slideIndex % slides.length];
 
+  // Auto-rotate slides every 4 seconds
   useEffect(() => {
-    fetch("/api/public/stats")
-      .then(r => r.json())
-      .then(d => {
-        if (d?.data) {
-          setStats({
-            totalEntities: d.data.totalEntities || 0,
-            totalTaxBurden: d.data.totalTaxBurden || 0,
-            avgEffectiveRate: d.data.avgEffectiveRate || 0,
-            totalFilingsTracked: d.data.totalFilingsTracked || 0,
-            totalAuditEntries: d.data.totalAuditEntries || 0,
-            entityTypesCount: d.data.entityTypesCount || 0,
-            taxTypesCount: d.data.taxTypesCount || 0,
-          });
-        }
-      })
-      .catch(() => {});
-  }, []);
+    setSlideIndex(0); // reset when mode changes
+    const interval = setInterval(() => {
+      setSlideIndex(prev => (prev + 1) % slides.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [effectiveMode, slides.length]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -340,71 +379,99 @@ export default function LoginScreen() {
                   )}
                 </h1>
                 <div className="grid grid-cols-2 gap-5">
-                  {/* Card 1 — Dynamic: Total Tax Computed (entities) or Tax Types (individual) */}
+                  {/* Card 1 — Rotating featured content */}
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {effectiveMode === "entities" ? "Total Tax Computed" : "Tax Types Tracked"}
+                          {currentSlide.label}
                         </p>
-                        <Activity className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform duration-500" />
+                        {currentSlide.icon}
                       </div>
-                      <AnimatedNumber
-                        value={effectiveMode === "entities" ? stats.totalTaxBurden : stats.taxTypesCount}
-                        format={effectiveMode === "entities" ? "currency" : "number"}
-                        className="text-3xl font-geist-pixel text-white tracking-tighter"
-                      />
-                      <div className="flex items-center gap-1 text-emerald-400 text-xs font-bold mt-3 bg-emerald-400/10 w-fit px-2.5 py-1 rounded-full border border-emerald-400/20">
-                        <ArrowUpRight className="w-3 h-3" />
-                        <span>
-                          {effectiveMode === "entities"
-                            ? `${(stats.avgEffectiveRate * 100).toFixed(1)}% avg effective`
-                            : "CIT · GST · TDS · TCS"}
-                        </span>
-                      </div>
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={slideIndex}
+                          initial={{ opacity: 0, y: 15, filter: "blur(8px)" }}
+                          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                          exit={{ opacity: 0, y: -15, filter: "blur(8px)" }}
+                          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <h3 className="text-2xl font-geist-pixel text-white tracking-tighter leading-tight">
+                            {currentSlide.title}
+                          </h3>
+                          <p className="text-xs text-stone-400 mt-2 leading-relaxed">
+                            {currentSlide.subtitle}
+                          </p>
+                        </motion.div>
+                      </AnimatePresence>
                     </div>
                   </div>
-                  {/* Card 2 — Dynamic: Entity count or filings tracked */}
+
+                  {/* Card 2 — Rotating tag content */}
                   <div className="bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500">
                       <div className="flex justify-between items-start mb-6">
                         <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase">
-                          {effectiveMode === "entities" ? "Active Entities" : "Filings Tracked"}
+                          FEATURED
                         </p>
-                        <ShieldCheck className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
+                        <Sparkles className="w-4 h-4 text-saffron group-hover:scale-110 transition-transform duration-500" />
                       </div>
-                      <AnimatedNumber
-                        value={effectiveMode === "entities" ? stats.totalEntities : stats.totalFilingsTracked}
-                        format="number"
-                        className="text-3xl font-geist-pixel text-white tracking-tighter"
-                      />
-                      <div className="flex items-center gap-1.5 text-saffron text-xs font-bold mt-3">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>
-                          {effectiveMode === "entities"
-                            ? `${stats.entityTypesCount} entity types`
-                            : "GSTR · ITR · TDS · MCA"}
-                        </span>
-                      </div>
+                      <AnimatePresence mode="wait">
+                        <motion.div
+                          key={slideIndex}
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 1.05 }}
+                          transition={{ duration: 0.4, ease: "easeOut" }}
+                        >
+                          <h3 className="text-2xl font-geist-pixel text-white tracking-tighter leading-tight">
+                            {currentSlide.tag}
+                          </h3>
+                          <div className={`flex items-center gap-1.5 text-xs font-bold mt-3 w-fit px-2.5 py-1 rounded-full border ${tagColorClasses[currentSlide.tagColor]}`}>
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>Active</span>
+                          </div>
+                        </motion.div>
+                      </AnimatePresence>
                     </div>
                   </div>
-                  {/* Card 3 — Dynamic: Audit entries or tax profiles */}
+
+                  {/* Card 3 — Progress indicator + full-width chart */}
                   <div className="col-span-2 bg-gradient-to-b from-white/[0.05] to-transparent p-[1px] rounded-3xl overflow-hidden group relative">
                     <div className="bg-black/40 backdrop-blur-xl rounded-[23px] p-6 h-full border border-white/[0.05] group-hover:bg-black/20 transition-all duration-500 overflow-hidden">
                       <div className="relative z-10 flex justify-between items-end">
                         <div>
                           <p className="text-[10px] font-bold tracking-widest text-stone-400 uppercase mb-2">
-                            {effectiveMode === "entities" ? "Audit Trail Entries" : "Tax Profiles Computed"}
+                            {effectiveMode === "entities" ? "PLATFORM CAPABILITY" : "WEALTH INTELLIGENCE"}
                           </p>
                           <div className="flex items-baseline gap-3">
-                            <AnimatedNumber
-                              value={effectiveMode === "entities" ? stats.totalAuditEntries : stats.totalTaxProfiles}
-                              format="number"
-                              className="text-2xl font-geist-pixel text-white tracking-tight"
-                            />
-                            <span className="text-sm font-geist-pixel text-emerald-400">
-                              {effectiveMode === "entities" ? "hash-chained" : "FY 2024-25"}
-                            </span>
+                            <AnimatePresence mode="wait">
+                              <motion.span
+                                key={slideIndex}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.4 }}
+                                className="text-xl font-sans font-medium text-white tracking-tight"
+                              >
+                                {currentSlide.subtitle}
+                              </motion.span>
+                            </AnimatePresence>
+                          </div>
+                          {/* Slide indicator dots */}
+                          <div className="flex gap-1.5 mt-4">
+                            {slides.map((_, i) => (
+                              <button
+                                key={i}
+                                onClick={() => setSlideIndex(i)}
+                                className={`h-1 rounded-full transition-all duration-300 ${
+                                  i === slideIndex % slides.length
+                                    ? "w-8 bg-saffron"
+                                    : "w-2 bg-white/20 hover:bg-white/40"
+                                }`}
+                                aria-label={`Go to slide ${i + 1}`}
+                              />
+                            ))}
                           </div>
                         </div>
                         <Sparkles className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-500" />
