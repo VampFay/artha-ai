@@ -346,7 +346,7 @@ export interface EInvoiceResponse {
 /**
  * Register an e-invoice with NIC (National Informatics Centre) API.
  * Production: calls https://einvoice1.gst.gov.in/api/v1/invoice
- * Dev: returns mock IRN
+ * Dev: throws error (set NIC_EINVOICE_API_KEY to enable)
  */
 export async function registerEInvoice(invoice: EInvoiceRequest): Promise<EInvoiceResponse> {
   const NIC_ENABLED = process.env.NIC_EINVOICE_API_KEY;
