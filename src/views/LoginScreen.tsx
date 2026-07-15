@@ -286,6 +286,10 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  // Use "individual" as default until hydrated to prevent SSR/client mismatch.
+  // After hydration, use the actual portalMode from localStorage.
+  const effectiveMode = hydrated ? portalMode : "individual";
+
   // Rotating carousel state
   const [slideIndex, setSlideIndex] = useState(0);
   const slides = effectiveMode === "entities" ? ENTITY_SLIDES : INDIVIDUAL_SLIDES;
@@ -337,10 +341,6 @@ export default function LoginScreen() {
   const handleEmailChange = (v: string) => { setEmail(v); if (error) setError(""); };
   const handlePasswordChange = (v: string) => { setPassword(v); if (error) setError(""); };
   const handleNameChange = (v: string) => { setName(v); if (error) setError(""); };
-
-  // Use "individual" as default until hydrated to prevent SSR/client mismatch.
-  // After hydration, use the actual portalMode from localStorage.
-  const effectiveMode = hydrated ? portalMode : "individual";
 
   return (
     <div className="min-h-screen flex w-full bg-black text-white font-sans overflow-hidden">
