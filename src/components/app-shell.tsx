@@ -32,6 +32,9 @@ import EntityComplianceView from "@/views/entity/EntityComplianceView";
 import EntityTeamView from "@/views/entity/EntityTeamView";
 import EntityNoticesView from "@/views/entity/EntityNoticesView";
 import EntityDocumentsView from "@/views/entity/EntityDocumentsView";
+import EntityGSTReturnsView from "@/views/entity/EntityGSTReturnsView";
+import EntityTDSReturnsView from "@/views/entity/EntityTDSReturnsView";
+import EntityAdvisorView from "@/views/entity/EntityAdvisorView";
 
 const INDIVIDUAL_NAV = [
   { num: "01", category: "OVERVIEW", items: [{ id: "dashboard", label: "Dashboard" }] },
@@ -46,8 +49,9 @@ const INDIVIDUAL_NAV = [
 const ENTITY_NAV = [
   { num: "01", category: "ENTITIES", items: [{ id: "entity-switcher", label: "Switch Entity" }, { id: "entity-onboarding", label: "Add New Entity" }] },
   { num: "02", category: "ENTITY OPS", items: [{ id: "entity-dashboard", label: "Dashboard" }, { id: "entity-tax", label: "Tax Computation" }, { id: "entity-compliance", label: "Compliance Calendar" }] },
-  { num: "03", category: "RECORDS", items: [{ id: "entity-documents", label: "Documents" }, { id: "entity-notices", label: "Tax Notices" }] },
-  { num: "04", category: "TEAM", items: [{ id: "entity-team", label: "Team & Access" }] },
+  { num: "03", category: "FILINGS", items: [{ id: "entity-gst-returns", label: "GST Returns" }, { id: "entity-tds-returns", label: "TDS Returns" }] },
+  { num: "04", category: "RECORDS", items: [{ id: "entity-documents", label: "Documents" }, { id: "entity-notices", label: "Tax Notices" }] },
+  { num: "05", category: "AI & TEAM", items: [{ id: "entity-advisor", label: "AI Tax Advisor" }, { id: "entity-team", label: "Team & Access" }] },
 ];
 
 export default function AppShell({ children }: { children: ReactNode }) {
@@ -135,6 +139,9 @@ export default function AppShell({ children }: { children: ReactNode }) {
         case "entity-team": return <EntityTeamView />;
         case "entity-notices": return <EntityNoticesView />;
         case "entity-documents": return <EntityDocumentsView />;
+        case "entity-gst-returns": return <EntityGSTReturnsView />;
+        case "entity-tds-returns": return <EntityTDSReturnsView />;
+        case "entity-advisor": return <EntityAdvisorView />;
         case "settings": return <SettingsView user={user as any} onLogout={logout} />;
         // Block ALL individual views — redirect to entity switcher
         default:

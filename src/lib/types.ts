@@ -22,7 +22,10 @@ export type ViewState =
   | "entity-team"
   | "entity-notices"
   | "entity-onboarding"
-  | "entity-switcher";
+  | "entity-switcher"
+  | "entity-gst-returns"
+  | "entity-tds-returns"
+  | "entity-advisor";
 
 export interface User {
   id: string;
