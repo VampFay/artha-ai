@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef, memo, useCallback } from "react";
+import React, { useState, useEffect, useRef, memo } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ShieldCheck, Loader2, ArrowRight, Activity, Sparkles, CheckCircle2, ArrowUpRight, Eye, EyeOff } from "lucide-react";
+import { ShieldCheck, Loader2, ArrowRight, Activity, Sparkles, CheckCircle2, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/hooks/use-toast";
 import { usePortal } from "@/lib/portal-context";

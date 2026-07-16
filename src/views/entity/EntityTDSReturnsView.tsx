@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import { usePortal } from "@/lib/portal-context";
 import { useNav } from "@/lib/nav-context";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, FileDown, FileText, AlertCircle } from "lucide-react";
+import { Loader2, FileDown, FileText } from "lucide-react";
 
 export default function EntityTDSReturnsView() {
   const { activeEntityId } = usePortal();
