@@ -102,7 +102,7 @@ export async function calculateComplianceScore(entityId: string): Promise<Compli
  * Sends email alerts for overdue + upcoming filings.
  */
 export async function runDailyComplianceCheck(): Promise<void> {
-  console.log("[Compliance Monitor] Running daily check...");
+  // Removed
 
   const entities = await db.entity.findMany({
     where: { isActive: true },
@@ -172,7 +172,7 @@ export async function runDailyComplianceCheck(): Promise<void> {
     details: { entitiesChecked: entities.length, alertsSent },
   });
 
-  console.log(`[Compliance Monitor] Done. Checked ${entities.length} entities, sent ${alertsSent} alerts.`);
+  // Removed
 }
 
 /**

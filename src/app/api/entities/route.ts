@@ -15,7 +15,7 @@ import { z } from "zod";
 const CreateEntitySchema = z.object({
   name: z.string().min(1).max(255),
   legalName: z.string().max(255).optional(),
-  entityType: z.string().refine((val) => val in ENTITY_TYPES, {
+  entityType: z.string().refine((val) => Object.keys(ENTITY_TYPES).includes(val), {
     message: "Invalid entityType",
   }),
   industrySector: z.string().max(255).optional(),
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
     const parsed = CreateEntitySchema.safeParse(body);
     if (!parsed.success) {
       return errorResponse({
-        message: `Validation error: ${parsed.error.errors.map(e => e.message).join(", ")}`,
+        message: `Validation error: ${parsed.error.issues.map(e => e.message).join(", ")}`,
         statusCode: 400,
       });
     }
