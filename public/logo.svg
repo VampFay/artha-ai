@@ -1,29 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 30 30" style="enable-background:new 0 0 30 30;" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+   viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
 <defs>
   <style type="text/css">
-    .st194{fill:#2D2D2D;stroke:#FFFFFF;stroke-width:0.6317;stroke-miterlimit:10;}
-    .st23{fill:#FFFFFF;}
-
-    .z-breathe {
-      animation: breathe 2.5s ease-in-out infinite;
+    .z-glow {
+      animation: zGlow 3s ease-in-out infinite;
     }
-
-    @keyframes breathe {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
+    .z-pulse {
+      animation: zPulse 2s ease-in-out infinite;
+    }
+    .z-rotate {
+      animation: zRotate 12s linear infinite;
+      transform-origin: 32px 32px;
+    }
+    @keyframes zGlow {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.9; }
+    }
+    @keyframes zPulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.03); }
+    }
+    @keyframes zRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
+  <linearGradient id="z-grad-bg" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#f59e0b"/>
+    <stop offset="50%" stop-color="#f97316"/>
+    <stop offset="100%" stop-color="#ea580c"/>
+  </linearGradient>
+  <linearGradient id="z-grad-bar" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#fff" stop-opacity="0.95"/>
+    <stop offset="100%" stop-color="#fff" stop-opacity="0.7"/>
+  </linearGradient>
+  <radialGradient id="z-grad-glow" cx="0.5" cy="0.5" r="0.5">
+    <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.4"/>
+    <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+  </radialGradient>
 </defs>
 
-<g>
-  <path class="st194" d="M24.51,28.51H5.49c-2.21,0-4-1.79-4-4V5.49c0-2.21,1.79-4,4-4h19.03c2.21,0,4,1.79,4,4v19.03
-    C28.51,26.72,26.72,28.51,24.51,28.51z"/>
-  <g class="z-breathe">
-    <path class="st23" d="M15.47,7.1l-1.3,1.85c-0.2,0.29-0.54,0.47-0.9,0.47h-7.1V7.09C6.16,7.1,15.47,7.1,15.47,7.1z"/>
-    <polygon class="st23" points="24.3,7.1 13.14,22.91 5.7,22.91 16.86,7.1"/>
-    <path class="st23" d="M14.53,22.91l1.31-1.86c0.2-0.29,0.54-0.47,0.9-0.47h7.09v2.33H14.53z"/>
-  </g>
+<!-- Glow background -->
+<circle cx="32" cy="32" r="30" fill="url(#z-grad-glow)" class="z-glow"/>
+
+<!-- Outer rotating ring -->
+<g class="z-rotate">
+  <circle cx="32" cy="32" r="28" fill="none" stroke="url(#z-grad-bg)" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="3 2"/>
 </g>
+
+<!-- Main rounded square -->
+<g class="z-pulse">
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#z-grad-bg)"/>
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="none" stroke="#fff" stroke-width="0.5" stroke-opacity="0.2"/>
+</g>
+
+<!-- "A" lettermark — geometric, precise -->
+<g fill="url(#z-grad-bar)">
+  <!-- Left diagonal -->
+  <path d="M20 44 L24 44 L34 20 L30 20 Z"/>
+  <!-- Right diagonal -->
+  <path d="M44 44 L40 44 L30 20 L34 20 Z"/>
+  <!-- Crossbar -->
+  <rect x="26" y="32" width="12" height="3.5" rx="1.75"/>
+</g>
+
+<!-- Inner highlight -->
+<g fill="#fff" opacity="0.15">
+  <path d="M22 42 L25 42 L33 22 L30 22 Z"/>
+</g>
+
+<!-- Top accent dot -->
+<circle cx="32" cy="14" r="1.5" fill="#fff" opacity="0.6" class="z-glow"/>
+
+<!-- Bottom accent dots -->
+<circle cx="22" cy="50" r="1" fill="#fff" opacity="0.3"/>
+<circle cx="42" cy="50" r="1" fill="#fff" opacity="0.3"/>
 </svg>

@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePortal } from "@/lib/portal-context";
 import { useNav } from "@/lib/nav-context";
 import { Building2, User } from "lucide-react";
+import AnimatedFinancialChart from "@/components/ui/AnimatedFinancialChart";
 
 const NOISE_SVG_URL = 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.8\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")';
 
@@ -477,16 +478,7 @@ export default function LoginScreen() {
                         <Sparkles className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-500" />
                       </div>
                       <div className="absolute bottom-0 left-0 right-0 h-28 opacity-40 group-hover:opacity-70 transition-opacity duration-500">
-                        <svg viewBox="0 0 400 100" preserveAspectRatio="none" className="w-full h-full">
-                          <defs>
-                            <linearGradient id="chart-grad-1" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.5" />
-                              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
-                            </linearGradient>
-                          </defs>
-                          <path d="M0,80 Q50,70 100,75 T200,50 T300,60 T400,20" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
-                          <path d="M0,80 Q50,70 100,75 T200,50 T300,60 T400,20 L400,100 L0,100 Z" fill="url(#chart-grad-1)" />
-                        </svg>
+                        <AnimatedFinancialChart />
                       </div>
                     </div>
                   </div>
