@@ -1,79 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-   viewBox="0 0 64 64" style="enable-background:new 0 0 64 64;" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 512 512" xml:space="preserve">
 <defs>
   <style type="text/css">
-    .z-glow {
-      animation: zGlow 3s ease-in-out infinite;
+    .logo-glow {
+      animation: logoGlow 3.5s ease-in-out infinite;
     }
-    .z-pulse {
-      animation: zPulse 2s ease-in-out infinite;
+    .logo-pulse {
+      animation: logoPulse 2.5s ease-in-out infinite;
+      transform-origin: center;
     }
-    .z-rotate {
-      animation: zRotate 12s linear infinite;
-      transform-origin: 32px 32px;
+    .logo-ring {
+      animation: logoRing 20s linear infinite;
+      transform-origin: center;
     }
-    @keyframes zGlow {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 0.9; }
+    .logo-shimmer {
+      animation: logoShimmer 4s ease-in-out infinite;
     }
-    @keyframes zPulse {
-      0%, 100% { opacity: 0.7; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.03); }
+    @keyframes logoGlow {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.8; }
     }
-    @keyframes zRotate {
+    @keyframes logoPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.92; transform: scale(0.985); }
+    }
+    @keyframes logoRing {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+    @keyframes logoShimmer {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.3; }
+    }
   </style>
-  <linearGradient id="z-grad-bg" x1="0" y1="0" x2="1" y2="1">
-    <stop offset="0%" stop-color="#f59e0b"/>
-    <stop offset="50%" stop-color="#f97316"/>
+
+  <!-- Primary gradient — saffron to deep amber -->
+  <linearGradient id="logo-bg-grad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#fbbf24"/>
+    <stop offset="35%" stop-color="#f59e0b"/>
+    <stop offset="70%" stop-color="#ea580c"/>
+    <stop offset="100%" stop-color="#c2410c"/>
+  </linearGradient>
+
+  <!-- Lettermark gradient — white with subtle warmth -->
+  <linearGradient id="logo-letter-grad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#ffffff"/>
+    <stop offset="50%" stop-color="#fff7ed"/>
+    <stop offset="100%" stop-color="#fed7aa"/>
+  </linearGradient>
+
+  <!-- Inner shine — top-left highlight -->
+  <linearGradient id="logo-shine-grad" x1="0" y1="0" x2="0.7" y2="1">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35"/>
+    <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05"/>
+    <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+  </linearGradient>
+
+  <!-- Glow radial gradient -->
+  <radialGradient id="logo-glow-grad" cx="0.5" cy="0.5" r="0.55">
+    <stop offset="0%" stop-color="#fde047" stop-opacity="0.5"/>
+    <stop offset="60%" stop-color="#f59e0b" stop-opacity="0.15"/>
+    <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+  </radialGradient>
+
+  <!-- Outer ring gradient -->
+  <linearGradient id="logo-ring-grad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#fbbf24"/>
+    <stop offset="50%" stop-color="#f59e0b"/>
     <stop offset="100%" stop-color="#ea580c"/>
   </linearGradient>
-  <linearGradient id="z-grad-bar" x1="0" y1="0" x2="0" y2="1">
-    <stop offset="0%" stop-color="#fff" stop-opacity="0.95"/>
-    <stop offset="100%" stop-color="#fff" stop-opacity="0.7"/>
-  </linearGradient>
-  <radialGradient id="z-grad-glow" cx="0.5" cy="0.5" r="0.5">
-    <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.4"/>
-    <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
-  </radialGradient>
+
+  <!-- Drop shadow filter -->
+  <filter id="logo-shadow" x="-20%" y="-20%" width="140%" height="140%">
+    <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#c2410c" flood-opacity="0.4"/>
+  </filter>
+
+  <!-- Glow filter for lettermark -->
+  <filter id="logo-letter-glow" x="-10%" y="-10%" width="120%" height="120%">
+    <feGaussianBlur stdDeviation="2" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
 </defs>
 
-<!-- Glow background -->
-<circle cx="32" cy="32" r="30" fill="url(#z-grad-glow)" class="z-glow"/>
+<!-- Background glow halo -->
+<circle cx="256" cy="256" r="240" fill="url(#logo-glow-grad)" class="logo-glow"/>
 
-<!-- Outer rotating ring -->
-<g class="z-rotate">
-  <circle cx="32" cy="32" r="28" fill="none" stroke="url(#z-grad-bg)" stroke-width="0.5" stroke-opacity="0.3" stroke-dasharray="3 2"/>
+<!-- Outer rotating ring — subtle, elegant -->
+<g class="logo-ring">
+  <circle cx="256" cy="256" r="224" fill="none" stroke="url(#logo-ring-grad)" stroke-width="1.5" stroke-opacity="0.25" stroke-dasharray="8 6"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="url(#logo-ring-grad)" stroke-width="0.8" stroke-opacity="0.15" stroke-dasharray="4 8"/>
 </g>
 
-<!-- Main rounded square -->
-<g class="z-pulse">
-  <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#z-grad-bg)"/>
-  <rect x="6" y="6" width="52" height="52" rx="14" fill="none" stroke="#fff" stroke-width="0.5" stroke-opacity="0.2"/>
+<!-- Main logo group with shadow + pulse -->
+<g class="logo-pulse" filter="url(#logo-shadow)">
+
+  <!-- Outer rounded square — saffron gradient -->
+  <rect x="64" y="64" width="384" height="384" rx="88" fill="url(#logo-bg-grad)"/>
+
+  <!-- Inner border — subtle white outline for depth -->
+  <rect x="64" y="64" width="384" height="384" rx="88" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.15"/>
+
+  <!-- Top-left shine highlight — gives 3D depth -->
+  <rect x="64" y="64" width="384" height="384" rx="88" fill="url(#logo-shine-grad)"/>
+
+  <!-- Decorative corner accents -->
+  <!-- Top-left -->
+  <path d="M 104 104 L 104 76 M 104 104 L 76 104" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round" fill="none"/>
+  <!-- Top-right -->
+  <path d="M 408 104 L 408 76 M 408 104 L 436 104" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round" fill="none"/>
+  <!-- Bottom-left -->
+  <path d="M 104 408 L 104 436 M 104 408 L 76 408" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round" fill="none"/>
+  <!-- Bottom-right -->
+  <path d="M 408 408 L 408 436 M 408 408 L 436 408" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.25" stroke-linecap="round" fill="none"/>
+
+  <!-- "A" Lettermark — precision engineered -->
+  <g filter="url(#logo-letter-glow)">
+
+    <!-- Left stroke of A -->
+    <path d="M 180 360 L 220 360 L 256 160 L 228 160 Z"
+          fill="url(#logo-letter-grad)"/>
+
+    <!-- Right stroke of A -->
+    <path d="M 332 360 L 292 360 L 256 160 L 284 160 Z"
+          fill="url(#logo-letter-grad)"/>
+
+    <!-- Crossbar of A -->
+    <rect x="220" y="280" width="72" height="18" rx="9"
+          fill="url(#logo-letter-grad)"/>
+
+    <!-- Crossbar inner highlight -->
+    <rect x="220" y="282" width="72" height="6" rx="3"
+          fill="#ffffff" opacity="0.4"/>
+  </g>
+
+  <!-- Inner shadow on left stroke — gives depth -->
+  <path d="M 180 360 L 220 360 L 256 160 L 228 160 Z"
+        fill="none" stroke="#000000" stroke-width="1" stroke-opacity="0.08" filter="url(#logo-letter-glow)"/>
+
+  <!-- Shimmer overlay on lettermark -->
+  <g class="logo-shimmer">
+    <path d="M 200 340 L 240 340 L 270 180 L 245 180 Z" fill="#ffffff"/>
+    <path d="M 312 340 L 272 340 L 242 180 L 267 180 Z" fill="#ffffff"/>
+    <rect x="220" y="280" width="72" height="18" rx="9" fill="#ffffff"/>
+  </g>
+
+  <!-- Top accent — small gem/dot above A -->
+  <circle cx="256" cy="130" r="8" fill="#ffffff" opacity="0.5" class="logo-glow"/>
+  <circle cx="256" cy="130" r="4" fill="#ffffff" opacity="0.9" class="logo-glow"/>
+
+  <!-- Bottom accent dots — symmetrical -->
+  <circle cx="200" cy="395" r="4" fill="#ffffff" opacity="0.3"/>
+  <circle cx="312" cy="395" r="4" fill="#ffffff" opacity="0.3"/>
+  <circle cx="256" cy="395" r="3" fill="#ffffff" opacity="0.2"/>
+
+  <!-- Subtle bottom gradient overlay — adds weight to bottom -->
+  <rect x="64" y="350" width="384" height="98" rx="0" fill="url(#logo-bg-grad)" opacity="0.15"/>
 </g>
-
-<!-- "A" lettermark — geometric, precise -->
-<g fill="url(#z-grad-bar)">
-  <!-- Left diagonal -->
-  <path d="M20 44 L24 44 L34 20 L30 20 Z"/>
-  <!-- Right diagonal -->
-  <path d="M44 44 L40 44 L30 20 L34 20 Z"/>
-  <!-- Crossbar -->
-  <rect x="26" y="32" width="12" height="3.5" rx="1.75"/>
-</g>
-
-<!-- Inner highlight -->
-<g fill="#fff" opacity="0.15">
-  <path d="M22 42 L25 42 L33 22 L30 22 Z"/>
-</g>
-
-<!-- Top accent dot -->
-<circle cx="32" cy="14" r="1.5" fill="#fff" opacity="0.6" class="z-glow"/>
-
-<!-- Bottom accent dots -->
-<circle cx="22" cy="50" r="1" fill="#fff" opacity="0.3"/>
-<circle cx="42" cy="50" r="1" fill="#fff" opacity="0.3"/>
 </svg>
