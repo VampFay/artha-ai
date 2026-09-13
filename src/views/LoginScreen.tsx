@@ -357,7 +357,7 @@ export default function LoginScreen() {
 
         {/* Header */}
         <div className="relative z-10 flex items-center gap-3">
-          <img src="/logo.svg" alt="Artha AI" className="w-10 h-10 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]" />
+          <img src="/logo.svg?v=3" alt="Artha AI" className="w-10 h-10 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]" />
           <span className="font-michroma text-2xl tracking-widest uppercase text-white">ARTHA</span>
         </div>
 
@@ -552,7 +552,7 @@ export default function LoginScreen() {
         <div className="absolute inset-0 z-0 opacity-[0.02] pointer-events-none" style={{ backgroundImage: NOISE_SVG_URL }} />
 
         <div className="lg:hidden flex items-center gap-3 mb-8 relative z-10">
-          <img src="/logo.svg" alt="Artha AI" className="w-10 h-10 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]" />
+          <img src="/logo.svg?v=3" alt="Artha AI" className="w-10 h-10 rounded-xl shadow-[0_0_20px_rgba(245,158,11,0.3)]" />
           <span className="font-michroma text-2xl tracking-widest uppercase text-white">ARTHA</span>
         </div>
 
