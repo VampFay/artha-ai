@@ -128,8 +128,10 @@ export function redactPii(text: string): string {
   // Email
   result = result.replace(/\b[^\s@]+@[^\s@]+\.[^\s@]+\b/g, "[REDACTED_EMAIL]");
 
-  // Phone (Indian)
+  // Phone (Indian) — handles +91 prefix, 91 prefix, or just 10-digit starting with 6-9
   result = result.replace(/\b\+?91?[6-9]\d{9}\b/g, "[REDACTED_PHONE]");
+  // Also handle standalone 10-digit numbers starting with 6-9 (no country code)
+  result = result.replace(/\b[6-9]\d{9}\b/g, "[REDACTED_PHONE]");
 
   return result;
 }
