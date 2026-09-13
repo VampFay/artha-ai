@@ -56,9 +56,7 @@ export default function SettingsView({ user, onLogout }: SettingsViewProps) {
           <div className="md:col-span-4 space-y-6">
             <div className="bg-carbon text-canvas rounded-3xl p-6 shadow-xl relative overflow-hidden">
               <div className="relative z-10 flex flex-col items-center text-center">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-saffron to-saffron-light flex items-center justify-center mb-4 shadow-lg shadow-saffron/20">
-                  <span className="text-3xl font-bold text-white">{user.name.charAt(0)}</span>
-                </div>
+                <img src="/logo.svg" alt="Artha AI" className="w-20 h-20 rounded-2xl mb-4 shadow-lg shadow-saffron/20" />
                 <h2 className="text-xl font-semibold mb-1">{user.name}</h2>
                 <div className="flex items-center gap-2 text-stone">
                   <UserIcon className="w-4 h-4" />

@@ -104,19 +104,16 @@ export default function MaintenancePage() {
           >
             {/* Logo with rotating animation */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "center", marginBottom: "40px" }}>
-              <motion.div
+              <motion.img
+                src="/logo.svg"
+                alt="Artha AI"
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 style={{
                   width: "48px", height: "48px", borderRadius: "12px",
-                  background: "linear-gradient(135deg, #f59e0b, #fbbf24)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  fontWeight: "bold", fontSize: "26px", color: "#0F172A",
                   boxShadow: "0 0 20px rgba(245,158,11,0.3)",
                 }}
-              >
-                A
-              </motion.div>
+              />
               <span style={{ fontFamily: "monospace", fontSize: "22px", letterSpacing: "4px", textTransform: "uppercase", color: "#f59e0b" }}>
                 ARTHA
               </span>

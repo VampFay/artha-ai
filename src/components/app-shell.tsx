@@ -183,7 +183,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* Desktop Sidebar (Dark) */}
       <aside className="hidden lg:flex w-[260px] flex-col bg-[#111111] text-stone-light relative z-20 shrink-0" style={{ position: "sticky", top: 0, height: "100vh", alignSelf: "flex-start" }}>
         <div className="pt-12 pb-6 px-8 cursor-pointer" onClick={() => handleNav(mode === "entities" ? "entity-switcher" : "dashboard")}>
-          <h1 className="font-michroma text-2xl tracking-widest text-saffron mb-1">ARTHA AI</h1>
+          <div className="flex items-center gap-2 mb-1">
+            <img src="/logo.svg" alt="Artha AI" className="w-8 h-8 rounded-lg" />
+            <h1 className="font-michroma text-2xl tracking-widest text-saffron">ARTHA AI</h1>
+          </div>
           <p className="text-[9px] font-bold tracking-[0.2em] text-stone uppercase">{mode === "entities" ? "Business Portal" : "Wealth Intelligence"}</p>
         </div>
 
@@ -255,6 +258,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-canvas/90 border-b border-carbon/5 z-40 flex items-center justify-between px-6">
         <div className="flex items-center gap-2" onClick={() => handleNav("dashboard")}>
+          <img src="/logo.svg" alt="Artha AI" className="w-7 h-7 rounded-lg" />
           <span className="font-michroma text-xl tracking-widest text-saffron">ARTHA AI</span>
         </div>
         <button aria-label="Open menu" onClick={() => setMobileMenuOpen(true)} className="p-2 -mr-2 rounded-lg text-carbon hover:bg-carbon/5 transition-colors">
@@ -277,7 +281,10 @@ export default function AppShell({ children }: { children: ReactNode }) {
               className="fixed top-0 left-0 bottom-0 w-4/5 max-w-sm bg-[#111111] text-stone-light z-50 p-8 shadow-2xl lg:hidden overflow-y-auto"
             >
               <div className="flex justify-between items-center mb-10">
-                <span className="font-michroma text-2xl tracking-widest text-saffron">ARTHA AI</span>
+                <div className="flex items-center gap-2">
+                  <img src="/logo.svg" alt="Artha AI" className="w-8 h-8 rounded-lg" />
+                  <span className="font-michroma text-2xl tracking-widest text-saffron">ARTHA AI</span>
+                </div>
                 <button aria-label="Close menu" onClick={() => setMobileMenuOpen(false)} className="p-2 -mr-2 rounded-lg text-stone hover:text-white transition-colors">
                   <X className="w-6 h-6" />
                 </button>

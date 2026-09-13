@@ -68,13 +68,7 @@ export default function Error() {
           >
             {/* Logo */}
             <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "center", marginBottom: "32px" }}>
-              <div style={{
-                width: "44px", height: "44px", borderRadius: "12px",
-                background: "linear-gradient(135deg, #f59e0b, #fbbf24)",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontWeight: "bold", fontSize: "24px", color: "#0F172A",
-                boxShadow: "0 0 20px rgba(245,158,11,0.3)",
-              }}>A</div>
+              <img src="/logo.svg" alt="Artha AI" style={{ width: "48px", height: "48px", borderRadius: "12px" }} />
               <span style={{ fontFamily: "monospace", fontSize: "20px", letterSpacing: "4px", textTransform: "uppercase", color: "#f59e0b" }}>ARTHA</span>
             </div>
 
