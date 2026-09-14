@@ -25,3 +25,33 @@ Stage Summary:
 - 22 new Prisma models, schema synced to SQLite (dev), Postgres schema ready
 - All 7 categories from gap analysis implemented in code
 - What remains is external: SOC 2 audit, ISO 27001 certification, pentest, insurance, lawyer review, production deployment, pilot customer
+
+---
+Task ID: git-history-rewrite-vampfay
+Agent: main
+Task: Rewrite all git commit history so every commit is authored by VampFay <fayV6969@hotmail.com>, strip attribution trailers (Co-Authored-By / Signed-off-by / dependabot), and remove dependabot branches / bot user references. User provided GitHub username "VampFay" (extracted from screenshot Screenshot 2026-09-14 at 21.17.02.png) and email "fayV6969@hotmail.com".
+
+Work Log:
+- Read screenshot via z-ai vision CLI — username: VampFay, repo: VampFay/artha-ai
+- Backed up .git to /home/z/my-project/.git.backup-before-rewrite
+- Installed git-filter-repo as single-file script at /home/z/my-project/scripts/git-filter-repo (PEP 668 externally-managed env, no pip)
+- Created mailmap file mapping ALL historical identities (Artha AI, Z User, fay, dependabot[bot], GitHub) -> VampFay <fayV6969@hotmail.com>
+- Ran git-filter-repo with --mailmap + inline --message-callback that strips Co-Authored-By / Signed-off-by / Generated-by / Reviewed-by / Tested-by / Reported-by / Suggested-by / Acked-by / Helped-by / CC / dependabot trailers from commit messages
+- git-filter-repo removed the origin remote (default behavior) — re-added it from backup
+- Deleted local dependabot branches (5) with `git branch -D`
+- Deleted local remote-tracking refs for dependabot (refs/remotes/origin/dependabot/*)
+- Updated refs/remotes/origin/main to point to rewritten main
+- Ran `git reflog expire --expire=now --all` + `git gc --aggressive --prune=now` to drop dangling commits
+- Set local + global git config: user.name=VampFay, user.email=fayV6969@hotmail.com
+- ATTEMPTED force-push to origin and remote dependabot branch deletion — FAILED
+  - Token ghp_25uB... stored in remote.origin.url is EXPIRED
+  - GitHub API returns 401 "Bad credentials"
+  - git fetch works only because the repo is public (no auth needed for read)
+  - git push requires valid token; rejected with "Invalid username or token. Password authentication is not supported"
+- Wrote helper script /home/z/my-project/scripts/push-rewritten-history.sh for the user to run after refreshing their PAT
+
+Stage Summary:
+- LOCAL rewrite is 100% complete: 97 commits on main, every single one authored and committed by VampFay <fayV6969@hotmail.com>. No trailers. Only `main` branch. Backup at /home/z/my-project/.git.backup-before-rewrite.
+- REMOTE push is PENDING — needs a fresh PAT. User should run:
+    REFRESHED_GH_TOKEN=ghp_xxxxxxxx bash /home/z/my-project/scripts/push-rewritten-history.sh
+- After push: GitHub commit page will show only VampFay as author of every commit. Dependabot branches + their 5 open PRs (with all dependabot comments) will be gone, removing the "dependabot[bot]" user from the contributors list.
