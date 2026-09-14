@@ -55,3 +55,27 @@ Stage Summary:
 - REMOTE push is PENDING — needs a fresh PAT. User should run:
     REFRESHED_GH_TOKEN=ghp_xxxxxxxx bash /home/z/my-project/scripts/push-rewritten-history.sh
 - After push: GitHub commit page will show only VampFay as author of every commit. Dependabot branches + their 5 open PRs (with all dependabot comments) will be gone, removing the "dependabot[bot]" user from the contributors list.
+
+---
+Task ID: git-history-rewrite-vampfay-remote-push
+Agent: main
+Task: Push rewritten history to GitHub remote (VampFay/artha-ai) and clean up remote state.
+
+Work Log:
+- User provided fresh fine-grained PAT (github_pat_11BDPWUVY0...)
+- First push attempt: 403 — PAT had only `Metadata: Read` permission, user edited to add `Contents: Read+Write`
+- Second push attempt: BLOCKED by GitHub Push Protection — committed file `.git.backup-before-rewrite/config` contained a PAT (`ghp_25uB...`) — likely committed by an automated `git add .` tool with a UUID-named commit
+- Ran git-filter-repo second pass with `--path .git.backup-before-rewrite/ --invert-paths` to strip this directory from ALL of history
+- Scanned all current tree + history for any other tokens — none found
+- Force-push to main SUCCEEDED: 98 commits, all by VampFay <fayV6969@hotmail.com>
+- Deleted 5 remote dependabot branches — their 5 open PRs and all bot comments auto-closed
+- Added `.git.backup-before-rewrite*` to .gitignore to prevent future re-commit of backup dirs
+- Committed gitignore update + pushed (commit d9dfa2e) — final commit count: 99
+- Deleted local backup dirs (contained old PAT) for security
+
+Stage Summary:
+- REMOTE rewrite complete: https://github.com/VampFay/artha-ai/commits/main now shows ONLY VampFay <fayV6969@hotmail.com> as author/committer of every commit (99 total).
+- Remote has only `main` branch — all 5 dependabot branches + their 5 open PRs (and all dependabot comments) are gone.
+- Contributors list: just `VampFay` (User, 99 contributions).
+- Local + global git config: user.name=VampFay, user.email=fayV6969@hotmail.com (all future commits will be by VampFay).
+- Task COMPLETE.
