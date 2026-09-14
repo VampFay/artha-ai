@@ -72,3 +72,7 @@ mini-services/
 tool-results/
 dashboard.png
 Caddyfile
+
+# Local backup dirs (never commit)
+.git.backup-before-rewrite
+.git.backup-before-rewrite2
