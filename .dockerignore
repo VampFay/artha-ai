@@ -1,22 +1,55 @@
-node_modules
-.next
+# ============================================
+# Artha AI — .dockerignore
+# Keeps build context small (10× faster builds)
+# ============================================
+
+# VCS
 .git
 .gitignore
+.git.backup-before-rewrite*
+
+# Node
+node_modules
+.next
+.vercel
+.turbo
+
+# Build artifacts
+dist
+build
 *.log
 dev.log
 server.log
+
+# Database + uploads (volume-mounted in prod)
 db/
 uploads/
-download/
-upload/
-uploaded-ui/
-uploaded-ui-v2/
-tool-results/
-.zscripts
-skills/
-examples/
-mini-services
+
+# Environment files (NEVER bake into image — pass via docker-compose env_file)
 .env
-.env.local
-dashboard.png
+.env.*
+!.env.example
+
+# Docs / IDE
+README.md
+*.md
+.licenseignore
+.idea
+.vscode
+.DS_Store
+
+# Tests
+coverage
+__tests__
+*.test.ts
+*.spec.ts
+e2e/
+
+# Misc
+Dockerfile
+docker-compose*.yml
 Caddyfile
+infra/
+legal/
+research/
+docs/
