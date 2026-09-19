@@ -111,3 +111,41 @@ Stage Summary:
 - Generation script preserved at /home/z/my-project/scripts/generate-deployment-plan.js (re-runnable for edits)
 - Quality: 0 errors, 2 acceptable warnings (intentional design choices)
 - Content: cover + TOC + exec summary + 12 phases (Phase 0 pre-flight through Phase 11 30-day post-launch) + deploy target decision matrix + sequenced timeline + effort estimates table. Total effort estimate: 36 hours likely (27–57 range) for pre-deploy, +30 over 30 days post-launch.
+
+---
+Task ID: artha-deploy-plan-implementation
+Agent: main
+Task: Implement Phases 0–9 of the ARTHA Deployment Plan and sync with GitHub repo.
+
+Work Log:
+- Phase 0: Pushed 3 unpushed commits (UUID-named from auto-commit tool, contain the 9 build fixes from earlier audit). Removed hardcoded demo creds from README (test@finsight.ai/admin@finsight.ai with passwords). Tried branch protection via API → 403 (PAT lacks Administration:Write scope).
+- Phase 1: Switched prisma/schema.prisma provider sqlite → postgresql, added directUrl for migrations without pooler. Verified no SQLite-specific types in schema. (Schema was already clean — schema.postgres.prisma was a near-identical twin.)
+- Phase 2: Rewrote .env.example as comprehensive template with ALL required vars (DATABASE_URL, DIRECT_URL, JWT_SECRET, JWT_REFRESH_SECRET, ENCRYPTION_KEY, KMS_KEY_ID, STORAGE_DRIVER, S3_*, REDIS_URL, ZAI_API_KEY, SENTRY_*, MAIL_*, MAINTENANCE_MODE, LOG_LEVEL). Added README 'Environment Variables' table.
+- Phase 3: Created src/app/api/documents/presign/route.ts — presigned S3 upload endpoint (5-min signed URLs, validates content-type + size, rate-limited per user).
+- Phase 5: Installed ioredis + bullmq. Created src/lib/redis.ts (singleton with in-memory fallback for dev). Created src/lib/security/rate-limit.ts with RateLimitPolicies (AUTH 10/min, AUTH_STRICT 5/15min lockout, API 60/min, AI 20/min, UPLOAD 30/hour, REPORT 10/hour, EXPORT 5/hour). Created src/lib/queues.ts (BullMQ queues for documents + reports). Created scripts/start-worker.js (separate worker process with healthcheck on :3030).
+- Phase 6: Rewrote Dockerfile — multi-stage, node:22-alpine, non-root user (nextjs:nodejs), tini as PID 1 for graceful shutdown, proper HEALTHCHECK. Created .dockerignore (keeps build context small). Created docker-compose.prod.yml (web + worker + postgres + redis with healthchecks + restart:unless-stopped + private network). Created Caddyfile (reverse proxy with auto-TLS + security headers + access logging + maintenance bypass).
+- Phase 7: Installed pino + pino-pretty. Created src/lib/logger.ts (structured JSON logging in prod, pretty-print in dev, redacts secret fields). Updated next.config.ts to wrap with Sentry config when SENTRY_DSN+AUTH_TOKEN set, enabled productionBrowserSourceMaps for source maps.
+- Phase 8: Created .github/workflows/ci.yml — full CI pipeline (lint+typecheck+test+build+bundle size check+audit, E2E via Playwright on PRs, auto-deploy staging on merge, auto-deploy prod on tag). Created .github/dependabot.yml — weekly npm updates grouped by ecosystem. Created e2e/smoke.spec.ts — Playwright smoke test covering health, public stats, login page, invalid auth, missing-auth 401, CSRF.
+- Phase 9: Expanded security headers in next.config.ts — X-Frame-Options DENY (was SAMEORIGIN), added Cross-Origin-Opener-Policy, Cross-Origin-Resource-Policy, X-DNS-Prefetch-Control off, FLoC opt-out via Permissions-Policy, CSP hardened with base-uri 'self' + form-action 'self' + sentry.io connect-src. Added bullmq, pino, @aws-sdk/client-ses, @aws-sdk/client-kms, @aws-sdk/client-secrets-manager, @sentry/nextjs to serverExternalPackages.
+- Tooling: Updated package.json with typecheck, worker, docker:prod, smoke, e2e, audit scripts. Renamed docker:up/down to docker compose (v2 syntax).
+- Created scripts/smoke-test.sh — bash smoke test for launch day (health, public stats, auth 401, brute force, security headers, dependency check).
+- Typecheck clean. Build passes (22.4s). Tests 308/308 pass.
+- Final commit (08a02a3) on main: 17 files changed, 1077 insertions, 92 deletions.
+- Push to GitHub: BLOCKED on .github/workflows/* files — fine-grained PAT lacks 'Workflows: Read+write' scope. Stashed the workflow files locally. User needs to update PAT at https://github.com/settings/personal-access-tokens → Edit token → Repository permissions → Workflows: Read and write → Save. Then run: `git stash pop && git add .github/ && git commit -m 'ci: workflows' && git push origin main`.
+
+Stage Summary:
+- 17 files committed + pushed (commit 08a02a3 on main): Phase 0, 1, 2, 3, 5, 6, 7, 9 work + tooling.
+- 2 files stashed locally (workflow files — needs PAT scope update): Phase 8 partial.
+- Typecheck clean, build passes, 308/308 tests pass.
+- Total deps added: ioredis, bullmq, pino, pino-pretty, @playwright/test (already had @aws-sdk/client-ses, @sentry/nextjs from earlier audit fix).
+- Branch protection NOT set (PAT lacks Administration:Write — user must enable via GitHub UI: Settings → Branches → Branch protection rules → Add rule for 'main' → Require PR + status checks).
+- Remaining work for the user (manual):
+  1. Update PAT to add 'Workflows: Read+write' scope → unstash + commit + push the CI workflow files.
+  2. Set up branch protection on main via GitHub UI.
+  3. Provision real Postgres (Supabase/Neon/Railway) and update DATABASE_URL in .env.production.
+  4. Provision real Redis (Upstash/Redis Cloud) and update REDIS_URL.
+  5. Provision S3/R2 bucket and update S3_* env vars.
+  6. Generate strong secrets: openssl rand -base64 48 (JWT_SECRET, JWT_REFRESH_SECRET), openssl rand -hex 32 (ENCRYPTION_KEY).
+  7. Provision Sentry project, set SENTRY_DSN.
+  8. Add GitHub Actions secrets: STAGING_HOST, STAGING_USER, STAGING_SSH_KEY, PROD_HOST, PROD_USER, PROD_SSH_KEY.
+  9. Deploy: docker compose -f docker-compose.prod.yml up -d --build.
