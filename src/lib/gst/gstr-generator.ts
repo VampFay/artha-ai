@@ -116,7 +116,7 @@ export async function generateGstr1(
 
     // Determine state code from GSTIN (first 2 digits)
     const pos = gstin.substring(0, 2);
-    const isInterState = txn.counterpartyPan?.length > 0; // simplified
+    const isInterState = (txn.counterpartyPan?.length ?? 0) > 0; // simplified
 
     if (txn.gstRate && txn.gstRate > 0) {
       const gstAmount = txn.gstAmount || 0;

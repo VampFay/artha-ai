@@ -238,6 +238,7 @@ export async function detectDocumentType(
 
       const base64Image = fileBuffer.toString("base64");
       const response = await zai.chat.completions.createVision({
+        model: "glm-5v-turbo",
         messages: [
           {
             role: "user",
@@ -309,6 +310,7 @@ export async function extractDocumentData(
 
       const base64Data = fileBuffer.toString("base64");
       const response = await zai.chat.completions.createVision({
+        model: "glm-5v-turbo",
         messages: [
           {
             role: "user",

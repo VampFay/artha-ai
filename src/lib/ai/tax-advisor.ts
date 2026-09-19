@@ -174,7 +174,7 @@ export async function getEntityTaxAdvice(
       .slice(0, 5);
 
     // Extract section citations (e.g., "Section 80C", "§115BAA", "Rule 37")
-    const citations = content.match(/(?:Section|Sec\.?|§)\s*\d+[A-Z]*(?:\([0-9A-Za-z]+\))?/gi) || [];
+    const citations: string[] = content.match(/(?:Section|Sec\.?|§)\s*\d+[A-Z]*(?:\([0-9A-Za-z]+\))?/gi) ?? [];
 
     // Generate follow-up questions
     const followUpQuestions = generateFollowUpQuestions(ctx, userMessage);

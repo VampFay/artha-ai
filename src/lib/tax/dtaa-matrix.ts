@@ -287,8 +287,9 @@ export function getWithholdingRate(
   const applicableRate = Math.min(treatyRate, domesticRate);
   const appliedSource = treatyRate <= domesticRate ? "treaty" : "domestic";
 
-  if (treaty.rates[incomeType].conditions) {
-    conditions.push(treaty.rates[incomeType].conditions!);
+  const rateEntry = treaty.rates[incomeType] as { conditions?: string };
+  if (rateEntry.conditions) {
+    conditions.push(rateEntry.conditions);
   }
 
   conditions.push(`${treaty.country} DTAA signed ${treaty.treatySigned}`);

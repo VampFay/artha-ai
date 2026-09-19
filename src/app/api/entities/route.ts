@@ -33,7 +33,7 @@ const CreateEntitySchema = z.object({
   website: z.string().url().optional(),
   turnoverLastYear: z.number().min(0).optional(),
   netWorth: z.number().min(0).optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 export async function GET(req: NextRequest) {
@@ -126,7 +126,9 @@ export async function POST(req: NextRequest) {
         website: validated.website || null,
         turnoverLastYear: validated.turnoverLastYear || null,
         netWorth: validated.netWorth || null,
-        metadataJson: validated.metadata ? JSON.stringify(validated.metadata) : null ? JSON.stringify(body.metadata) : null,
+        metadataJson: (validated.metadata ?? body.metadata)
+          ? JSON.stringify(validated.metadata ?? body.metadata)
+          : null,
       },
     });
 

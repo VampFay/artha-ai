@@ -14,7 +14,7 @@
  *   - healthCheck(): Verify connectivity
  */
 
-import { appendAuditEntry } from "../security/audit-chain";
+import { appendAuditEntry } from "../../security/audit-chain";
 
 export interface BankingAdapter {
   name: string;
