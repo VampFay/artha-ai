@@ -149,3 +149,51 @@ Stage Summary:
   7. Provision Sentry project, set SENTRY_DSN.
   8. Add GitHub Actions secrets: STAGING_HOST, STAGING_USER, STAGING_SSH_KEY, PROD_HOST, PROD_USER, PROD_SSH_KEY.
   9. Deploy: docker compose -f docker-compose.prod.yml up -d --build.
+
+---
+Task ID: artha-sandbox-restart-verification
+Agent: main
+Task: Restart the sandbox and verify everything works end-to-end.
+
+Work Log:
+- Killed stale dev server processes (PIDs 1086, 1087, 4555 — next dev + next-server)
+- Cleared caches: .next/, .turbo/, dev.log, server.log, coverage/
+- Reinstalled deps: bun install --frozen-lockfile → 810 installs across 884 packages (no changes)
+- Regenerated Prisma client for postgresql provider
+- Typecheck: clean (exit 0)
+- Tests: 308/308 pass (7 test files, 1.7s)
+- Production build: succeeds (22.4s, standalone output)
+- First prod server start: server runs but middleware forces HTTPS redirect → 301 on /api/health
+  when curlled directly without reverse-proxy headers (expected behavior — middleware
+  enforces HTTPS in production, reverse proxy like Caddy adds x-forwarded-proto: https)
+- Created scripts/smoke-prod.sh — starts prod server, runs 10 endpoint checks, kills server
+- Ran smoke-prod.sh with all checks passing (with x-forwarded-proto header):
+  1. GET /api/health → 200 ✓ {status:ok, service:artha-ai, version:0.2.0, uptime:...}
+  2. GET /api/health with x-forwarded-proto:https → 200 ✓
+  3. GET /api/ready → 200 ✓ {status:ready, checks:{database:ok}}
+  4. GET /api/public/stats → 200 ✓ (body keys: data)
+  5. GET / → 200 ✓ (25754 bytes HTML, contains "artha")
+  6. GET /api/users/me (no auth) → 401 ✓
+  7. POST /api/auth/login (invalid creds) → 401 ✓
+  8. Security headers present ✓ (HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy)
+  9. GET /maintenance → 200 ✓ (15178 bytes)
+  10. GET /nonexistent → 404 ✓ (custom not-found page)
+- NOTE: Verified temporarily with SQLite provider (no Postgres in sandbox) — restored
+  postgresql provider after verification. Schema committed to GitHub remains postgresql
+  (production-correct); user needs to provision real Postgres (Supabase/Neon/Railway)
+  and set DATABASE_URL in .env.production before real deploy.
+- Committed smoke-prod.sh helper as commit 7280339 — pushed to GitHub.
+
+Stage Summary:
+- Sandbox fully restarted: all caches cleared, deps reinstalled, fresh build.
+- All quality gates pass: typecheck ✓, tests 308/308 ✓, build ✓.
+- Prod server starts and serves all 10 smoke-checked endpoints correctly.
+- The only "warning" (HTTP 301 on direct curl without proxy headers) is intentional
+  middleware behavior — production reverse proxy (Caddy/Nginx) handles HTTPS termination
+  and sets x-forwarded-proto: https.
+- All security headers verified present.
+- Custom 404 + maintenance pages render correctly.
+- Auth flow works: 401 on missing creds, 401 on invalid creds.
+- No code regressions from Phase 0–9 hardening.
+- GitHub repo state: 4 commits ahead of pre-implementation baseline
+  (08a02a3 + 7280339 on top of 97d378b which had the 9 build fixes).
