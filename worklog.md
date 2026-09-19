@@ -79,3 +79,35 @@ Stage Summary:
 - Contributors list: just `VampFay` (User, 99 contributions).
 - Local + global git config: user.name=VampFay, user.email=fayV6969@hotmail.com (all future commits will be by VampFay).
 - Task COMPLETE.
+
+---
+Task ID: artha-deployment-plan-docx
+Agent: main
+Task: Generate a detailed Word plan document covering everything to do before deploying ARTHA for professional use. User selected: Word .docx, Checklist depth (no commands prose-only) BUT with inline code/config snippets, cover all three deploy targets (VPS/AWS/Vercel), pre-deploy + 30-day post-launch scope, just-for-them audience, with effort estimates + sequenced timeline, tech minimal visual style.
+
+Work Log:
+- Loaded docx skill (Skill(command="docx")) + read references/create.md, references/common-rules.md, references/design-system.md (R1 recipe + DM-1 palette)
+- Asked AskUserQuestion (8 questions: format/depth/snippets/target/scope/audience/estimates/style) — got all answers
+- Called Outline with 16 sections (cover + exec summary + 12 phases + deploy matrix + timeline)
+- Wrote /home/z/my-project/scripts/generate-deployment-plan.js (~1300 lines) using docx-js
+- Cover: R1 (Pure Paragraph Left) + DM-1 Deep Cyan palette (matches "tech minimal" request — slate bg + cyan accent)
+- Body: 12 phase sections, each with bullet checklist + inline code blocks (Dockerfile, docker-compose, env templates, GitHub Actions YAML, smoke test script, k6 load test, etc.)
+- 2 tables: deploy target decision matrix (VPS vs AWS vs Vercel) and effort/timeline breakdown
+- 3-section structure: Cover (margin 0) → TOC (Roman numerals) → Body (Arabic numerals)
+- First run: 1 syntax error (unescaped " in bullet string) — fixed with single-quote grep patterns
+- Second run: 1 ReferenceError (${TS} in template literal) — escaped with \${TS}
+- Third run: success, 38.5 KB
+- Ran add_toc_placeholders.py → added 31 bookmarks + 40 TOC entries
+- Ran postcheck.py → 5/9 passed, 0 errors, 3 warnings (blank-pages, line-spacing, font-fallback JetBrains Mono)
+- Fixed heading skip H1→H3 by converting all H3 "Checklist"/"Pre-launch"/"Week N" subheaders to H2 (16 edits)
+- Fixed font fallback: JetBrains Mono → Consolas, Sarasa Mono SC → NSimSun (universally installed on Windows; substituted elsewhere)
+- Re-ran postcheck → 6/9 passed, 0 errors, 2 warnings (acceptable: blank-pages from section breaks, line-spacing from intentional code-block tighter spacing)
+- Converted to PDF via libreoffice → 32 pages, 457 KB
+- Visually verified cover (R1 dark navy + cyan, title fully visible, no overflow) and body page (clean monospaced code blocks, aligned bullets, hierarchical formatting) via z-ai vision
+
+Stage Summary:
+- Deliverable: /home/z/my-project/download/ARTHA-Deployment-Plan.docx (32 pages, 41 KB)
+- Bonus PDF preview: /home/z/my-project/download/ARTHA-Deployment-Plan.pdf (32 pages, 457 KB)
+- Generation script preserved at /home/z/my-project/scripts/generate-deployment-plan.js (re-runnable for edits)
+- Quality: 0 errors, 2 acceptable warnings (intentional design choices)
+- Content: cover + TOC + exec summary + 12 phases (Phase 0 pre-flight through Phase 11 30-day post-launch) + deploy target decision matrix + sequenced timeline + effort estimates table. Total effort estimate: 36 hours likely (27–57 range) for pre-deploy, +30 over 30 days post-launch.
