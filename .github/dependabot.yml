@@ -9,3 +9,21 @@ updates:
     labels:
       - "dependencies"
       - "automated"
+    # Skip MAJOR version bumps — they need manual review + testing.
+    # Only get patch + minor bumps (safer, backwards-compatible).
+    ignore:
+      - update-types: ["version-update:semver-major"]
+    # Group related deps into single PRs to reduce noise
+    groups:
+      # AWS SDK family — released together, often break together
+      aws:
+        patterns: ["@aws-sdk/*"]
+      # Sentry SDK
+      sentry:
+        patterns: ["@sentry/*"]
+      # Linting + formatting tooling
+      linting:
+        patterns: ["eslint*", "prettier*", "@typescript-eslint/*"]
+      # Testing
+      testing:
+        patterns: ["vitest", "@vitest/*", "@playwright/*"]
