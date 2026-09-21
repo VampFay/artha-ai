@@ -100,11 +100,19 @@ export default function LoginPage() {
               {loading ? <><Loader2 className="h-4 w-4 animate-spin mr-1" />Please wait...</> : mode === "login" ? "Login" : "Create account"}
             </Button>
           </form>
-          <div className="mt-4 p-3 bg-emerald-50/50 rounded-lg text-xs text-slate-600 space-y-1 border border-emerald-100">
-            <p className="font-semibold text-slate-700">Demo Accounts:</p>
-            <p>Test: test@finsight.ai / test1234</p>
-            <p>Admin: admin@finsight.ai / admin1234</p>
-          </div>
+          {process.env.NODE_ENV === "development" && (
+            <div className="mt-4 p-3 bg-emerald-50/50 rounded-lg text-xs text-slate-600 space-y-1 border border-emerald-100">
+              <p className="font-semibold text-slate-700">Demo Accounts (Dev Only):</p>
+              <p>Test: test@finsight.ai / test1234</p>
+              <p>Admin: admin@finsight.ai / admin1234</p>
+              <p className="text-[10px] text-slate-400 mt-1">Seeded by scripts/seed-accounts.ts. Never deploy with these credentials.</p>
+            </div>
+          )}
+          {process.env.NODE_ENV === "production" && (
+            <p className="mt-4 text-xs text-slate-500 text-center">
+              Don't have an account? <a href="mailto:support@artha.ai" className="text-emerald-600 hover:underline">Contact support</a>
+            </p>
+          )}
           <p className="text-xs text-slate-400 text-center mt-4">By continuing you agree to our privacy policy.</p>
           <button type="button" onClick={() => router.push("/")} className="text-xs text-slate-400 hover:text-slate-600 block text-center mt-3 w-full">Back to home</button>
         </CardContent>

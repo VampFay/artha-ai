@@ -119,7 +119,7 @@ export async function runDailyComplianceCheck(): Promise<void> {
     for (const filing of overdue) {
       try {
         await sendEmail({
-          to: entity.contactEmail || "admin@artha.ai",
+          to: entity.contactEmail || process.env.SUPPORT_EMAIL || "noreply@artha.ai",
           template: "filing_reminder",
           data: {
             urgency: "OVERDUE",
@@ -144,7 +144,7 @@ export async function runDailyComplianceCheck(): Promise<void> {
       if (filing.daysUntilDue <= 7) {
         try {
           await sendEmail({
-            to: entity.contactEmail || "admin@artha.ai",
+            to: entity.contactEmail || process.env.SUPPORT_EMAIL || "noreply@artha.ai",
             template: "filing_reminder",
             data: {
               urgency: filing.daysUntilDue <= 1 ? "DUE TOMORROW" : "DUE SOON",

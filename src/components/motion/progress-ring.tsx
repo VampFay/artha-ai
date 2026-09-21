@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 /** ProgressRing — animated SVG circular progress. */
 export function ProgressRing({
@@ -20,8 +20,8 @@ export function ProgressRing({
   strokeWidth?: number;
   color?: string;
   trackColor?: string;
-  label?: string;
-  sublabel?: string;
+  label?: React.ReactNode;
+  sublabel?: React.ReactNode;
   duration?: number;
   glow?: boolean;
 }) {

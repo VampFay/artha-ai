@@ -29,7 +29,7 @@ const DEFAULT_CONFIG: WhiteLabelConfig = {
   customDomain: null,
   customCssUrl: null,
   emailFromName: "Artha AI",
-  emailFromAddr: "noreply@artha.ai",
+  emailFromAddr: process.env.MAIL_FROM || "noreply@artha.ai",
   hideBranding: false,
 };
 
