@@ -1,52 +1,281 @@
-name: CI
+# ============================================
+# ARTHA CI/CD Pipeline — Full
+# WP3.2: Lint → Typecheck → Tests → Postgres Migration Gate →
+#         Container Build → Staging Deploy
+# ============================================
+name: CI/CD
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
+    tags: ['v*']
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  ci:
+  # ─────────────────────────────────────────────────────────────────────
+  # Job 1: Quality gate — lint, typecheck, test
+  # ─────────────────────────────────────────────────────────────────────
+  quality:
+    name: Lint + Typecheck + Test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: artha
+          POSTGRES_PASSWORD: artha
+          POSTGRES_DB: artha_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U artha"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql://artha:artha@localhost:5432/artha_test
+      DIRECT_URL: postgresql://artha:artha@localhost:5432/artha_test
+      REDIS_URL: redis://localhost:6379
+      JWT_SECRET: ci-test-secret-32-chars-minimum-padding123
+      JWT_REFRESH_SECRET: ci-test-refresh-secret-32-chars-padding
+      ENCRYPTION_KEY: 0000000000000000000000000000000000000000000000000000000000000000
+      STORAGE_DRIVER: local
+      NODE_ENV: test
+      NEXT_TELEMETRY_DISABLED: '1'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: latest }
+
+      - name: Cache deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            .next/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: ${{ runner.os }}-bun-
+
+      - run: bun install --frozen-lockfile
+      - run: bun run db:generate
+
+      # ── Postgres Migration Gate ────────────────────────────────────
+      # WP3.2: schema must apply cleanly to a fresh Postgres
+      - name: 🚦 Postgres migration gate
+        run: |
+          bun run db:push -- --skip-generate
+          # Verify tables exist
+          PGPASSWORD=artha psql -h localhost -U artha -d artha_test -c "\dt" | grep -E "User|Document|Entity"
+
+      - run: bunx tsc --noEmit
+        name: 🔍 Typecheck
+
+      - name: 📝 Lint (warn-only)
+        run: bun run lint || true
+        continue-on-error: true
+
+      - name: 🧪 Test (with coverage)
+        run: bun run test -- --coverage
+
+      - name: 📦 Build (production)
+        run: bun run build
+
+      - name: 📊 Bundle size check (<200MB)
+        run: |
+          SIZE=$(du -sk .next/standalone | cut -f1)
+          echo "Standalone bundle: ${SIZE} KB"
+          if [ "$SIZE" -gt 200000 ]; then
+            echo "::error::Bundle exceeds 200MB limit"
+            exit 1
+          fi
+
+      - name: 🔒 Security audit
+        run: bun audit --audit-level=high || true
+        continue-on-error: true
+
+      - name: 📤 Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Job 2: Container build (only on main + tags — not on PRs)
+  # ─────────────────────────────────────────────────────────────────────
+  container-build:
+    name: 🐳 Build Docker image
+    needs: quality
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
         with:
-          bun-version: latest
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: bun install
-
-      - name: Lint
-        run: bun run lint
-        continue-on-error: true
-
-      - name: Type check
-        run: bunx tsc --noEmit
-        continue-on-error: true
-
-      - name: Tests
-        run: bun run test
-
-      - name: Build
-        run: bun run build
-        env:
-          DATABASE_URL: file:./test.db
-          JWT_SECRET: test-secret-for-ci-only-not-for-production
-
-      - name: Security scan (Trivy)
-        uses: aquasecurity/trivy-action@master
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          scan-type: fs
-          scan-ref: .
-          severity: CRITICAL,HIGH
-          exit-code: 0
-        continue-on-error: true
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=sha,prefix=sha-
 
-      - name: Terraform format check
+      - name: 🏗️ Build + push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # WP3.2 target: image <150MB
+          build-args: |
+            BUN_VERSION=1.3.14
+
+      - name: 📏 Verify image size <150MB
         run: |
-          cd infra/terraform
-          terraform fmt -check -recursive
-        continue-on-error: true
+          IMAGE=$(echo ghcr.io/${{ github.repository }}:sha-$(git rev-parse --short HEAD))
+          docker pull $IMAGE
+          SIZE=$(docker image inspect $IMAGE --format '{{.Size}}' | awk '{print $1/1024/1024 " MB"}')
+          echo "Image size: $SIZE"
+          SIZE_BYTES=$(docker image inspect $IMAGE --format '{{.Size}}')
+          if [ "$SIZE_BYTES" -gt 157286400 ]; then
+            echo "::error::Image exceeds 150MB target (was $SIZE)"
+            exit 1
+          fi
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Job 3: E2E smoke test (PRs only)
+  # ─────────────────────────────────────────────────────────────────────
+  e2e:
+    name: 🎭 E2E smoke test
+    needs: quality
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: latest }
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+        env:
+          DATABASE_URL: postgresql://localhost:5432/test
+          JWT_SECRET: e2e-test-secret-32-chars-padding123
+          NODE_ENV: test
+      - run: bunx playwright install --with-deps chromium
+      - run: bunx playwright test e2e/smoke.spec.ts
+        env: { CI: 'true' }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Job 4: Deploy to staging (auto on merge to main)
+  # ─────────────────────────────────────────────────────────────────────
+  deploy-staging:
+    name: 🚀 Deploy to staging
+    needs: [quality, container-build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: staging
+      url: https://staging.artha.ai
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: SSH deploy to staging VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          key: ${{ secrets.STAGING_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /opt/artha-staging
+            git fetch --all
+            git reset --hard origin/main
+            doppler secrets download --config staging --format env > .env.production
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker-compose.prod.yml exec -T web bun run db:push
+            sleep 15
+            curl -sf https://staging.artha.ai/api/health | jq -e '.status == "ok"'
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Job 5: Deploy to production (on git tag v1.0.0)
+  # ─────────────────────────────────────────────────────────────────────
+  deploy-prod:
+    name: 🚀 Deploy to production
+    needs: [quality, container-build]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: production
+      url: https://artha.ai
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: SSH deploy to prod VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd /opt/artha
+            git fetch --all --tags
+            git reset --hard ${{ github.ref }}
+            doppler secrets download --config production --format env > .env.production
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
+            docker compose -f docker-compose.prod.yml exec -T web bun run db:push
+            sleep 30
+            curl -sf https://artha.ai/api/health | jq -e '.status == "ok"'
