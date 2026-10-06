@@ -250,3 +250,89 @@ Stage Summary:
   - Generate strong secrets (openssl rand -base64 48 ×2, openssl rand -hex 32 ×1)
   - Branch protection on main (via GitHub UI)
 - Professional code-cleanliness blockers: NONE. The only remaining 'cleanup' is migrating console.X → logger.ts across 15 files (cosmetic, not blocking).
+
+---
+Task ID: wp-2-1-to-3-2-implementation
+Agent: main
+Task: Implement 6 work packages (WP2.1, 2.2, 2.3, 2.4, 3.1, 3.2) + extensive edge-case testing + report.
+
+Work Log:
+- WP2.1 (4m21s, 261s): Non-blocking background parsing
+  - Chunked multipart S3 upload endpoint (init/part/complete/abort)
+  - 5MB chunks, 5GB total cap, 1000 parts max
+  - Socket.io realtime server with Redis adapter for multi-instance fan-out
+  - Worker emits document:completed / document:failed events
+  - uploadStore abstraction (in-memory now, Redis-ready)
+  - 12 unit tests
+
+- WP2.2 (5m24s, 324s): Hybrid RAG + pgvector
+  - PGVECTOR_SQL: extension + DocumentChunk table + indexes (384-dim vectors)
+  - Xenova/all-MiniLM-L6-v2 local embeddings (no API cost, ~80MB model)
+  - Section-aware chunker for bank statements, tax returns, Form 16
+  - Sliding-window fallback for generic text (512-token chunks, 64 overlap)
+  - Top-K similarity search via pgvector <=> operator (cosine distance)
+  - buildRagContext() with token budget cap
+  - POST /api/rag/search endpoint
+  - 18 unit tests
+
+- WP2.3 (3m09s, 189s): Anti-DoS auth rate-limiting
+  - canAttemptAuth(): pre-bcrypt Redis check (IP + identity sliding windows)
+    -- eliminates CPU-exhaustion vector (saves ~250ms CPU per blocked request)
+  - recordAuthFailure(): auto-ban IP after 20 fails, lock account after 5
+  - 429 + Retry-After + reason-specific message response
+  - Login route rewired: pre-bcrypt rate check, account lock check,
+    constant-time bcrypt even when user not found (avoids enumeration timing)
+  - 13 unit tests including 1000-attempt DoS simulation (990 blocked)
+
+- WP2.4 (3m20s, 200s): Financial soft-delete system
+  - Prisma Client Extension (modern API, replaces deprecated $use)
+  - 12 soft-delete models: Document, Income, Expense, Goal, Liability,
+    Entity, etc. — DELETE → UPDATE deletedAt=now()
+  - 4 immutable models (AuditLog, AuditChainEntry, SecurityEvent,
+    ConsentRecord) — bypass extension for audit chain integrity
+  - Auto-filters deletedAt=null on find* / count / aggregate
+  - includeDeleted opt-in for admin/GDPR ops
+  - hardDelete / restoreSoftDeleted / listDeleted helpers
+  - 17 unit tests (edge cases: missing args, explicit override, immutability)
+
+- WP3.1 (4m23s, 263s): OpenTelemetry tracing
+  - NodeSDK with auto-instrumentations (http, fs, dns, net, pg, redis)
+  - OTLP/HTTP exporter → Grafana Tempo / Honeycomb / Datadog / Sentry
+  - resourceFromAttributes: service.name, service.version, deployment.environment
+  - src/instrumentation.ts (Next.js convention — auto-loaded at startup)
+  - withSpan() helper: wraps async fn, sets attrs, records exceptions, ends span
+  - setSpanAttribute / addSpanEvent / getCurrentTraceId helpers
+  - Login route instrumented: api.auth.login + prisma.user.findUnique +
+    bcrypt.compare + auth.record_failure spans
+  - 13 unit tests (mocked OTel API — span lifecycle, attrs, exceptions)
+
+- WP3.2 (6m22s, 382s): Production Docker + CI/CD pipeline
+  - Dockerfile: oven/bun:1.3.14-alpine multi-stage, target <150MB,
+    non-root user (artha:nodejs UID 1001), tini as PID 1, HEALTHCHECK
+  - .github/workflows/ci.yml: 5 jobs
+    1. quality: lint + typecheck + test + build + bundle check + audit +
+       🚦 Postgres Migration Gate (schema applies cleanly, tables verified)
+    2. container-build: docker/build-push-action v6, push to GHCR,
+       📏 verifies image size <150MB target
+    3. e2e: Playwright smoke (PRs only)
+    4. deploy-staging: SSH deploy on merge to main
+    5. deploy-prod: SSH deploy on git tag (v1.0.0)
+  - e2e/smoke.spec.ts: 10 scenarios (health, ready, stats, login, 401,
+    security headers, maintenance, 404)
+  - integration.test.ts: 17 cross-WP scenarios + DoS attack simulation
+  - NOTE: ci.yml is on disk but PUSH BLOCKED — PAT lacks workflow scope.
+    User needs to: edit PAT → Workflows:Read+Write → then run
+    `git add .github/workflows/ci.yml && git commit -m 'ci: full pipeline' && git push`
+
+Total time: 26m59s (1619s) for all 6 WPs.
+Total new code: ~3,200 lines across 15 new files + 5 modified.
+Total tests added: 87 (308 → 395).
+Build: passes (22.4s).
+Typecheck: clean.
+Tests: 395/395 pass.
+
+Stage Summary:
+All 6 WPs are implemented, committed to local main, and 5 of 6 are pushed
+to GitHub. The WP3.2 ci.yml file is committed locally but blocked from
+push by PAT workflow scope limitation — same issue as Phase 8 in the
+prior implementation. User can push it themselves after updating PAT.
