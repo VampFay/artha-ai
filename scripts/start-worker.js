@@ -8,6 +8,7 @@
 import { Worker } from "bullmq";
 import { getRedis } from "../src/lib/redis";
 import { logger } from "../src/lib/logger";
+import { emitDocumentCompleted, emitDocumentFailed } from "../src/lib/realtime/socket-server";
 import type { DocumentJobData, ReportJobData } from "../src/lib/queues";
 
 const connection = getRedis();
@@ -47,10 +48,17 @@ const documentWorker = new Worker<DocumentJobData>(
 
 documentWorker.on("failed", (job, err) => {
   logger.error({ jobId: job?.id, err: err.message }, "document job failed");
+  if (job) {
+    emitDocumentFailed(job.data.documentId, job.data.userId, err.message).catch(() => {});
+  }
 });
 
 documentWorker.on("completed", (job) => {
   logger.info({ jobId: job.id }, "document job completed");
+  // WP2.1 — emit Socket.io event for optimistic UI update
+  emitDocumentCompleted(job.data.documentId, job.data.userId, job.returnvalue).catch((err) => {
+    logger.error({ err: err.message, jobId: job.id }, "failed to emit document:completed event");
+  });
 });
 
 // Report generation worker
