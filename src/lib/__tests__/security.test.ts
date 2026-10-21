@@ -66,12 +66,18 @@ describe("PII Masking", () => {
 
   it("should mask short values entirely", () => {
     expect(maskPii("ABC", 4, 2)).toBe("***");
+    expect(maskPii("", 4, 2)).toBe("");
+    expect(maskPii("123456", 3, 3)).toBe("******");
   });
 });
 
 describe("PII Detection", () => {
   it("should detect PAN", () => {
     expect(detectPiiCategory("ABCDE1234F")).toBe("pan");
+    // With whitespace
+    expect(detectPiiCategory("  ABCDE1234F  ")).toBe("pan");
+    // Invalid PAN should not match
+    expect(detectPiiCategory("ABCDE12345")).toBeNull();
   });
 
   it("should detect Aadhaar", () => {

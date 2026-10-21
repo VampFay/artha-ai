@@ -84,6 +84,10 @@ describe("Tax Engine", () => {
       // 87A rebate: if taxable ≤ 7L, tax = 0
       if (700000 <= REBATE_87A_LIMIT) tax = 0;
       expect(tax).toBe(0);
+
+      let taxEdge = applySlabs(699999, NEW_SLABS);
+      if (699999 <= REBATE_87A_LIMIT) taxEdge = 0;
+      expect(taxEdge).toBe(0);
     });
 
     it("tax above ₹7L is NOT rebated", () => {
@@ -92,6 +96,10 @@ describe("Tax Engine", () => {
       expect(tax).toBeGreaterThan(0);
       // ₹3L-7L at 5% = ₹20,000 + ₹1,000 at 10% = ₹20,100
       expect(tax).toBe(20100);
+
+      let taxEdge = applySlabs(700001, NEW_SLABS);
+      if (700001 <= REBATE_87A_LIMIT) taxEdge = 0;
+      expect(taxEdge).toBeGreaterThan(0);
     });
   });
 
@@ -141,32 +149,48 @@ describe("Tax Engine", () => {
     it("zero surcharge for income below ₹50 Lakhs", () => {
       expect(computeSurcharge(4900000, 1000000, "new")).toBe(0);
       expect(computeSurcharge(4900000, 1000000, "old")).toBe(0);
+      expect(computeSurcharge(4999999, 1000000, "new")).toBe(0);
+      expect(computeSurcharge(0, 0, "new")).toBe(0);
     });
 
-    it("10% surcharge for income between ₹50L and ₹1Cr", () => {
+    it("10% surcharge boundary at exactly ₹50 Lakhs and up to ₹1Cr", () => {
+      // Exactly 50L triggers 10%
+      expect(computeSurcharge(5000000, 1000000, "new")).toBe(100000);
+      expect(computeSurcharge(5000000, 1000000, "old")).toBe(100000);
       // 10% of ₹15,00,000 tax = ₹1,50,000
       expect(computeSurcharge(7500000, 1500000, "new")).toBe(150000);
       expect(computeSurcharge(7500000, 1500000, "old")).toBe(150000);
+      expect(computeSurcharge(9999999, 1500000, "new")).toBe(150000);
     });
 
-    it("15% surcharge for income between ₹1Cr and ₹2Cr", () => {
+    it("15% surcharge boundary at exactly ₹1Cr and up to ₹2Cr", () => {
+      // Exactly 1Cr triggers 15%
+      expect(computeSurcharge(10000000, 2000000, "new")).toBe(300000);
       // 15% of ₹30,00,000 tax = ₹4,50,000
       expect(computeSurcharge(15000000, 3000000, "new")).toBe(450000);
       expect(computeSurcharge(15000000, 3000000, "old")).toBe(450000);
+      expect(computeSurcharge(19999999, 3000000, "new")).toBe(450000);
     });
 
-    it("25% surcharge for income between ₹2Cr and ₹5Cr", () => {
+    it("25% surcharge boundary at exactly ₹2Cr and up to ₹5Cr", () => {
+      // Exactly 2Cr triggers 25%
+      expect(computeSurcharge(20000000, 5000000, "new")).toBe(1250000);
       // 25% of ₹60,00,000 tax = ₹15,00,000
       expect(computeSurcharge(30000000, 6000000, "new")).toBe(1500000);
       expect(computeSurcharge(30000000, 6000000, "old")).toBe(1500000);
+      expect(computeSurcharge(49999999, 6000000, "new")).toBe(1500000);
     });
 
-    it("37% surcharge for income above ₹5Cr in Old Regime", () => {
+    it("37% surcharge boundary at exactly ₹5Cr in Old Regime", () => {
+      // Exactly 5Cr triggers 37% in Old Regime
+      expect(computeSurcharge(50000000, 10000000, "old")).toBe(3700000);
       // 37% of ₹1,80,00,000 tax = ₹66,60,000
       expect(computeSurcharge(60000000, 18000000, "old")).toBe(6660000);
     });
 
-    it("25% surcharge capped for income above ₹5Cr in New Regime", () => {
+    it("25% surcharge capped at exactly ₹5Cr and above in New Regime", () => {
+      // Exactly 5Cr triggers 25% cap in New Regime
+      expect(computeSurcharge(50000000, 10000000, "new")).toBe(2500000);
       // 25% of ₹1,80,00,000 tax = ₹45,00,000
       expect(computeSurcharge(60000000, 18000000, "new")).toBe(4500000);
     });
