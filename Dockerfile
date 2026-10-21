@@ -14,10 +14,16 @@ RUN apk add --no-cache python3 make g++ libc6-compat openssl
 
 # Cache: install deps first
 COPY package.json bun.lock* ./
-RUN bun install --frozen-lockfile --production
+RUN bun install --frozen-lockfile
 
 # Copy source (use .dockerignore to skip node_modules, .next, etc.)
 COPY . .
+
+# Build environment variables
+ENV DATABASE_URL="postgresql://artha:artha@localhost:5432/artha_test"
+ENV DIRECT_URL="postgresql://artha:artha@localhost:5432/artha_test"
+ENV JWT_SECRET="build-secret-32-chars-long-minimum-padding123"
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Generate Prisma client
 RUN bun run db:generate
