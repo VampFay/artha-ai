@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
-  productionBrowserSourceMaps: true, // enable for Sentry source maps (Phase 7)
+  productionBrowserSourceMaps: false,
   images: {
     unoptimized: true,
   },
