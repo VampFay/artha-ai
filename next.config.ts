@@ -22,6 +22,10 @@ const nextConfig: NextConfig = {
     "socket.io",
     "papa-parse",
     "xlsx",
+    "@xenova/transformers",
+    "onnxruntime-node",
+    "@opentelemetry/sdk-node",
+    "@opentelemetry/auto-instrumentations-node",
   ],
   async headers() {
     return [{
