@@ -16,6 +16,7 @@ import { verifyToken } from "../auth";
 import { authenticateApiKey } from "./api-keys";
 import { loadUserPermissions, requirePermission, hasPermission, RbacError, type AuthContext, type Resource, type Action } from "./rbac";
 import { getClientIp } from "../security";
+import { getRedis } from "../redis";
 
 // Re-export for convenience
 export { requirePermission, hasPermission, RbacError };
@@ -25,6 +26,22 @@ export interface AuthResult {
   authenticated: boolean;
   ctx?: AuthContext;
   error?: string;
+}
+
+const SESSION_CACHE_TTL_SEC = 300; // 5 minutes
+
+/**
+ * Invalidate Redis session cache for a user
+ */
+export async function invalidateSessionCache(userId: string): Promise<void> {
+  const redis = getRedis();
+  if (redis) {
+    try {
+      await redis.del(`session:user:${userId}`);
+    } catch (err) {
+      console.warn(`[session-cache] Failed to invalidate session for ${userId}:`, err);
+    }
+  }
 }
 
 /**
@@ -55,14 +72,63 @@ export async function authenticateRequest(
       return { authenticated: false, error: "Invalid or expired token" };
     }
 
-    // Load user + tenant + permissions
-    const user = await db.user.findUnique({
-      where: { id: payload.sub },
-      select: { id: true, tenantId: true, role: true },
-    });
-    if (!user) return { authenticated: false, error: "User not found" };
+    // Try Redis session cache first
+    const redis = getRedis();
+    const cacheKey = `session:user:${payload.sub}`;
+    let cachedData: {
+      user: { id: string; tenantId: string | null; role: string };
+      permissions: string[];
+      roleName: string | null;
+      roleId: string | null;
+    } | null = null;
 
-    const { permissions, roleName, roleId } = await loadUserPermissions(user.id, user.tenantId);
+    if (redis) {
+      try {
+        const raw = await redis.get(cacheKey);
+        if (raw) {
+          cachedData = JSON.parse(raw);
+        }
+      } catch {
+        // Fall back to DB on Redis read error
+      }
+    }
+
+    let user = cachedData?.user;
+    let permissions: Set<string> | undefined = cachedData?.permissions ? new Set(cachedData.permissions) : undefined;
+    let roleName: string | null | undefined = cachedData?.roleName;
+    let roleId: string | null | undefined = cachedData?.roleId;
+
+    if (!user || !permissions || roleName === undefined) {
+      // Load user + tenant + permissions from DB
+      const dbUser = await db.user.findUnique({
+        where: { id: payload.sub },
+        select: { id: true, tenantId: true, role: true },
+      });
+      if (!dbUser) return { authenticated: false, error: "User not found" };
+      user = dbUser;
+
+      const permData = await loadUserPermissions(user.id, user.tenantId);
+      permissions = permData.permissions;
+      roleName = permData.roleName;
+      roleId = permData.roleId;
+
+      if (redis) {
+        try {
+          await redis.setex(
+            cacheKey,
+            SESSION_CACHE_TTL_SEC,
+            JSON.stringify({
+              user,
+              permissions: Array.from(permissions),
+              roleName,
+              roleId,
+            })
+          );
+        } catch {
+          // Redis cache failure non-fatal
+        }
+      }
+    }
 
     const ctx: AuthContext = {
       userId: user.id,

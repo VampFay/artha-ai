@@ -18,7 +18,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const res = NextResponse.next();
+  const nonce = Buffer.from(crypto.getRandomValues(new Uint8Array(16))).toString("base64");
+  const requestHeaders = new Headers(req.headers);
+  requestHeaders.set("x-nonce", nonce);
+
+  const res = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 
   // 1. Security headers (applied to all responses)
   res.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
@@ -28,18 +36,23 @@ export function middleware(req: NextRequest) {
   res.headers.set("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
   res.headers.set("X-XSS-Protection", "1; mode=block");
 
-  // Anti-caching: prevent preview proxy/CDN from caching HTML pages.
-  // This ensures the latest code is always served.
-  res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  res.headers.set("Pragma", "no-cache");
-  res.headers.set("Expires", "0");
-  res.headers.set("Surrogate-Control", "no-store");
+  // Anti-caching: strictly scoped to /api/* routes
+  if (req.nextUrl.pathname.startsWith("/api/")) {
+    res.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.headers.set("Pragma", "no-cache");
+    res.headers.set("Expires", "0");
+    res.headers.set("Surrogate-Control", "no-store");
+  }
 
-  // Content Security Policy
-  // In production: tighten to specific origins
+  // Content Security Policy with nonce
+  const isDev = process.env.NODE_ENV !== "production";
+  const scriptDirectives = isDev
+    ? `'self' 'unsafe-inline' 'unsafe-eval'`
+    : `'self' 'nonce-${nonce}' https:`;
+
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js needs unsafe-inline/eval
+    `script-src ${scriptDirectives}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",

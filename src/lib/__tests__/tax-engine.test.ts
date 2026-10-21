@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { computeSurcharge } from "../tax-engine";
 
 // Test the tax slab computation logic directly (without DB)
 // We extract the pure math functions for testing
@@ -133,6 +134,41 @@ describe("Tax Engine", () => {
       const newTotal = Math.round(newTax * (1 + CESS));
       // For ₹20L with no deductions, new regime should be cheaper
       expect(newTotal).toBeLessThan(oldTax);
+    });
+  });
+
+  describe("Surcharge Computation", () => {
+    it("zero surcharge for income below ₹50 Lakhs", () => {
+      expect(computeSurcharge(4900000, 1000000, "new")).toBe(0);
+      expect(computeSurcharge(4900000, 1000000, "old")).toBe(0);
+    });
+
+    it("10% surcharge for income between ₹50L and ₹1Cr", () => {
+      // 10% of ₹15,00,000 tax = ₹1,50,000
+      expect(computeSurcharge(7500000, 1500000, "new")).toBe(150000);
+      expect(computeSurcharge(7500000, 1500000, "old")).toBe(150000);
+    });
+
+    it("15% surcharge for income between ₹1Cr and ₹2Cr", () => {
+      // 15% of ₹30,00,000 tax = ₹4,50,000
+      expect(computeSurcharge(15000000, 3000000, "new")).toBe(450000);
+      expect(computeSurcharge(15000000, 3000000, "old")).toBe(450000);
+    });
+
+    it("25% surcharge for income between ₹2Cr and ₹5Cr", () => {
+      // 25% of ₹60,00,000 tax = ₹15,00,000
+      expect(computeSurcharge(30000000, 6000000, "new")).toBe(1500000);
+      expect(computeSurcharge(30000000, 6000000, "old")).toBe(1500000);
+    });
+
+    it("37% surcharge for income above ₹5Cr in Old Regime", () => {
+      // 37% of ₹1,80,00,000 tax = ₹66,60,000
+      expect(computeSurcharge(60000000, 18000000, "old")).toBe(6660000);
+    });
+
+    it("25% surcharge capped for income above ₹5Cr in New Regime", () => {
+      // 25% of ₹1,80,00,000 tax = ₹45,00,000
+      expect(computeSurcharge(60000000, 18000000, "new")).toBe(4500000);
     });
   });
 });

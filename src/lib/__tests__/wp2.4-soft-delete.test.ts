@@ -183,7 +183,8 @@ describe("WP 2.4: Financial Compliance Soft-Delete System", () => {
   describe("Coverage and edge cases", () => {
     it("source code lists all financial models", () => {
       const fs = require("fs");
-      const src = fs.readFileSync("/home/z/my-project/src/lib/db-soft-delete.ts", "utf-8");
+      const path = require("path");
+      const src = fs.readFileSync(path.resolve(process.cwd(), "src/lib/db-soft-delete.ts"), "utf-8");
       expect(src).toContain('"Document"');
       expect(src).toContain('"Income"');
       expect(src).toContain('"Expense"');
@@ -197,7 +198,8 @@ describe("WP 2.4: Financial Compliance Soft-Delete System", () => {
 
     it("includes restore + hardDelete helpers for GDPR", () => {
       const fs = require("fs");
-      const src = fs.readFileSync("/home/z/my-project/src/lib/db-soft-delete.ts", "utf-8");
+      const path = require("path");
+      const src = fs.readFileSync(path.resolve(process.cwd(), "src/lib/db-soft-delete.ts"), "utf-8");
       expect(src).toContain("restoreSoftDeleted");
       expect(src).toContain("hardDelete");
       expect(src).toContain("listDeleted");

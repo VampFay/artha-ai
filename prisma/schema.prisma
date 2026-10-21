@@ -74,6 +74,7 @@ model Document {
 
   @@unique([userId, fileHash])
   @@index([userId])
+  @@index([userId, createdAt])
   @@index([fileHash])
 }
 
@@ -107,6 +108,7 @@ model Income {
   document       Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([userId, financialYear])
 }
 
 model Expense {
@@ -122,6 +124,7 @@ model Expense {
   document        Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([userId, transactionDate])
   @@index([transactionDate])
 }
 
@@ -138,6 +141,7 @@ model Deduction {
   document       Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
 
   @@index([userId])
+  @@index([userId, financialYear])
 }
 
 model TaxEstimation {

@@ -7,34 +7,42 @@ import { usePortal } from "@/lib/portal-context";
 import { Menu, X, LogOut, Command, ArrowUp, ArrowDown, Loader2, Building2, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ViewState } from "@/lib/types";
+import dynamic from "next/dynamic";
 import CommandPaletteNew from "@/components/CommandPaletteNew";
 import OnboardingFlowNew from "@/components/OnboardingFlowNew";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import DashboardView from "@/views/DashboardView";
-import PortfolioView from "@/views/PortfolioView";
-import CashflowView from "@/views/CashflowView";
-import LiabilitiesView from "@/views/LiabilitiesView";
-import RetirementView from "@/views/RetirementView";
-import DocumentsView from "@/views/DocumentsView";
-import DocumentVerifyView from "@/views/DocumentVerifyView";
-import EstateView from "@/views/EstateView";
-import TaxView from "@/views/TaxView";
-import FinanceView from "@/views/FinanceView";
-import GoalsView from "@/views/GoalsView";
-import AssistantView from "@/views/AssistantView";
-import ReportsView from "@/views/ReportsView";
-import SettingsView from "@/views/SettingsView";
-import EntitySwitcherView from "@/views/entity/EntitySwitcherView";
-import EntityOnboardingView from "@/views/entity/EntityOnboardingView";
-import EntityDashboardView from "@/views/entity/EntityDashboardView";
-import EntityTaxView from "@/views/entity/EntityTaxView";
-import EntityComplianceView from "@/views/entity/EntityComplianceView";
-import EntityTeamView from "@/views/entity/EntityTeamView";
-import EntityNoticesView from "@/views/entity/EntityNoticesView";
-import EntityDocumentsView from "@/views/entity/EntityDocumentsView";
-import EntityGSTReturnsView from "@/views/entity/EntityGSTReturnsView";
-import EntityTDSReturnsView from "@/views/entity/EntityTDSReturnsView";
-import EntityAdvisorView from "@/views/entity/EntityAdvisorView";
+
+const ViewLoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-[400px]">
+    <Loader2 className="h-6 w-6 animate-spin text-saffron" />
+  </div>
+);
+
+const DashboardView = dynamic(() => import("@/views/DashboardView"), { loading: () => <ViewLoadingFallback /> });
+const PortfolioView = dynamic(() => import("@/views/PortfolioView"), { loading: () => <ViewLoadingFallback /> });
+const CashflowView = dynamic(() => import("@/views/CashflowView"), { loading: () => <ViewLoadingFallback /> });
+const LiabilitiesView = dynamic(() => import("@/views/LiabilitiesView"), { loading: () => <ViewLoadingFallback /> });
+const RetirementView = dynamic(() => import("@/views/RetirementView"), { loading: () => <ViewLoadingFallback /> });
+const DocumentsView = dynamic(() => import("@/views/DocumentsView"), { loading: () => <ViewLoadingFallback /> });
+const DocumentVerifyView = dynamic(() => import("@/views/DocumentVerifyView"), { loading: () => <ViewLoadingFallback /> });
+const EstateView = dynamic(() => import("@/views/EstateView"), { loading: () => <ViewLoadingFallback /> });
+const TaxView = dynamic(() => import("@/views/TaxView"), { loading: () => <ViewLoadingFallback /> });
+const FinanceView = dynamic(() => import("@/views/FinanceView"), { loading: () => <ViewLoadingFallback /> });
+const GoalsView = dynamic(() => import("@/views/GoalsView"), { loading: () => <ViewLoadingFallback /> });
+const AssistantView = dynamic(() => import("@/views/AssistantView"), { loading: () => <ViewLoadingFallback /> });
+const ReportsView = dynamic(() => import("@/views/ReportsView"), { loading: () => <ViewLoadingFallback /> });
+const SettingsView = dynamic(() => import("@/views/SettingsView"), { loading: () => <ViewLoadingFallback /> });
+const EntitySwitcherView = dynamic(() => import("@/views/entity/EntitySwitcherView"), { loading: () => <ViewLoadingFallback /> });
+const EntityOnboardingView = dynamic(() => import("@/views/entity/EntityOnboardingView"), { loading: () => <ViewLoadingFallback /> });
+const EntityDashboardView = dynamic(() => import("@/views/entity/EntityDashboardView"), { loading: () => <ViewLoadingFallback /> });
+const EntityTaxView = dynamic(() => import("@/views/entity/EntityTaxView"), { loading: () => <ViewLoadingFallback /> });
+const EntityComplianceView = dynamic(() => import("@/views/entity/EntityComplianceView"), { loading: () => <ViewLoadingFallback /> });
+const EntityTeamView = dynamic(() => import("@/views/entity/EntityTeamView"), { loading: () => <ViewLoadingFallback /> });
+const EntityNoticesView = dynamic(() => import("@/views/entity/EntityNoticesView"), { loading: () => <ViewLoadingFallback /> });
+const EntityDocumentsView = dynamic(() => import("@/views/entity/EntityDocumentsView"), { loading: () => <ViewLoadingFallback /> });
+const EntityGSTReturnsView = dynamic(() => import("@/views/entity/EntityGSTReturnsView"), { loading: () => <ViewLoadingFallback /> });
+const EntityTDSReturnsView = dynamic(() => import("@/views/entity/EntityTDSReturnsView"), { loading: () => <ViewLoadingFallback /> });
+const EntityAdvisorView = dynamic(() => import("@/views/entity/EntityAdvisorView"), { loading: () => <ViewLoadingFallback /> });
 
 const INDIVIDUAL_NAV = [
   { num: "01", category: "OVERVIEW", items: [{ id: "dashboard", label: "Dashboard" }] },

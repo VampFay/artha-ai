@@ -31,8 +31,8 @@ export async function GET(req: NextRequest) {
     const grossIncome = incomes.reduce((sum, i) => sum + i.amount, 0);
     const totalDeductions = deductions.reduce((sum, d) => sum + d.amount, 0);
 
-    const oldRegimeTax = computeTaxWithRules(grossIncome - totalDeductions, taxRules.old_regime_slabs, taxRules);
-    const newRegimeTax = computeTaxWithRules(grossIncome, taxRules.new_regime_slabs, taxRules);
+    const oldRegimeTax = computeTaxWithRules(grossIncome - totalDeductions, taxRules.old_regime_slabs, taxRules, "old");
+    const newRegimeTax = computeTaxWithRules(grossIncome, taxRules.new_regime_slabs, taxRules, "new");
 
     const recommendedRegime = oldRegimeTax < newRegimeTax ? "old" : "new";
 
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-function computeTaxWithRules(taxableIncome: number, slabs: any[], rules: any): number {
+function computeTaxWithRules(taxableIncome: number, slabs: any[], rules: any, regime: "old" | "new"): number {
   if (taxableIncome <= 0) return 0;
 
   let tax = 0;
@@ -79,9 +79,13 @@ function computeTaxWithRules(taxableIncome: number, slabs: any[], rules: any): n
     }
   }
 
-  // Apply rebate u/s 87A
-  const rebateLimit = rules.rebate_87a_old_regime_income_limit;
-  const rebateAmount = rules.rebate_87a_old_regime_amount;
+  // Apply rebate u/s 87A (regime-specific)
+  const rebateLimit = regime === "new"
+    ? (rules.rebate_87a_new_regime_income_limit ?? 700000)
+    : (rules.rebate_87a_old_regime_income_limit ?? 500000);
+  const rebateAmount = regime === "new"
+    ? (rules.rebate_87a_new_regime_amount ?? 25000)
+    : (rules.rebate_87a_old_regime_amount ?? 12500);
   if (taxableIncome <= rebateLimit) {
     tax = Math.max(0, tax - rebateAmount);
   }

@@ -25,6 +25,18 @@ vi.mock("@opentelemetry/api", () => ({
     getActiveSpan: () => mockSpan,
   },
   context: { active: vi.fn() },
+  createContextKey: (desc: string) => Symbol(desc),
+  DiagLogLevel: { ALL: 0, VERBOSE: 1, DEBUG: 2, INFO: 3, WARN: 4, ERROR: 5, NONE: 6 },
+  SpanKind: { INTERNAL: 0, SERVER: 1, CLIENT: 2, PRODUCER: 3, CONSUMER: 4 },
+  diag: {
+    createComponentLogger: () => ({
+      verbose: vi.fn(),
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    }),
+  },
   SpanStatusCode: { OK: 1, ERROR: 2 },
 }));
 
@@ -136,12 +148,14 @@ describe("WP 3.1: OpenTelemetry Tracing", () => {
   describe("instrumentation.ts file", () => {
     it("exists at src/instrumentation.ts (Next.js convention)", () => {
       const fs = require("fs");
-      expect(fs.existsSync("/home/z/my-project/src/instrumentation.ts")).toBe(true);
+      const path = require("path");
+      expect(fs.existsSync(path.resolve(process.cwd(), "src/instrumentation.ts"))).toBe(true);
     });
 
     it("exports register() function per Next.js convention", () => {
       const fs = require("fs");
-      const src = fs.readFileSync("/home/z/my-project/src/instrumentation.ts", "utf-8");
+      const path = require("path");
+      const src = fs.readFileSync(path.resolve(process.cwd(), "src/instrumentation.ts"), "utf-8");
       expect(src).toContain("export async function register");
     });
   });
@@ -149,7 +163,8 @@ describe("WP 3.1: OpenTelemetry Tracing", () => {
   describe("Tracing coverage in critical paths", () => {
     it("auth login route uses withSpan", () => {
       const fs = require("fs");
-      const src = fs.readFileSync("/home/z/my-project/src/app/api/auth/login/route.ts", "utf-8");
+      const path = require("path");
+      const src = fs.readFileSync(path.resolve(process.cwd(), "src/app/api/auth/login/route.ts"), "utf-8");
       expect(src).toContain('withSpan("api.auth.login"');
       expect(src).toContain('withSpan("bcrypt.compare"');
       expect(src).toContain('withSpan("prisma.user.findUnique"');

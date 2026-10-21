@@ -43,13 +43,13 @@ function computeHraExemption(hraReceived: number, basicSalary: number, rentPaid:
  *   ₹50L-1Cr: 10%, ₹1Cr-2Cr: 15%, ₹2Cr-5Cr: 25%, >₹5Cr: 25% (capped at 25% in new regime)
  * Old Regime: same but >₹5Cr is 37%
  */
-function computeSurcharge(taxableIncome: number, tax: number, regime: "old" | "new"): number {
-  if (taxableIncome < 50000000) return 0;
+export function computeSurcharge(taxableIncome: number, tax: number, regime: "old" | "new"): number {
+  if (taxableIncome < 5_000_000) return 0;
   let rate = 0;
-  if (taxableIncome >= 500000000) rate = regime === "old" ? 0.37 : 0.25;
-  else if (taxableIncome >= 200000000) rate = 0.25;
-  else if (taxableIncome >= 100000000) rate = 0.15;
-  else if (taxableIncome >= 50000000) rate = 0.10;
+  if (taxableIncome >= 50_000_000) rate = regime === "old" ? 0.37 : 0.25;
+  else if (taxableIncome >= 20_000_000) rate = 0.25;
+  else if (taxableIncome >= 10_000_000) rate = 0.15;
+  else if (taxableIncome >= 5_000_000) rate = 0.10;
   return Math.round(tax * rate);
 }
 
@@ -183,18 +183,31 @@ export async function computeTaxSummary(userId: string, fy: string) {
   }
   const score = Math.min(100, Math.max(0, docScore + verifyScore + consistencyScore + deductionScore));
 
-  // Cache — use findFirst + create/update (avoids composite unique requirement)
-  const existing = await db.taxEstimation.findFirst({ where: { userId, financialYear: fy } });
-  if (existing) {
-    await db.taxEstimation.update({
-      where: { id: existing.id },
-      data: { grossIncome: gross, totalDeductions: totalDed, taxableIncomeOldRegime: oldTaxable, taxableIncomeNewRegime: newTaxable, estimatedTaxOldRegime: oldTotal, estimatedTaxNewRegime: newTotal, recommendedRegime: recommended, computedAt: new Date() },
-    });
-  } else {
-    await db.taxEstimation.create({
-      data: { userId, financialYear: fy, grossIncome: gross, totalDeductions: totalDed, taxableIncomeOldRegime: oldTaxable, taxableIncomeNewRegime: newTaxable, estimatedTaxOldRegime: oldTotal, estimatedTaxNewRegime: newTotal, recommendedRegime: recommended },
-    });
-  }
+  // Cache with atomic upsert to prevent concurrency race conditions
+  await db.taxEstimation.upsert({
+    where: { userId_financialYear: { userId, financialYear: fy } },
+    update: {
+      grossIncome: gross,
+      totalDeductions: totalDed,
+      taxableIncomeOldRegime: oldTaxable,
+      taxableIncomeNewRegime: newTaxable,
+      estimatedTaxOldRegime: oldTotal,
+      estimatedTaxNewRegime: newTotal,
+      recommendedRegime: recommended,
+      computedAt: new Date(),
+    },
+    create: {
+      userId,
+      financialYear: fy,
+      grossIncome: gross,
+      totalDeductions: totalDed,
+      taxableIncomeOldRegime: oldTaxable,
+      taxableIncomeNewRegime: newTaxable,
+      estimatedTaxOldRegime: oldTotal,
+      estimatedTaxNewRegime: newTotal,
+      recommendedRegime: recommended,
+    },
+  });
 
   return {
     financial_year: fy,
@@ -209,7 +222,7 @@ export async function computeTaxSummary(userId: string, fy: string) {
     },
     missing_documents: missing,
     mismatches: [],
-    fields_verified_pct: 1.0,
+    fields_verified_pct: allFields.length > 0 ? Number((verifiedCount / allFields.length).toFixed(2)) : 1.0,
     computed_at: new Date().toISOString(),
   };
 }

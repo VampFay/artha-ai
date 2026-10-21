@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { SignJWT, jwtVerify } from "jose";
-import { createHash } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { db } from "./db";
 
 // JWT secret: read from env. In dev, a known fallback is used (safe because
@@ -43,7 +43,8 @@ export async function createRefreshToken(
   userAgent?: string,
   ipAddress?: string
 ): Promise<string> {
-  const rawToken = `${userId}:${Date.now()}:${Math.random().toString(36).slice(2)}`;
+  const randomEntropy = randomBytes(32).toString("hex");
+  const rawToken = `${userId}:${Date.now()}:${randomEntropy}`;
   const tokenHash = createHash("sha256").update(rawToken).digest("hex");
   const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
 
@@ -144,4 +145,4 @@ export async function cleanupExpiredTokens(): Promise<void> {
 }
 
 export const CONSENT_TEXT =
-  "FinSight AI needs your permission to process uploaded financial documents for tax-readiness and financial-health analysis. You can delete your documents at any time.";
+  "Artha AI needs your permission to process uploaded financial documents for tax-readiness and financial-health analysis. You can delete your documents at any time.";

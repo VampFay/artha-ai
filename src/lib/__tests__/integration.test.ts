@@ -65,7 +65,7 @@ Section B — Transactions
     });
 
     it("WP2.3+3.1: rate-limited auth with telemetry span", async () => {
-      const ip = "203.0.113.99";
+      const ip = "203.0.113.200";
       const email = "integration-test@example.com";
 
       let capturedTraceId: string | undefined;

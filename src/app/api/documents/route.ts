@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { verifyToken } from "@/lib/auth";
-import { createHash } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import path from "path";
 import { getFileStore } from "@/lib/storage/file-store";
+import { encryptField, detectPiiCategory } from "@/lib/security/field-encryption";
 
 const ALLOWED_TYPES = ["salary_slip", "form16", "bank_statement", "rent_receipt", "insurance_receipt", "loan_certificate", "investment_statement", "other"];
 const ALLOWED_EXTS = [".pdf", ".jpg", ".jpeg", ".png", ".csv", ".xlsx"];
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
     if (existing) return NextResponse.json({ detail: "This file has already been uploaded." }, { status: 409 });
 
     // Save file using storage abstraction (local or S3)
-    const docId = `doc_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const docId = `doc_${Date.now()}_${randomBytes(4).toString("hex")}`;
     const storageKey = `${payload.sub}/${docId}${ext}`;
     const fileStore = await getFileStore();
     const storedPath = await fileStore.save(storageKey, buffer, file.type || "application/octet-stream");
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
           confidence = 0.95;
           extractedText = `Bank: ${result.sourceFormat.toUpperCase()}\nTransactions: ${result.transactionCount}\nTotal Credits: ${result.totals.credits}\nTotal Debits: ${result.totals.debits}\nNet: ${result.totals.net}\n\nTop categories:\n${Object.entries(result.transactions.reduce((acc: any, t: any) => { acc[t.category] = (acc[t.category] || 0) + t.amount; return acc; }, {})).sort((a: any, b: any) => b[1] - a[1]).slice(0, 10).map(([k, v]: any) => `  ${k}: ₹${v.toFixed(0)}`).join("\n")}`;
 
-          // Create extracted fields from bank statement summary
+          // Create extracted fields from bank statement summary (encrypting any PII)
           const summary = summarizeTransactions(result.transactions, result.sourceFormat);
           const bankFields = [
             { name: "bank_name", value: result.sourceFormat.toUpperCase(), confidence: 0.95, snippet: `Detected from headers` },
@@ -88,8 +89,15 @@ export async function POST(req: NextRequest) {
             { name: "month_detected", value: summary.monthDetected || "unknown", confidence: 0.85, snippet: `From first transaction date` },
           ];
           if (bankFields.length > 0) {
+            const encryptedBankFields = await Promise.all(
+              bankFields.map(async (f) => {
+                const isPii = detectPiiCategory(f.value) || f.name.includes("account");
+                const val = isPii ? ((await encryptField(f.value)) || f.value) : f.value;
+                return { ...f, value: val };
+              })
+            );
             await db.$transaction(
-              bankFields.map((f) =>
+              encryptedBankFields.map((f) =>
                 db.extractedField.create({ data: { documentId: doc.id, fieldName: f.name, fieldValue: f.value, confidenceScore: f.confidence, sourceSnippet: f.snippet } })
               )
             );
@@ -114,11 +122,18 @@ export async function POST(req: NextRequest) {
         else if (lowerText.includes("interest certificate") || lowerText.includes("loan")) { detectedType = "loan_certificate"; confidence = 0.82; }
         else { confidence = 0.70; }
 
-        // Extract fields using regex — wrap in transaction
+        // Extract fields using regex — encrypt PII and wrap in transaction
         const fields = extractFields(extractedText, detectedType);
         if (fields.length > 0) {
+          const encryptedFields = await Promise.all(
+            fields.map(async (f) => {
+              const isPii = detectPiiCategory(f.value) || f.name.includes("pan") || f.name.includes("aadhaar") || f.name.includes("account");
+              const val = isPii ? ((await encryptField(f.value)) || f.value) : f.value;
+              return { ...f, value: val };
+            })
+          );
           await db.$transaction(
-            fields.map((f) =>
+            encryptedFields.map((f) =>
               db.extractedField.create({ data: { documentId: doc.id, fieldName: f.name, fieldValue: f.value, confidenceScore: f.confidence, sourceSnippet: f.snippet } })
             )
           );
